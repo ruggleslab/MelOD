@@ -1,0 +1,40 @@
+
+
+/* styles.css */
+
+/* Change the background color of the navbar */
+.navbar-default {
+    background-color:#AB82C5;
+}
+
+/* Change the text color of the navbar */
+.navbar-default .navbar-nav>li>a {
+    color:#EEE6F3;
+}
+
+/* Change the color of the active tab */
+.navbar-toggle,
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>.active>a:hover {
+    background-color: #AB82C5;
+    color: #E2D4B7;
+}
+
+
+
+
+.navbar-default .navbar-toggle .icon-bar{
+      background-color: #EEE6F3;
+}
+
+.container-fluid{
+  padding:0;
+}
+.navbar-default{
+padding-left: 5%;
+}
+.tab-content
+{
+  margin-left: 2%;
+}
