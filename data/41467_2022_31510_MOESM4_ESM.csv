@@ -1,0 +1,70 @@
+﻿Supplementary Data 1: Cell line associated clinical data.,,,,,,,,,,,,,,,,,,,,,,,,
+TIL_NO,Sex,Subtype,RNAcluster,RefinedCohort,Purity_SEQZ,Ploidy,AJCC8_TNMAtFirstDiagnosis,PrimarySite,AgeAtSampleCollection,StageAtSampleCollection,TumorLocation,ImmediatePriorSystemic,PriorCategory,PreVsSample,NextSystemic,NextCategory,PostVsSample,PostResponse,PostDurability,PriorTIL,PriorTargeted,PriorCytokine,PriorCTLA4i,PriorPD1i
+2042,F,Mucosal,MEL-like,N,1,3.7,Not known,anorectal,51-60,IV,lymph node,biochemotherapy,biochemo,-162,paclitaxel,chemo,170,NR,70,N,N,N,N,N
+2097,F,Non-acral,Intermediate,Y,0.7,5.5,Not known,upper limb,51-60,III,soft tissue arm,none,none,NA,none,none,NA,NA,NA,N,N,N,N,N
+2125,M,Non-acral,MES-like,Y,1,4,Not known,back,41-50,IV,soft tissue abdominal wall,IL2,cytokine,-31,TIL,TIL,66,NR,117,N,N,Y,N,N
+2153,F,Non-acral,Intermediate,Y,1,4.2,Not known,back,21-30,IV,lymph node neck,adj IFN,cytokine,-230,TIL,TIL,136,R,2280,N,N,Y,N,N
+2170,F,Mucosal,MEL-like,N,0.89,5.7,Not known,genitourinary,51-60,III,lymph node groin,none,none,NA,none,none,NA,NA,NA,N,N,N,N,N
+2173,F,Non-acral,MES-like,N,0.23,2.2,IIIC T3b N2a M0,neck,21-30,IV,soft tissue hip,adj IFN,cytokine,-70,biochemotherapy,biochemo,21,NR,48,N,N,Y,N,N
+2189,M,Non-acral,MEL-like,Y,1,6.3,IIIB T3a N1a M0,back,51-60,IV,soft tissue chest wall,anti-CTLA-4,CTLA4i,-1342,none,none,NA,NA,NA,N,N,Y,Y,N
+2216,M,Non-acral,MEL-like,Y,1,4.4,IIIA T2a N1a M0,back,51-60,IV,soft tissue neck,TIL,TIL,-114,none,none,NA,NA,NA,Y,N,Y,N,N
+2247,F,Non-acral,Intermediate,Y,0.93,5.6,IIIC T4a N2a M0,HN,11-20,IV,lymph node neck,IL2,cytokine,NA,biochemotherapy,biochemo,30,NR,121,N,N,Y,N,N
+2260,M,Non-acral,MES-like,N,0.41,5.9,IIIC T4a N1a M0,chest,31-40,IV,lymph node intrathoracic,DTIC+ramucirumab,chemo,-197,carbo+taxol,chemo,35,NR,18,N,N,Y,N,N
+2261,M,Non-acral,MES-like,Y,0.52,5.2,IIIB T3a N1a M0,upper limb,31-40,III,lymph node axilla,vaccine+leuprolide,vaccine,-20,adj IFN,cytokine,75,NA,57,N,N,N,N,N
+2279,M,Melanoma of Unknown Primary,MEL-like,Y,0.95,2.2,Not known,MUP,11-20,IV,spleen,none,none,NA,temozolomide+avastin,chemo,94,NR,76,N,N,N,N,N
+2316,M,Uveal,MES-like,N,0.25,2.2,Not known,eye,31-40,IV,soft tissue thigh,vaccine,vaccine,-46,MEKi,MAPKi,22,NR,76,N,N,Y,N,N
+2320,M,Non-acral,MEL-like,Y,1,4.8,Not known,back,31-40,IV,brain,TIL,TIL,-70,none,none,NA,NA,NA,Y,N,Y,N,N
+2330,M,Melanoma of Unknown Primary,MEL-like,Y,0.99,4.5,Not known,MUP,41-50,III,lymph node axilla,adj IFN,cytokine,-22,biochemotherapy,biochemo,156,R,172,N,N,Y,N,N
+2333,F,Melanoma of Unknown Primary,Intermediate,Y,1,4,IV T0 Nx M1d,MUP,51-60,IV,lung,TMZ,chemo,-25,BRAFi+MEKi,MAPKi,1578,R,669,N,N,N,N,N
+2338,M,Non-acral,MES-like,Y,1,6.5,IIIA T1b N2a M0,HN,51-60,IV,lung,vaccine,vaccine,-261,IL2,cytokine,18,NR,34,N,N,N,N,N
+2350,F,Non-acral,Intermediate,Y,,,IB T2a N0 M0,HN,21-30,IV,lung,adj IFN,cytokine,-2231,biochemotherapy,biochemo,95,NR,72,N,N,Y,N,N
+2354,M,Acral,MEL-like,N,1,5.1,IIC T4b N0 M0,upper limb,51-60,IV,lymph node axilla,adj IFN,cytokine,-56,biochemotherapy,biochemo,10,R,171,N,N,Y,N,N
+2356,M,Non-acral,MES-like,Y,1,2.2,IIIB T3a N1a M0,upper limb,61-70,IV,soft tissue hip,none,none,NA,biochemotherapy,biochemo,12,NR,80,N,N,N,N,N
+2357,M,Non-acral,MEL-like,Y,1,3,IIC T4b N0 M0,HN,51-60,IV,soft tissue abdominal wall,sorafenib+TMZ,chemo,-16,TIL,TIL,38,R,1617,N,Y,Y,N,N
+2365,M,Non-acral,Intermediate,Y,1,3.5,Not known,HN,61-70,IV,soft tissue abdominal wall,TMZ+IFN,biochemo,-1001,none,none,NA,NA,NA,N,N,N,N,N
+2373,M,Non-acral,MEL-like,Y,1,4,IIIC T3b N3a M0,back,41-50,IV,soft tissue back,IL2,cytokine,-16,TIL,TIL,94,NR,111,N,N,Y,N,N
+2374,F,Non-acral,MEL-like,Y,0.99,6.5,IIIC T4b N2a M0,back,21-30,IV,soft tissue chest wall,adj IFN,cytokine,-1047,MEKi,MAPKi,48,NR,198,N,N,Y,N,N
+2379,F,Non-acral,MEL-like,Y,1,3.1,IIB T3b N0 M0,chest,41-50,IV,soft tissue chest wall,IL2,cytokine,-25,TIL,TIL,84,R,724,N,N,Y,N,N
+2380,F,Melanoma of Unknown Primary,Intermediate,Y,1,3.7,IV T0 Nx M1d,MUP,41-50,IV,dura,TMZ,chemo,-198,none,none,NA,NA,NA,N,N,N,N,N
+2381,M,Non-acral,Intermediate,Y,0.99,4,IB T2a N0 M0,upper limb,41-50,IV,brain,none,none,NA,CVT,chemo,20,NR,85,N,N,N,N,N
+2391,F,Acral,MEL-like,Y,1,4.1,IV T3b N3c M1c0,upper limb,41-50,IV,soft tissue breast,none,none,NA,biochemotherapy,biochemo,4,NR,52,N,N,N,N,N
+2392,M,Melanoma of Unknown Primary,Intermediate,Y,1,5.1,Not known,MUP,41-50,IV,soft tissue arm,adj GM-CSF,cytokine,-6,TVEC,oncolytic,120,NR,215,N,N,Y,N,N
+2399,M,Non-acral,MES-like,N: 2338,1,2.1,IIIA T1b N2a M0,HN,51-60,IV,lymph node axilla,TIL,TIL,-157,CVT+itIL2,biochemo,12,NR,38,Y,N,Y,N,N
+2400,M,Non-acral,MEL-like,Y,1,4.3,Not known,HN,31-40,IV,soft tissue,none,none,NA,biochemotherapy,biochemo,12,NR,144,N,N,N,N,N
+2405,F,Non-acral,MES-like,Y,1,2.9,IIIC T3b N3b M0,lower limb,31-40,IV,soft tissue thigh,none,none,NA,biochemotherapy,biochemo,39,NR,25,N,N,N,N,N
+2406,M,Melanoma of Unknown Primary,MEL-like,Y,1,4.2,Not known,MUP,41-50,IV,lymph node neck,IL2,cytokine,-107,CVD,chemo,157,NR,235,N,N,Y,N,N
+2408,F,Non-acral,MEL-like,Y,0.98,2.3,IIIC T3b N2a M0,upper limb,51-60,III,soft tissue arm,adj IFN,cytokine,-43,TVEC,oncolytic,35,R,3521,N,N,Y,N,N
+2410,M,Non-acral,Intermediate,Y,1,3,Not known,HN,51-60,IV,lung,none,none,NA,none,none,NA,NA,NA,N,N,N,N,N
+2417,M,Non-acral,MEL-like,N: 2400,1,6.7, T4b Nx M0,HN,31-40,IV,soft tissue abdominal wall,biochemotherapy,biochemo,23,BRAFi,MAPKi,85,NR,299,N,N,Y,N,N
+2423,F,Non-acral,Intermediate,Y,1,2.1,IIIC T4b N2b M0,upper limb,21-30,III,lymph node neck,none,none,NA,adj IFN,cytokine,74,NA,NA,N,N,N,N,N
+2462,F,Acral,MES-like,N,0.99,2.3,IIIA T2a N1a M0,foot,31-40,IV,soft tissue thigh,adj vaccine,vaccine,-1607,IL2,cytokine,46,NR,99,N,N,Y,N,N
+2470,M,Non-acral,MES-like,Y,0.99,2.4,IIA T3a N0 M0,upper limb,61-70,III,lymph node axilla,none,none,NA,anti-CTLA-4 + IL21,CTLA4i,721,NR,229,N,N,N,N,N
+2495,M,Non-acral,Intermediate,Y,0.98,2.1,IIIA T1a N1a M0,upper limb,51-60,IV,soft tissue intra-abdominal,biochemotherapy,biochemo,-238,none,none,NA,NA,NA,N,N,Y,N,N
+2508,F,Non-acral,MEL-like,Y,1,3.9,Not known,back,41-50,IV,adrenal,anti-CTLA-4 + TMZ,CTLA4i,-46,TIL,TIL,462,R,337,N,N,Y,Y,N
+2510,F,Non-acral,MEL-like,Y,1,3.5,IA T1a Nx M0,lower limb,31-40,IV,lymph node intrathoracic,biochemotherapy,biochemo,-19,anti-CTLA-4,CTLA4i,91,NR,80,N,N,Y,N,N
+2521,M,Non-acral,MEL-like,Y,1,3.6,IIIC T4b N1a M0,HN,51-60,IV,soft tissue chest wall,none,none,NA,none,none,NA,NA,NA,N,N,N,N,N
+2549,F,Non-acral,Intermediate,Y,0.99,6.5,Not known,lower limb,41-50,III,lymph node groin,none,none,NA,anti-CTLA-4,CTLA4i,31,NR,59,N,N,N,N,N
+2559,M,Non-acral,MEL-like,N: 2400,1,2.9,Not known,HN,31-40,IV,parotid,BRAFi,MAPKi,0,TIL+DC vaccine,TIL,222,R,113,N,Y,Y,N,N
+2583,M,Melanoma of Unknown Primary,MES-like,Y,1,4.4,IV T0 N1b M1d0,MUP,61-70,IV,lymph node axilla,none,none,NA,itIL2,cytokine,215,NR,79,N,N,N,N,N
+2596,F,Non-acral,Intermediate,Y,0.99,2.2,IB T2a N0 M0,chest,41-50,IV,lymph node axilla,anti-PD-1 + vaccine,PD1i,-28,IL2,cytokine,18,NR,139,N,N,Y,Y,Y
+2645,M,Non-acral,Intermediate,Y,0.94,2.3,IIID T4b N3c M0,chest,31-40,IV,soft tissue,biochemotherapy,biochemo,-40,anti-CTLA-4,CTLA4i,14,NR,144,N,N,Y,N,N
+2650,M,Non-acral,Intermediate,Y,0.86,3.8,IIA T3a N0 M0,HN,51-60,IV,lung,none,none,NA,BRAFi,MAPKi,38,NR,51,N,N,N,N,N
+2653,M,Non-acral,MES-like,N,0.18,2.1,IA T1b N0 M0,HN,51-60,IV,lung,none,none,NA,anti-CTLA-4 + DTIC,CTLA4i,267,NR,103,N,N,N,N,N
+2654,F,Non-acral,Intermediate,Y,1,4.2,IA T1a Nx M0,HN,21-30,IV,soft tissue intra-abdominal,TIL,TIL,-197,anti-CTLA-4,CTLA4i,82,NR,103,Y,N,Y,N,N
+2661,F,Non-acral,Intermediate,N: 2596,1,4.5,IB T2a N0 M0,chest,41-50,IV,liver,TIL,TIL,-104,CVT,chemo,24,NR,37,Y,N,Y,Y,Y
+2667,F,Non-acral,MEL-like,Y,,,IIIC T3b N2a M0,back,51-60,IV,soft tissue breast,adj IFN,cytokine,-27,BRAFi + anti-CTLA-4,immunoTT,205,NR,147,N,N,Y,N,N
+2668,F,Melanoma of Unknown Primary,MEL-like,Y,0.98,2.4,IV T0 Nx M1c,MUP,51-60,IV,lymph node pelvic,adj biochemotherapy,biochemo,-213,BRAFi+MEKi,MAPKi,45,R,413,N,N,Y,N,N
+2686,M,Non-acral,MES-like,Y,0.99,2.4,Not known,chest,21-30,IV,lymph node,BRAFi+MEKi,MAPKi,-1,anti-CTLA-4 + TMZ + BRAFi + MEKi,CTLA4i,1,NR,97,N,Y,Y,N,N
+2688,M,Non-acral,MES-like,Y,0.99,4,Not known,back,41-50,IV,soft tissue thigh,"itIL2, TMZ",biochemo,-4,none,none,NA,NA,NA,N,Y,Y,Y,N
+2718,M,Melanoma of Unknown Primary,MEL-like,Y,1,2.9,Not known,MUP,21-30,IV,brain,anti-CTLA-4 + TMZ,CTLA4i,-6,CVT,chemo,173,NR,64,N,N,Y,Y,N
+2731,M,Non-acral,MES-like,Y,1,3.1,IIA T3a N0 M0,upper limb,51-60,IV,brain,anti-PD-1,PD1i,0,none,none,NA,NA,NA,N,N,Y,Y,Y
+2734,F,Non-acral,Intermediate,Y,1,4.8,Not known,lower limb,61-70,IV,soft tissue back,anti-CTLA-4,CTLA4i,-54,TIL,TIL,119,NR,369,N,N,Y,Y,Y
+2755,F,Mucosal,MES-like,N,1,3.3,Not known,HN,41-50,IV,soft tissue arm,none,none,NA,anti-CTLA-4,CTLA4i,1,NR,NA,N,N,N,N,N
+2761,M,Melanoma of Unknown Primary,MEL-like,Y,1,2.9,IIIB T0 N1b M0,MUP,61-70,IV,lymph node intraabdominal,BRAFi+MEKi,MAPKi,0,BRAFi+MEKi,MAPKi,113,NR,436,N,Y,N,N,N
+2765,M,Melanoma of Unknown Primary,MEL-like,Y,0.98,3.3,Not known,MUP,31-40,IV,soft tissue abdominal wall,IL2,cytokine,-29,anti-PD-1,PD1i,21,NR,86,N,N,Y,Y,N
+2767,M,Non-acral,Intermediate,Y,0.99,3.2,Not known,chest,31-40,IV,lung,anti-CTLA-4,CTLA4i,-51,BRAFi+MEKi,MAPKi,40,NR,23,N,N,N,Y,Y
+2800,M,Non-acral,Intermediate,Y,0.95,6.9,IV T1b Nx M1d0,MUP,31-40,IV,lymph node intraabdominal,anti-CTLA-4 + KIRi,CTLA4i,-83,BRAFi + mTORi,MAPKi,45,R,96,N,Y,Y,Y,Y
+2812,M,Non-acral,Intermediate,Y,1,3.6,IA T1a Nx M0,back,41-50,IV,soft tissue gluteal,itIL2,cytokine,0,CVT,chemo,35,NR,128,N,N,Y,Y,Y
+2844,M,Non-acral,MEL-like,N: 2357,,,IIC T4b N0 M0,HN,51-60,IV,liver,TIL,TIL,-1585,none,none,NA,NA,NA,Y,Y,Y,N,N
+2770A,M,Non-acral,MES-like,Y,0.99,3.9,Not known,HN,61-70,IV,soft tissue neck,anti-CTLA-4,CTLA4i,-52,anti-PD-1,PD1i,31,NR,31,N,N,N,Y,N
+2770B,M,Non-acral,MES-like,N: 2770A,1,3.8,Not known,HN,61-70,IV,soft tissue neck,anti-CTLA-4,CTLA4i,-52,anti-PD-1,PD1i,31,NR,31,N,N,N,Y,N
