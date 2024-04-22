@@ -1,8 +1,3 @@
-library(shiny)
-library(bslib)
-library(bsicons)
-library("shinyWidgets")
-
 
 # Define UI
 ui <- fluidPage(
@@ -30,6 +25,12 @@ ui <- fluidPage(
     tabPanel(
       "Proteomics",
       plotOutput("proteomics_boxplot"),
-      plotOutput("proteomics_correlation")
-    ))
+      plotOutput("proteomics_correlation")),
+    # oncoplot tab ----
+    tabPanel("Oncoplot",
+         theme = bs_theme(version = 5, bootswatch = "pulse"),
+         oncoplotUI("oncoTab", cohorts)
+),
+
+)
 )

@@ -12,20 +12,22 @@ bulkrna_ui <- function(id){
                  
                  tags$h3("List of Inputs"),
                  
-                 selectInput(inputId = 'xcol',
-                             label = 'X Variable',
-                             choices = names(iris)),
+                 selectInput(inputId =NS(id,'notch'),
+                             label = 'Notch',
+                             choices = c(TRUE,FALSE),
+                             selected = FALSE),
                  
-                 selectInput(inputId = 'ycol',
-                             label = 'Y Variable',
-                             choices = names(iris),
-                             selected = names(iris)[[2]]),
+                 selectInput(inputId = NS(id,'outline'),
+                             label = 'Outline',
+                             choices = c(TRUE,FALSE),
+                             selected = TRUE),
                  
-                 sliderInput(inputId = 'clusters',
-                             label = 'Cluster count',
-                             value = 3,
-                             min = 1,
-                             max = 9),
+                 selectInput(inputId = NS(id,'color_boxplot'),
+                             label = 'Select Color',
+                            choices = c("skyblue", "red", "green"),
+                             selected = "skyblue"),
+                 
+                 
                  
                  circle = TRUE, status = "danger",
                  icon = icon("gear"), width = "300px",
@@ -66,47 +68,40 @@ bulkrna_ui <- function(id){
   )
 }
 
+data_folder <- "./data/"
+shared.plt.mtx.pace <- read.csv(paste0(data_folder, "24-04-19-shared_genes_plt.csv"), row.names = 1)
+
 
 bulkrna_server <- function(id) {
   moduleServer(id, function(input, output, session) {
-    data_folder <- "./data/"
-    shared.plt.mtx.pace <- read.csv(paste0(data_folder, "24-04-19-shared_genes_plt.csv"), row.names = 1)
-    
-    observe({
+    # Define a reactive expression to handle gene selection
+    selected_genes <- reactive({
       # Get the genes entered by the user from the textAreaInput
       genes_of_interest <- strsplit(input$gene_search2, "\n")[[1]]
-      
       # Subset the gene expression data for the selected genes
-      selected_genes <- shared.plt.mtx.pace[genes_of_interest, ]
-      
+      shared.plt.mtx.pace[genes_of_interest, ]
+    })
     
-      
-      # Update plot1 with the boxplot of selected genes
-      output$plot1 <- renderPlot({
-        # Convert the data to a format suitable for boxplot()
-        selected_genes_boxplot <- as.data.frame(t(selected_genes))
-        # Create box plots for the selected genes
-        boxplot(selected_genes_boxplot,
-                main = "Boxplot of Gene Expression",
-                xlab = "Genes",
-                ylab = "Expression Level",
-                col = "skyblue",      # Color of the boxes
-                border = "black",     # Border color of the boxes
-                notch = FALSE,        # Whether to draw a notch
-                outline = TRUE)      # Whether to draw outliers
-      })
-   
+    # Update plot1 with the boxplot of selected genes
+    output$plot1 <- renderPlot({
+      selected_genes_boxplot <- as.data.frame(t(selected_genes()))
+      boxplot(selected_genes_boxplot,
+              main = "Boxplot of Gene Expression",
+              xlab = "Genes",
+              ylab = "Expression Level",
+              col = input$color_boxplot,      
+              border = "black",     
+              notch = as.logical(input$notch),      
+              outline = as.logical(input$outline))
+    })
+    
+    # Update plot2 with the heatmap of selected genes
     output$plot2 <- renderPlot({
-      selected_genes_matrix <- data.matrix(selected_genes, rownames.force = NA)
-      # Your code to generate plot 2
+      selected_genes_matrix <- data.matrix(selected_genes(), rownames.force = NA)
       heatmap(x = selected_genes_matrix,
-              xlab = "Patient IDs",
-              ylab = "Genes",
               main = "Gene Expression Heatmap",
               labRow = rownames(selected_genes_matrix),   
               labCol = colnames(selected_genes_matrix))
     })
-    })
-    
   })
 }
