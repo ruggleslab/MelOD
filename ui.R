@@ -8,8 +8,11 @@ ui <- fluidPage(
     
 ############## TAB PANEL Import ###############
 
-    tabPanel("Import",
-             import_ui("import_tab")),
+  #tabPanel("Import",
+            # import_ui("import_tab")),
+
+    tabPanel("Home",
+         home_ui("home_tab")),
 
 ############## TAB PANEL BULK RNA ###############
 

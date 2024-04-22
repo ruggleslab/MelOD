@@ -4,24 +4,9 @@ library(shiny)
 shinyServer(function(input, output, session) {
   
 ############### IMPORT TAB #################
-  import_server("import_tab")
+  home_server("home_tab")
 
 ############### BULK RNA TAB #################
   bulkrna_server("bulkrna_tab")
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

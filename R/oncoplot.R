@@ -1,7 +1,3 @@
-
-
-
-
 oncoplotUI <- function(id, cohorts){
   ns <- NS(id)
   
