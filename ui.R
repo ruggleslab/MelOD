@@ -1,6 +1,8 @@
 library(shiny)
 library(bslib)
 library(bsicons)
+library("shinyWidgets")
+
 
 # Define UI
 ui <- fluidPage(
