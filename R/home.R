@@ -1,46 +1,45 @@
-# Define UI
-home_ui <-function(id){
-NS <- NS(id)
-  titlePanel("Dataset Selection")
-  sidebarLayout(
-    sidebarPanel(
-      selectInput(NS("dataset"), "Select Dataset:",
-                  choices = c("Dataset 1", "Dataset 2", "Dataset 3")),
-      actionButton("load", "Load Dataset")
+home_ui <- function(id) {
+  fluidPage(tags$div(
+    tags$h3("Explanation of the Project"),
+    fluidRow(column(
+      width = 9,
+      tags$p(
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      )
     ),
-    mainPanel(
-      textOutput("status")
+    column(
+      width = 3,
+      tags$img(src = "./melanoma.png", width = "150px")
+    )),
+    hr(),
+    
+    fluidRow(
+      column(
+        width = 3,
+        actionButton(NS(id, "load_dataset1"), "Gide et al. 2019", class = "btn btn-primary btn-block")
+      ),
+      
+      column(
+        width = 3,
+        actionButton(NS(id, "load_dataset2"), "Load Dataset 2", class = "btn btn-primary btn-block")
+      ),
+
+      
+      column(
+        width = 3,
+        actionButton(NS(id, "load_dataset3"), "Load Dataset 3", class = "btn btn-primary btn-block")
+      )
     )
-  )
-
-
+  ))
 }
+
 
 home_server <- function(id) {
   moduleServer(id, function(input, output, session) {
-    # Define a reactive expression to load the dataset
-    loaded_dataset <- reactive({
-      switch(input$dataset,
-             "Dataset 1" = {
-               read.csv("path_to_dataset_1.csv")
-             },
-             "Dataset 2" = {
-               read.csv("path_to_dataset_2.csv")
-             },
-             "Dataset 3" = {
-               read.csv("path_to_dataset_3.csv")
-             }
-      )
-    })
-    
-    # Display status message
-    output$status <- renderText({
-      paste("Dataset", input$dataset, "loaded.")
-    })
-    
-    # Observe the click event on the load button and update the status
-    observeEvent(input$load, {
-      loaded_dataset()
+    observeEvent(input$clicked_tab, {
+      if(input$clicked_tab == "load_dataset1") {
+        updateTabItems(session, "dataset", selected = "bulkrna_tab")
+      }
     })
   })
 }

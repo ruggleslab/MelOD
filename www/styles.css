@@ -2,33 +2,73 @@
 
 /* styles.css */
 
-/* Change the background color of the navbar */
-.navbar-default {
-    background-color:#AB82C5;
+
+/*home page
+*/
+
+
+
+.home{
+  text-align: center;
 }
+
+/* Change background color of the page */
+body {
+  background-color: #EEE6F3; /* Change this to the desired background color */
+}
+
+/* Change background color of the title */
+h2.home {
+  background-color: #AB82C5; /* Change this to the desired background color */
+  color: #EEE6F3; /* Change this to the desired text color */
+  padding: 10px; /* Add padding for better appearance */
+}
+
+
+
+
+
+/*-------------------------------------------------*/
+
+/* Change the background color of the navbar */
+
 
 /* Change the text color of the navbar */
-.navbar-default .navbar-nav>li>a {
-    color:#EEE6F3;
-}
-
-/* Change the color of the active tab */
-.navbar-toggle,
-.navbar-default .navbar-nav>.active>a,
-.navbar-default .navbar-nav>.active>a:focus,
-.navbar-default .navbar-nav>.active>a:hover {
-    background-color: #AB82C5;
-    color: #E2D4B7;
-}
-
-
-
 
 .navbar-default .navbar-toggle .icon-bar{
-      background-color: #EEE6F3;
+
+      background-color: #E2D4B7;
 }
 
-.container-fluid{
+
+
+
+.skin-blue .main-header .navbar {
+    background-color: #AB82C5;
+}
+
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+    background-color: #EEE6F3;
+}
+
+.skin-blue .main-header .logo {
+    background-color: #AB82C5;
+    color: #EEE6F3;
+    border-bottom: 0 solid transparent;
+}
+
+
+.skin-blue .sidebar-menu>li.active>a, .skin-blue .sidebar-menu>li:hover>a {
+    color: #fff;
+    background: #1e282c;
+    border-left-color: #AB82C5;
+}
+
+
+.skin-blue .sidebar a {
+    color: #AB82C5;
+}
+/*.container-fluid{
   padding:0;
 }
 .navbar-default{
@@ -37,4 +77,4 @@ padding-left: 5%;
 .tab-content
 {
   margin-left: 2%;
-}
+}*/

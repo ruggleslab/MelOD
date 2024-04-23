@@ -68,6 +68,8 @@ bulkrna_ui <- function(id){
   )
 }
 
+
+
 data_folder <- "./data/"
 shared.plt.mtx.pace <- read.csv(paste0(data_folder, "24-04-19-shared_genes_plt.csv"), row.names = 1)
 
