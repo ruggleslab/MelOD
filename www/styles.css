@@ -30,18 +30,17 @@ h2.home {
 
 /*-------------------------------------------------*/
 
-/* Change the background color of the navbar */
-
-
-/* Change the text color of the navbar */
 
 .navbar-default .navbar-toggle .icon-bar{
 
       background-color: #E2D4B7;
+      color:#E2D4B7;
 }
 
 
-
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+  background-color: #DAC3E9;
+}
 
 .skin-blue .main-header .navbar {
     background-color: #AB82C5;
@@ -59,8 +58,8 @@ h2.home {
 
 
 .skin-blue .sidebar-menu>li.active>a, .skin-blue .sidebar-menu>li:hover>a {
-    color: #fff;
-    background: #1e282c;
+    color: #57068c;
+    background: #DAC3E9;
     border-left-color: #AB82C5;
 }
 
@@ -68,13 +67,52 @@ h2.home {
 .skin-blue .sidebar a {
     color: #AB82C5;
 }
-/*.container-fluid{
-  padding:0;
-}
-.navbar-default{
-padding-left: 5%;
-}
-.tab-content
+
+
+
+/*Couleur subitems background 
+*/.skin-blue .sidebar-menu>li>.treeview-menu
 {
-  margin-left: 2%;
-}*/
+  background:transparent;
+}
+
+
+.skin-blue .main-header .logo:hover {
+    background-color: #DAC3E9;
+}
+
+x.skin-blue .main-header .navbar .sidebar-toggle:hover {
+    background-color: #DAC3E9;
+}
+
+.skin-blue .treeview-menu>li.active>a, .skin-blue .treeview-menu>li>a:hover {
+    color: #AB82C5;
+}
+
+
+.skin-blue .treeview-menu>li.active>a{
+  color: #57068c;
+}
+
+.skin-blue .treeview-menu>li>a {
+    color: #AB82C5;
+}
+
+
+
+
+
+.footer {
+  height: 50px;
+  padding: 10px;
+  color:#E2D4B7;
+  background-color: #AB82C5;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Ensures it stays on top of other elements */
+}
+
+

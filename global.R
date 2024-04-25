@@ -4,7 +4,7 @@ library(bsicons)
 library(magrittr)
 library(shinyWidgets)
 library(shinydashboard)
-
+library(shinyjs)
 
 
 
