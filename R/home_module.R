@@ -1,0 +1,28 @@
+# Home UI Module
+home_ui <- function(id) {
+  ns <- NS(id)
+  fluidPage(
+    tags$h3("Explanation of the Project"),
+    fluidRow(column(
+      width = 9,
+      tags$p(
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      ),
+      actionButton(ns("load_dataset1"), "Gide et al. 2019", class = "btn btn-primary btn-block")
+    )),
+    column(
+      width = 3,
+      tags$img(src = "./melanoma.png", width = "150px")
+    ),
+    hr()
+  )
+}
+
+# Home Server Module
+home_server <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    observeEvent(input$load_dataset1, {
+      updateTabItems(session, "tabs", selected = "Gide")
+    })
+  })
+}
