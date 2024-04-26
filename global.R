@@ -5,7 +5,8 @@ library(magrittr)
 library(shinyWidgets)
 library(shinydashboard)
 library(shinyjs)
-
+library(plotly)
+library(DESeq2)
 
 
 
