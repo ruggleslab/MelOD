@@ -7,16 +7,15 @@ badal_ui <- function(id) {
       box(title="Inputs", status="warning",
           collapsible = TRUE,
           solidHeader = TRUE, 
-          sliderInput(ns("slider"), "Slider input:", 0, 1, 0.05),
-          pickerInput(ns("gene"), "Select gene: (Not Implemented Yed)", choices = NULL, multiple = TRUE, options = list(`live-search` = TRUE, size = 5)),
-          pickerInput(ns("Comparison"), "Select comparison: (Not Implemented Yed)", choices = "Navy vs Cancer", multiple = TRUE, options = list("TO DO")),
-          selectizeInput(ns("selected_gene"), "Select genes to highlight: (Not Implemented Yed)",
+          sliderInput(ns("slider_padj"), "padj Cutoff", 0, 1, 0.05),
+          sliderInput(ns("slider_log2"), "log2foldchange Cutoff", -2, 2, c(-1, 1)),
+          selectizeInput(ns("selected_gene"), "Gene(s) selection",
                       choices = NULL,  # Ensure this is accessible here or move to server
                       selected = NULL,  # Default selection
                       multiple = TRUE)
       ),
       tabBox(
-        title = "Metadata",
+        title = "Metadata (To DO)",
         # The id lets us use input$tabset1 on the server to find the current tab
         id = "tabset1", height = "250px",
         tabPanel("Patient", "First tab content"),
@@ -25,7 +24,7 @@ badal_ui <- function(id) {
     ),
     fluidRow(
       box(
-        title = "Boxplot R vs",  # Title of the box
+        title = "Boxplot",  # Title of the box
         status = "primary",            # Color theme
         solidHeader = TRUE,            # Gives the box a solid header
         collapsible = TRUE,            # Allows the box to be collapsed
@@ -37,15 +36,16 @@ badal_ui <- function(id) {
         solidHeader = TRUE,            # Gives the box a solid header
         collapsible = TRUE,            # Allows the box to be collapsed
         plotlyOutput(ns("volcano_plot"))  # Placeholder for the plot
-      ),
+      )),
       box(
         title = "Heatmap",  # Title of the box
-        status = "primary",      # Color theme
+        status = "primary",
+        width = 12,# Color theme
         solidHeader = TRUE,      # Gives the box a solid header
         collapsible = TRUE,      # Allows the box to be collapsed
         plotlyOutput(ns("badal_heatmap_test"))  # Placeholder for the volcano plot
       )
-    )
+    
   )
 }
 
@@ -64,18 +64,20 @@ badal_server <- function(id) {
     
     
     
-    
     filtered_data <- reactive({
-      padj_threshold <- input$slider
+      padj_threshold <- input$slider_padj
+      log2_thresholds <- input$slider_log2
       
       if (is.numeric(padj_threshold) && !is.na(padj_threshold)) {
-        # Filter genes based on significance and sort by p-value
-        filtered_genes <- res[!is.na(res$padj) & res$padj < padj_threshold, ]
+        # Filter genes based on significance and log2fold change and sort by p-value
+        filtered_genes <- res[
+          !is.na(res$padj) & res$padj < padj_threshold &
+            res$log2FoldChange >= log2_thresholds[1] & res$log2FoldChange <= log2_thresholds[2],
+        ]
         return(filtered_genes[order(filtered_genes$padj), ])
       }
       NULL  # Return NULL if conditions aren't met
     })
-    
     
   
     observe({ gene_data <- filtered_data()
@@ -97,7 +99,7 @@ badal_server <- function(id) {
         print(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
       } else {
         # Return top 5 genes as default
-        return(head(all_genes, 5))
+        return(head(all_genes, 10))
       }
     })
     
@@ -123,7 +125,7 @@ badal_server <- function(id) {
           plot_title <- paste("Expression for selected genes")  # Title for multiple selected genes
         }
       } else {
-        plot_title <- "Top 5 Significant Genes"  # Default title
+        plot_title <- "Top 10 most significant genes"  # Default title
       }
       
       if (nrow(filtered_genes) > 0) {
@@ -169,7 +171,7 @@ badal_server <- function(id) {
                 text = ~paste("Gene ID:", gene_id)) %>%
           layout(title = plot_title,
                  yaxis = list(title = "Log CPM"),
-                 xaxis = list(title = "Response"))
+                 xaxis = list(title = "Comparison"))
       }
     })
 

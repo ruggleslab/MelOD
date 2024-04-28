@@ -4,12 +4,18 @@ source("global.R", local = TRUE)
 create_volcanoplot <- function(res, input, gene) {
   # Create the plot
   res$neg_log10_padj <- -log10(res$padj)  # Transform p-values for plotting
-  threshold <- input$slider  # Get the threshold from user input
-  res$sig <- ifelse(res$padj < threshold & abs(res$log2FoldChange) > 1, "Significant", "Not Significant")
- plot <-plot_ly(data = as.data.frame(res), x = ~log2FoldChange, y = ~neg_log10_padj, type = 'scatter', mode = 'markers',
+  threshold <- input$slider_padj  # Get the threshold from user input
+  log2_cutoffs <- input$slider_log2  # Get log2fold change cutoffs
+  
+  
+  res$sig <- ifelse(res$padj < threshold & (res$log2FoldChange <= log2_cutoffs[1] | res$log2FoldChange >= log2_cutoffs[2]), "Significant", "Not Significant")
+  plot <-plot_ly(data = as.data.frame(res), x = ~log2FoldChange, y = ~neg_log10_padj, type = 'scatter', mode = 'markers',
           color = ~sig, colors = c("#E2D4B7", "#AB82C5"),
           text = ~paste("Gene:", rownames(res), "<br>log2 Fold Change:", log2FoldChange, "<br>Adjusted p-value:", padj),
-          marker = list(size = 10)) %>%
+          marker = list(size = 7,line = list(
+            color = 'rgb(0, 0, 0)',
+            width = 1
+          ))) %>%
     layout(title = "Volcano Plot of DESeq2 Results",
            xaxis = list(title = "Log2 Fold Change"),
            yaxis = list(title = "-log10 Adjusted p-value"))
@@ -26,10 +32,13 @@ create_volcanoplot <- function(res, input, gene) {
  return(plot)
 }
 
-# Function to create a boxplot with all points
-create_boxplot_with_points <- function(data, x_var, y_var) {
-  plot_ly(data, x = ~get(x_var), y = ~get(y_var), type = 'box', color = ~get(x_var), boxpoints = 'all')
-}
+
+
+
+
+
+
+
 
 
 create_heatmap <- function(dds, input, gene) {
