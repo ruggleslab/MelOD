@@ -1,8 +1,4 @@
-library(dplyr)
-library(tidyverse)
-library(plotly)
-library(shinyWidgets)
-library(heatmaply)
+source("global.R", local = TRUE)
 
 badal_ui <- function(id) {
   ns <- NS(id)
@@ -14,11 +10,10 @@ badal_ui <- function(id) {
           sliderInput(ns("slider"), "Slider input:", 0, 1, 0.05),
           pickerInput(ns("gene"), "Select gene: (Not Implemented Yed)", choices = NULL, multiple = TRUE, options = list(`live-search` = TRUE, size = 5)),
           pickerInput(ns("Comparison"), "Select comparison: (Not Implemented Yed)", choices = "Navy vs Cancer", multiple = TRUE, options = list("TO DO")),
-          selectInput("selectedGenes", "Select genes to highlight: (Not Implemented Yed)",
-                      choices = rownames(res),  # Ensure this is accessible here or move to server
-                      selected = rownames(res)[1],  # Default selection
-                      multiple = TRUE,
-                      selectize = TRUE)
+          selectizeInput(ns("selected_gene"), "Select genes to highlight: (Not Implemented Yed)",
+                      choices = NULL,  # Ensure this is accessible here or move to server
+                      selected = NULL,  # Default selection
+                      multiple = TRUE)
       ),
       tabBox(
         title = "Metadata",
@@ -56,113 +51,140 @@ badal_ui <- function(id) {
 
 
 
-
-
-
-
-
-
-
-
-
 badal_server <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
     # Load DESeq2 results and CPM values
-    dds <- readRDS(file.path("./data/badal", "dds.Rds"))
+    dds <- readRDS(file.path("./data/badal", "Badal_Deseq2.rds"))
+    summary(dds)
+    colData(dds)
     res = results(dds)
-
-   
-  
-    
     # Define reactive expression for filtered data
+    
+    
+    
+    
     filtered_data <- reactive({
-      padj_threshold <- input$slider  # Ensure this input is defined in the UI as a slider for padjust
-      
+      padj_threshold <- input$slider
       
       if (is.numeric(padj_threshold) && !is.na(padj_threshold)) {
-        
-        filtered_genes <- res[res$padj < padj_threshold,]
-      
-        
-          return(df)
-        
+        # Filter genes based on significance and sort by p-value
+        filtered_genes <- res[!is.na(res$padj) & res$padj < padj_threshold, ]
+        return(filtered_genes[order(filtered_genes$padj), ])
       }
       NULL  # Return NULL if conditions aren't met
     })
     
     
+  
+    observe({ gene_data <- filtered_data()
+    gene_choices <- rownames(gene_data)
+    updateSelectizeInput(session, "selected_gene", choices = gene_choices,server = TRUE)
+    })
+   
     
-
+    
+    display_genes <- reactive({
+      # Get all filtered genes from the reactive
+      all_genes <- filtered_data()
+      
+      # Check if specific genes are selected
+      selected_genes <- input$selected_gene
+      if (!is.null(selected_genes) && all(selected_genes %in% rownames(all_genes))) {
+        # Return only the selected genes
+        return(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
+        print(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
+      } else {
+        # Return top 5 genes as default
+        return(head(all_genes, 5))
+      }
+    })
+    
+    
+  
+    
+#############################################
+ 
+    
     # Creating a Plotly boxplot reactively
     output$badal_test <- renderPlotly({
       req(filtered_data())  # Ensure that the data is available
       
       
-      filtered_genes <- filtered_data()
-      
-      if (length(filtered_genes) > 0) {
-        
-        
-        # First, extract normalized counts for all genes
-        counts <- counts(dds, normalized=FALSE)
-        
-        # Subset counts to include only filtered genes
-        
-        counts_filtered <- norm_counts[rownames(norm_counts) %in% rownames(filtered_genes),]
-        df <- as.data.frame(counts_filtered)
-      }
-        
-      # Proceed with log transformation
-      log_norm_counts_filtered <- log(df + 0.01)
-      
-      # Create a data frame for plotting
-      df <- as.data.frame(log_norm_counts_filtered)
-      
-      col_data_df <- as.data.frame(colData(dds))
-      
-      df_long <- df %>%
-        tibble::rownames_to_column("gene_id") %>%
-        tidyr::pivot_longer(
-          cols = starts_with("Patient_"),
-          names_to = "patient_id",
-          values_to = "expression"
-        )
-      
-      col_data_df <- col_data_df %>% 
-        rownames_to_column(var = "patient_id")
-      
-      merged_data <- dplyr::left_join(df_long, col_data_df, by = c("patient_id" = "patient_id"))
-      
-      
+     
+      filtered_genes <- display_genes()
 
-      plot_ly(data = merged_data, x = ~responder, y = ~expression, type = 'box',
-              color = ~responder, boxpoints = 'all',
-              jitter = 0.3, pointpos = 0,  # Points directly over the box
-              text = ~paste("Gene ID:", gene_id)) %>%
-        layout(title = "Log CPM by Patient Response",
-               yaxis = list(title = "Log CPM"),
-               xaxis = list(title = "Response"))
-    })
-    
-    
-    # Generate a volcano plot
-    output$volcano_plot <- renderPlotly({
-      # Assuming 'res' is your dataset containing the results
-      res$neg_log10_padj <- -log10(res$padj)  # Transform p-values for plotting
-      threshold <- input$slider  # Get the threshold from user input
-      res$sig <- ifelse(res$padj < threshold & abs(res$log2FoldChange) > 1, "Significant", "Not Significant")
+      # Determine the plot title based on the selection
+      if (!is.null(input$selected_gene) && all(input$selected_gene %in% rownames(filtered_genes))) {
+        if (length(input$selected_gene) == 1) {
+          plot_title <- paste("Expression for", input$selected_gene)  # Title for single selected gene
+        } else {
+          plot_title <- paste("Expression for selected genes")  # Title for multiple selected genes
+        }
+      } else {
+        plot_title <- "Top 5 Significant Genes"  # Default title
+      }
       
-      # Create the plot
-      plot_ly(data = as.data.frame(res), x = ~log2FoldChange, y = ~neg_log10_padj, type = 'scatter', mode = 'markers',
-              color = ~sig, colors = c("#E2D4B7", "#AB82C5"),
-              text = ~paste("Gene:", rownames(res), "<br>log2 Fold Change:", log2FoldChange, "<br>Adjusted p-value:", padj),
-              marker = list(size = 10)) %>%
-        layout(title = "Volcano Plot of DESeq2 Results",
-               xaxis = list(title = "Log2 Fold Change"),
-               yaxis = list(title = "-log10 Adjusted p-value"))
+      if (nrow(filtered_genes) > 0) {
+        # Extract and prepare data for plotting
+        counts <- counts(dds, normalized = TRUE)
+        counts_filtered <- counts[rownames(counts) %in% rownames(filtered_genes), ]
+        df <- as.data.frame(counts_filtered)
+        log_norm_counts_filtered <- log(df + 0.01)
+        df <- as.data.frame(log_norm_counts_filtered)
+        col_data_df <- as.data.frame(colData(dds))
+
+        if (ncol(df) > 1) {
+          df_long <- df %>%
+            tibble::rownames_to_column("gene_id") %>%
+            tidyr::pivot_longer(
+              cols = starts_with("JC"),
+              names_to = "Sample",
+              values_to = "expression"
+              
+            )
+          
+        } else {
+          # Handle the case with only one column (the gene itself)
+          # Assume df has only one column of actual data besides the rownames
+          gene_id <- input$selected_gene
+          sample_names <- rownames(df)
+          expression_values <- as.vector(df[[1]])
+          df_long <- data.frame(gene_id = rep(gene_id, length(expression_values)),
+                                Sample = sample_names,
+                                expression = expression_values,
+                                stringsAsFactors = FALSE)
+ 
+        }
+        col_data_df <- col_data_df %>%
+          rownames_to_column(var = "patient_id")
+   
+        merged_data <- dplyr::left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
+        
+        # Generate the plot with dynamic title
+        plot_ly(data = merged_data, x = ~condition, y = ~expression, type = 'box',
+                color = ~condition, boxpoints = 'outliers',
+                jitter = 0.3, pointpos = 0,
+                text = ~paste("Gene ID:", gene_id)) %>%
+          layout(title = plot_title,
+                 yaxis = list(title = "Log CPM"),
+                 xaxis = list(title = "Response"))
+      }
     })
+
+    
+    
+  
+   
+    output$volcano_plot <- renderPlotly({
+      create_volcanoplot(res = res, input= input, gene = input$selected_gene)
+    })
+    
+    output$badal_heatmap_test <- renderPlotly({
+      create_heatmap(dds = dds, input= input, gene = input$selected_gene)
+    })
+    
 
   })
 }

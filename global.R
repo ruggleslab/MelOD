@@ -7,7 +7,10 @@ library(shinydashboard)
 library(shinyjs)
 library(plotly)
 library(DESeq2)
-
+library(dplyr)
+library(tidyverse)
+library(heatmaply)
+library(reshape2)
 
 
 

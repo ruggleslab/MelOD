@@ -1,12 +1,15 @@
 library(shiny)
 library(shinydashboard)
 library(shinyjs)
+library(pheatmap)
 # Source module functions
 source("modules/home_module.R", local = TRUE)
 source("modules/gide_module.R", local = TRUE)
 source("modules/badal_module.R", local = TRUE)
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
+source("scripts/plot.R", local=TRUE)
+
 
 # Define UI using the sourced template
 ui <- dashboardTemplate()
