@@ -1,6 +1,6 @@
 source("global.R", local = TRUE)
 
-badal_ui <- function(id) {
+kunz_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
     
@@ -73,12 +73,12 @@ badal_ui <- function(id) {
 }
 
 
-badal_server <- function(id) {
+kunz_server <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
     # Load DESeq2 results and CPM values
-    dds <- readRDS(file.path("./data/badal", "Badal_Deseq2.rds"))
+    dds <- readRDS(file.path("./data/kunz", "Kunz_Deseq2.rds"))
     res =  results(dds)
     
  
@@ -131,11 +131,11 @@ badal_server <- function(id) {
       # Isolate ensures changes in these inputs do not trigger this reactive block
       gene <- isolate(input$selected_gene)
       padj_cut <-isolate(input$slider_padj)
-      lot2_cut <-isolate(input$slider_log2)
+      log2_cut <-isolate(input$slider_log2)
       # Generate plots
       list(
         boxplot = create_boxplot(dds = dds,  gene = gene, display_genes = display_genes()),
-        volcano = create_volcanoplot(res = res, gene = gene,padj_cut=padj_cut,lot2_cut=lot2_cut),
+        volcano = create_volcanoplot(res = res, gene = gene,padj_cut=padj_cut,log2_cut=log2_cut),
         heatmap = create_heatmap(dds = dds, gene = gene)
 
       )
@@ -210,8 +210,10 @@ badal_server <- function(id) {
                margin = list(t = 100))
       
     })
+    
+    
     output$pca <- renderPlotly({
-      creation_pca(dds)
+      creation_pca(dds= dds)
     })
   })
 }

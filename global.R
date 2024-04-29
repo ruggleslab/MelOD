@@ -14,7 +14,8 @@ library(reshape2)
 
 
 
-# Define file paths
-dataset1_path <- "./data/24-04-19-shared_genes_plt.csv"
-dataset2_path <- "path_to_dataset_2.csv"
-dataset3_path <- "path_to_dataset_3.csv"
+
+# Load data once at the start
+# badal_data <- readRDS(file.path("./data/badal", "Badal_Deseq2.rds"))
+# badal_res <- results(badal_data)
+

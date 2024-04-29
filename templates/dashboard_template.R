@@ -4,13 +4,14 @@ dashboardTemplate <- function() {
   dashboardPage(
     dashboardHeader(title = "Shiny-Seq"),
     dashboardSidebar(
-      width = 250,
+      width = 200,
       sidebarMenu(id = "tabs",
                   menuItem("Home", tabName = "home", icon = icon("home")),
                   menuItem("Query by studies", tabName = "dataset", icon = icon("database"),
                            menuItem("BulkRNA", tabName = "bulkrna_tab",
                                     menuSubItem("Gide et al 2019", tabName = "gide"),
-                                    menuSubItem("Badal et al ...", tabName = "badal")
+                                    menuSubItem("Badal et al 2018", tabName = "badal"),
+                                    menuSubItem("Kunz et al ...", tabName = "kunz")
                            )
                   ),
                   menuItem("Query by genes", tabName = "genes", icon = icon("search")),
@@ -26,6 +27,7 @@ dashboardTemplate <- function() {
         tabItem(tabName = "home", home_ui("home_module")),
         tabItem(tabName = "gide", gide_ui("gide_module")),
         tabItem(tabName = "badal", badal_ui("badal_module")),
+        tabItem(tabName = "kunz", badal_ui("kunz_module")),
         tabItem(tabName = "about", h1("About Page"))
       ),
       tags$div(class = "footer", tags$p("Rshiny-Seq Ruggles Lab"))
