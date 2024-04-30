@@ -1,14 +1,32 @@
 source("global.R", local = TRUE)
 
+
+blurbs <- "./www/data_blurbs.json" # Update this path to where your JSON file is stored
+blurbs_info <- fromJSON(blurbs)
+badal_info <- blurbs_info$badal_info
+
 badal_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
+    
+    fluidRow(
+      box(title = "Explanation of data used in analysis:", status = "info",
+          collapsible = TRUE,
+          solidHeader = TRUE, width = 12,
+          tags$p(badal_info$data_explanation),
+          
+          
+          
+      )),
   fluidRow(
-  box(title = "Inputs/Outputs", status = "warning",
+  
+    
+  box(title = "Inputs", status = "warning",
       collapsible = TRUE,
-      solidHeader = TRUE, width = 5,
+      solidHeader = TRUE, width = 6,
       
-      
+      tags$h3("Explanation of data used in analysis: "),
+      tags$p(gide_info$data_explanation),
       tags$h3("Parameters", style = "margin-top: 0;"),  # Title for the parameters section
       numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
       numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
@@ -22,14 +40,16 @@ badal_ui <- function(id) {
       
   ),
   box(
-    title = "Study Overview", status = "info", solidHeader = TRUE, width = 7, collapsible = TRUE,
-    tags$p("
-This study explores the molecular features of high-risk melanomas, using next-generation sequencing on 78 treatment-naive tumors to differentiate benign from malignant forms. A significant finding includes a high-risk melanoma subset with a 122-epigenetic gene signature and TP53 gene deregulation, linked to poor survival. The results highlight the importance of TP53 genes and epigenetic factors in melanoma progression, offering new targets for therapy."),
-tags$p("Sources: ",  br(),
-       tags$a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5414564/", "Link of the study", target = "_blank"),
-       br(),
-       tags$a(href = "10.1172/jci.insight.92102", "DOI", target = "_blank")
-))),
+    title = "Study Overview", status = "info", solidHeader = TRUE, width = 6, collapsible = TRUE,
+    tags$h2(badal_info$title),
+    tags$h3("Lead Author: ", badal_info$lead_author),
+    tags$h3("Abstract: "),
+    tags$p(badal_info$abstract),
+    tags$p("Read the full paper: ", tags$a(href = badal_info$paper_link, "PubMed", target = "_blank")),
+    tags$p("DOI: ", tags$a(href = paste("https://doi.org/", badal_info$doi, sep = ""), badal_info$doi, target = "_blank")),
+    tags$p("Data Access: ", tags$a(href = badal_info$data_link, "ENA Dataset", target = "_blank")),
+    
+  )),
     fluidRow(
       tabBox(
         title = "Metadata",
@@ -142,14 +162,46 @@ badal_server <- function(id) {
       }
     }, ignoreNULL = FALSE)
     
-  ####################################################### see if I do choices = rownames(filtered_data())
+    filter_and_order_by_padj <- function(results_data) {
+      # Ensure the padj column exists
+      if (!"padj" %in% names(results_data)) {
+        stop("The provided data does not have a 'padj' column.")
+      }
+      
+      # Filter rows where padj is not NA and order by padj
+      filtered_data <- results_data[!is.na(results_data$padj), ]
+      ordered_data <- filtered_data[order(filtered_data$padj), ]
+      
+      return(ordered_data)
+    }
+    
+    filtered_res <- filter_and_order_by_padj(res)
+    
+    ####################################################### see if I do choices = rownames(filtered_data())
     observe({
-      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_data()), server = TRUE)
+      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res), server = TRUE)
     })
+    
+    # display_genes <- reactive({
+    #   # Get all filtered genes from the reactive
+    #   all_genes <- filtered_data()
+    # 
+    #   # Check if specific genes are selected
+    #   selected_genes <- input$selected_gene
+    #   if (!is.null(selected_genes) && all(selected_genes %in% rownames(all_genes))) {
+    #     # Return only the selected genes
+    #     return(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
+    #     print(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
+    #   } else {
+    #     # Return top 5 genes as default
+    #     return(head(all_genes, 10))
+    #   }
+    # })
+    # 
     
     display_genes <- reactive({
       # Get all filtered genes from the reactive
-      all_genes <- filtered_data()
+      all_genes <- filtered_res
       
       # Check if specific genes are selected
       selected_genes <- input$selected_gene
@@ -162,6 +214,7 @@ badal_server <- function(id) {
         return(head(all_genes, 10))
       }
     })
+    
     
     
   
@@ -209,7 +262,18 @@ badal_server <- function(id) {
     ############################### if want just filtered result display filtered_data()
     output$filtered_results <- DT::renderDataTable({
       req(filtered_data())  # Ensure that the data is available
-      DT::datatable(as.data.frame(res), options = list(pageLength = 10, scrollX = TRUE))
+      
+      # Convert the result to a data frame and include DataTables options with export buttons
+      DT::datatable(
+        as.data.frame(res),
+        extensions = 'Buttons',  # Enable buttons extension for DataTables
+        options = list(
+          dom = 'Blfrtip',  # Define the table control elements to appear on the page: B-buttons, f-filtering input, r-processing display element, t-the table, i-table information summary, p-pagination control
+          buttons = c('copy', 'csv', 'excel'),  # Include buttons for copying to clipboard, exporting to CSV, and Excel
+          pageLength = 10,
+          scrollX = TRUE
+        )
+      )
     })
     
     

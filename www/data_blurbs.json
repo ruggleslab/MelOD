@@ -1,0 +1,42 @@
+
+{
+    "blank_study_info" : {
+        "title": "",
+        "lead_author": "",
+        "abstract": "",
+        "paper_link": "",
+        "doi": "",
+        "data_link": "",
+        "data_explanation": ""
+    },
+    
+    "gide_info": {
+        "title": "Distinct Immune Signatures Define Response to Anti-PD-1 Monotherapy and Anti-PD-1/Anti-CTLA-4 Combined Therapy",
+        "lead_author": "Gide, Tuba N.",
+        "abstract": "Cancer immunotherapies provide survival benefits in responding patients, but many patients fail to respond. Identifying the biology of treatment response and resistance are a priority to optimize drug selection and improve patient outcomes. We performed transcriptomic and immune profiling on 158 tumor biopsies from melanoma patients treated with anti-PD-1 monotherapy (n = 63) or combined anti-PD-1 and anti-CTLA-4 (n = 57). These data identified activated T cell signatures and T cell populations in responders to both treatments. Further mass cytometry analysis identified an EOMES+CD69+CD45RO+ effector memory T cell phenotype that was significantly more abundant in responders to combined immunotherapy compared with non-responders (n = 18). The gene expression profile of this population was associated with longer progression-free survival in patients treated with single agent and greater tumor shrinkage in both treatments.",
+        "paper_link": "https://pubmed.ncbi.nlm.nih.gov/30753825/",
+        "doi": "10.1016/j.ccell.2019.01.003",
+        "data_link": "https://www.ebi.ac.uk/ena/browser/view/PRJEB23709",
+        "data_explanation": "73 total samples, 41 anti-PD-1 monotherapy (20 Responders, 21 Non Responders), 32 combined anti-PD-1 and anti-CTLA-4 (18 Responders, 14 Non Responders). The ground truth for the comparison was Responder vs. Non Responder."
+    },
+
+    "badal_info" : {
+        "title": "Transcriptional dissection of melanoma identifies a high-risk subtype underlying TP53 family genes and epigenome deregulation",
+        "lead_author": "Badal, Brateil",
+        "abstract": "BACKGROUND. Melanoma is a heterogeneous malignancy. We set out to identify the molecular underpinnings of high-risk melanomas, those that are likely to progress rapidly, metastasize, and result in poor outcomes. \n METHODS. We examined transcriptome changes from benign states to early-, intermediate-, and late-stage tumors using a set of 78 treatment-naive melanocytic tumors consisting of primary melanomas of the skin and benign melanocytic lesions. We utilized a next-generation sequencing platform that enabled a comprehensive analysis of protein-coding and -noncoding RNA transcripts. \nRESULTS. Gene expression changes unequivocally discriminated between benign and malignant states, and a dual epigenetic and immune signature emerged defining this transition. To our knowledge, we discovered previously unrecognized melanoma subtypes. A high-risk primary melanoma subset was distinguished by a 122-epigenetic gene signature (“epigenetic” cluster) and TP53 family gene deregulation (TP53, TP63, and TP73). This subtype associated with poor overall survival and showed enrichment of cell cycle genes. Noncoding repetitive element transcripts (LINEs, SINEs, and ERVs) that can result in immunostimulatory signals recapitulating a state of “viral mimicry” were significantly repressed. The high-risk subtype and its poor predictive characteristics were validated in several independent cohorts. Additionally, primary melanomas distinguished by specific immune signatures (“immune” clusters) were identified. \nCONCLUSION. The TP53 family of genes and genes regulating the epigenetic machinery demonstrate strong prognostic and biological relevance during progression of early disease. Gene expression profiling of protein-coding and -noncoding RNA transcripts may be a better predictor for disease course in melanoma. This study outlines the transcriptional interplay of the cancer cell’s epigenome with the immune milieu with potential for future therapeutic targeting.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5414564/",
+        "doi": "10.1172/jci.insight.92102",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98394",
+        "data_explanation": "78 total samples, 27 benign, 51 melanoma. The ground truth for the comparison was Melanoma vs. Benign."
+    },
+
+    "kunz_info" : {
+        "title": "RNA-seq analysis identifies different transcriptomic types and developmental trajectories of primary melanomas",
+        "lead_author": "Kunz, Manfred",
+        "abstract": "Recent studies revealed trajectories of mutational events in early melanomagenesis, but the accompanying changes in gene expression are far less understood. Therefore, we performed a comprehensive RNA-seq analysis of laser-microdissected melanocytic nevi (n=23) and primary melanoma samples (n=57) and characterized the molecular mechanisms of early melanoma development. Using self-organizing maps, unsupervised clustering, and analysis of pseudotime (PT) dynamics to identify evolutionary trajectories, we describe here two transcriptomic types of melanocytic nevi (N1 and N2) and primary melanomas (M1 and M2). N1/M1 lesions are characterized by pigmentation-type and MITF gene signatures, and a high prevalence of NRAS mutations in M1 melanomas. N2/M2 lesions are characterized by inflammatory-type and AXL gene signatures with an equal distribution of wild-type and mutated BRAF and low prevalence of NRAS mutations in M2 melanomas. Interestingly, N1 nevi and M1 melanomas and N2 nevi and M2 melanomas, respectively, cluster together, but there is no clustering in a stage-dependent manner. Transcriptional signatures of M1 melanomas harbor signatures of BRAF/MEK inhibitor resistance and M2 melanomas harbor signatures of anti-PD-1 antibody treatment resistance. Pseudotime dynamics of nevus and melanoma samples are suggestive for a switch-like immune-escape mechanism in melanoma development with downregulation of immune genes paralleled by an increasing expression of a cell cycle signature in late-stage melanomas. Taken together, the transcriptome analysis identifies gene signatures and mechanisms underlying development of melanoma in early and late stages with relevance for diagnostics and therapy.",
+        "paper_link": "https://www.nature.com/articles/s41388-018-0385-y",
+        "doi": "10.1038/s41388-018-0385-y",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE112509",
+        "data_explanation": "80 toatl samples, 23 melanocytic nevi, 57 primary melanomas. The ground truth for the comparison was Naevi vs. Melanoma."
+    }
+}
