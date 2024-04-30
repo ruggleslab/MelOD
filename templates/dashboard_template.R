@@ -4,14 +4,14 @@ dashboardTemplate <- function() {
   dashboardPage(
     dashboardHeader(title = "Shiny-Seq"),
     dashboardSidebar(
-      width = 200,
+      width = 250,
       sidebarMenu(id = "tabs",
                   menuItem("Home", tabName = "home", icon = icon("home")),
                   menuItem("Query by studies", tabName = "dataset", icon = icon("database"),
                            menuItem("BulkRNA", tabName = "bulkrna_tab",
-                                    menuSubItem("Gide et al 2019", tabName = "gide"),
-                                    menuSubItem("Badal et al 2018", tabName = "badal"),
-                                    menuSubItem("Kunz et al ...", tabName = "kunz")
+                                    menuSubItem("Gide et al. 2019", tabName = "gide"),
+                                    menuSubItem("Badal et al. 2018", tabName = "badal"),
+                                    menuSubItem("Kunz, Schartl 2018", tabName = "kunz")
                            )
                   ),
                   menuItem("Query by genes", tabName = "genes", icon = icon("search")),

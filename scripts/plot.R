@@ -4,7 +4,7 @@ source("global.R", local = TRUE)
 
 create_boxplot <- function(dds,gene , display_genes ){
   
-  
+
   
   filtered_genes <- display_genes
   # Determine the plot title based on the selection
@@ -55,9 +55,20 @@ create_boxplot <- function(dds,gene , display_genes ){
     
     merged_data <- dplyr::left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
     
+    
+    # Define a list of colors for the conditions found
+    conditions_found <- unique(merged_data$condition)
+    colors_chosen <- c( "#D81B60","#1E88E5")  # Blue and Orange
+    if (length(conditions_found) <= length(colors_chosen)) {
+      custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
+    } else {
+      stop("More conditions found than colors provided.")
+    }
+    
+    
     # Generate the plot with dynamic title
     plot<-plot_ly(data = merged_data, x = ~condition, y = ~expression, type = 'box',
-            color = ~condition, boxpoints = 'outliers',
+            color = ~condition,colors = custom_colors, boxpoints = 'outliers',
             jitter = 0.3, pointpos = 0,
             text = ~paste("Gene ID:", gene_id)) %>%
       layout(title = plot_title,
@@ -135,7 +146,7 @@ create_volcanoplot <- function(res, padj_cut, log2_cut, gene = NULL) {
   # Add trace for significant genes
   sig_data <- subset(res, sig == "Significant")
   plot <- add_trace(plot, data = sig_data, x = sig_data$log2FoldChange, y = sig_data$neg_log10_padj, 
-                    type = 'scatter', mode = 'markers', color = I("#6699CC"),
+                    type = 'scatter', mode = 'markers', color = I("#1E88E5"),
                     text = paste("Gene:", rownames(sig_data), "<br>Log2 Fold Change:", sig_data$log2FoldChange, 
                                  "<br>Adjusted p-value:", sig_data$padj),
                     marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
@@ -233,7 +244,7 @@ create_heatmap <- function(dds, input, gene) {
   
   c <- colData(dds)[1]
   # Create an interactive heatmap with plotly
-  fig <- plot_ly(x = colnames(mat.z)[hc_cols$order], y = rownames(mat.z)[hc_rows$order], z = mat.z, type = "heatmap", colorscale = "Viridis", showscale = TRUE) %>%
+  fig <- plot_ly(x = colnames(mat.z)[hc_cols$order], y = rownames(mat.z)[hc_rows$order], z = mat.z, type = "heatmap", colorscale = "Bluered_r", showscale = TRUE) %>%
     layout(title = "Interactive Gene Expression Heatmap with Clustering",
            xaxis = list(title = "Samples"),
            yaxis = list(title = "Genes", autorange = "reversed"),
@@ -256,6 +267,7 @@ create_heatmap <- function(dds, input, gene) {
                      showlegend = TRUE)
   }
   
+  
   # Adjust the layout to ensure the legend is properly visible
   fig <- layout(fig, legend = list(x = 1.05, y = 0.5))
   
@@ -266,7 +278,7 @@ create_heatmap <- function(dds, input, gene) {
 creation_pca <- function(dds) {
   
   vsdata <- vst(dds, blind=FALSE)
-  custom_colors <- c("#1E88E5", "#D81B60")  # Example colors, adjust as needed
+  custom_colors <- c("#D81B60","#1E88E5")  # Example colors, adjust as needed
   
   # Create PCA plot using Plotly
   pca_data <- plotPCA(vsdata, intgroup = "condition", returnData = TRUE)

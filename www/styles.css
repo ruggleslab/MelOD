@@ -14,13 +14,13 @@
 
 /* Change background color of the page */
 body {
-  background-color: #EEE6F3; /* Change this to the desired background color */
+  background-color: #FFF5EE; /* Change this to the desired background color */
 }
 
 /* Change background color of the title */
 h2.home {
-  background-color: #AB82C5; /* Change this to the desired background color */
-  color: #EEE6F3; /* Change this to the desired text color */
+  background-color: #6699CC; /* Change this to the desired background color */
+  color: #FFF5EE; /* Change this to the desired text color */
   padding: 10px; /* Add padding for better appearance */
 }
 
@@ -33,39 +33,39 @@ h2.home {
 
 .navbar-default .navbar-toggle .icon-bar{
 
-      background-color: #E2D4B7;
-      color:#E2D4B7;
+      background-color: #FFF5EE;
+      color:#FFF5EE;
 }
 
 
 .skin-blue .main-header .navbar .sidebar-toggle:hover {
-  background-color: #DAC3E9;
+  background-color: #93b7db;
 }
 
 .skin-blue .main-header .navbar {
-    background-color: #AB82C5;
+    background-color: #6699CC;
 }
 
 .skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
-    background-color: #EEE6F3;
+    background-color: #75a3d1;
 }
 
 .skin-blue .main-header .logo {
-    background-color: #AB82C5;
-    color: #EEE6F3;
+    background-color: #6699CC;
+    color: #FFF5EE;
     border-bottom: 0 solid transparent;
 }
 
 
 .skin-blue .sidebar-menu>li.active>a, .skin-blue .sidebar-menu>li:hover>a {
-    color: #57068c;
-    background: #DAC3E9;
-    border-left-color: #AB82C5;
+    color: #FFF5EE	;
+    background: #6699CC;
+    border-left-color: #FFA812;
 }
 
 
 .skin-blue .sidebar a {
-    color: #AB82C5;
+    color: #FFF5EE;
 }
 
 
@@ -78,24 +78,24 @@ h2.home {
 
 
 .skin-blue .main-header .logo:hover {
-    background-color: #DAC3E9;
+    background-color: #6699CC;
 }
 
 x.skin-blue .main-header .navbar .sidebar-toggle:hover {
-    background-color: #DAC3E9;
+    background-color: #6699CC;
 }
 
 .skin-blue .treeview-menu>li.active>a, .skin-blue .treeview-menu>li>a:hover {
-    color: #AB82C5;
+    color: #FFA812;
 }
 
 
 .skin-blue .treeview-menu>li.active>a{
-  color: #57068c;
+  color: #FFA812	;
 }
 
 .skin-blue .treeview-menu>li>a {
-    color: #AB82C5;
+    color: #FFF5EE;
 }
 
 
@@ -105,8 +105,8 @@ x.skin-blue .main-header .navbar .sidebar-toggle:hover {
 .footer {
   height: 50px;
   padding: 10px;
-  color:#E2D4B7;
-  background-color: #AB82C5;
+  color:#FFF5EE;
+  background-color: #6699CC;
   text-align: center;
   position: fixed;
   bottom: 0;
@@ -116,5 +116,13 @@ x.skin-blue .main-header .navbar .sidebar-toggle:hover {
 }
 
 
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
 
 
+.btn-primary{
+  background-color:#6699CC ;
+  color:#FFF5EE;
+}
