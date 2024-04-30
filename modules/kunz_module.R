@@ -5,13 +5,11 @@ kunz_ui <- function(id) {
   fluidPage(
     
     fluidRow(
-      box(title = "Inputs/Outputs", status = "warning",
+      box(title = "Inputs", status = "warning",
           collapsible = TRUE,
           solidHeader = TRUE, width = 5,
-          splitLayout(
-            cellWidths = c("70%", "30%"),  # Adjust widths as needed
-            fluidRow(
-              column(12,
+
+         
                      tags$h3("Parameters", style = "margin-top: 0;"),  # Title for the parameters section
                      numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
                      numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
@@ -20,18 +18,9 @@ kunz_ui <- function(id) {
                                     selected = NULL,  # Default selection
                                     multiple = TRUE),
                      actionButton(ns("update_plot"), "Generate plots", class = "btn-primary")
-              )
-            ),
-            fluidRow(
-              column(12,
-                     tags$h3("Export", style = "margin-top:0;"),  # Title for the export section, with space
-                     actionButton(ns("export_deseq2"), "DESeq2 Result", class = "btn-primary center-btn"),
-                     br(),
-                     br(),
-                     actionButton(ns("export_counts"), "Count Matrix", class = "btn-primary center-btn")
-              )
-            )
-          )
+            
+   
+          
       ),
       box(
         title = "Study Overview", status = "info", solidHeader = TRUE, width = 7, collapsible = TRUE,
@@ -244,6 +233,7 @@ kunz_server <- function(id) {
       req(filtered_data())  # Ensure that the data is available
       DT::datatable(as.data.frame(res), options = list(pageLength = 10, scrollX = TRUE))
     })
+    
     
     
     

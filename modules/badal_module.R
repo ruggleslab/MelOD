@@ -3,50 +3,33 @@ source("global.R", local = TRUE)
 badal_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    
-    fluidRow(
-      box(title = "Inputs/Outputs", status = "warning",
-          collapsible = TRUE,
-          solidHeader = TRUE, width = 5,
-          splitLayout(
-            cellWidths = c("70%", "30%"),  # Adjust widths as needed
-            fluidRow(
-              column(12,
-                     tags$h3("Parameters", style = "margin-top: 0;"),  # Title for the parameters section
-                     numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
-                     numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
-                     selectizeInput(ns("selected_gene"), "Gene(s) selection",
-                                    choices = NULL,  # Ensure this is accessible here or move to server
-                                    selected = NULL,  # Default selection
-                                    multiple = TRUE),
-                     actionButton(ns("update_plot"), "Generate plots", class = "btn-primary")
-              )
-            ),
-            fluidRow(
-              column(12,
-                     tags$h3("Export", style = "margin-top:0;"),  # Title for the export section, with space
-                     actionButton(ns("export_deseq2"), "DESeq2 Result", class = "btn-primary center-btn"),
-                     br(),
-                     br(),
-                     actionButton(ns("export_counts"), "Count Matrix", class = "btn-primary center-btn")
-              )
-            )
-          )
-      ),
+  fluidRow(
+  box(title = "Inputs/Outputs", status = "warning",
+      collapsible = TRUE,
+      solidHeader = TRUE, width = 5,
+      
+      
+      tags$h3("Parameters", style = "margin-top: 0;"),  # Title for the parameters section
+      numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
+      numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
+      selectizeInput(ns("selected_gene"), "Gene(s) selection",
+                     choices = NULL,  # Ensure this is accessible here or move to server
+                     selected = NULL,  # Default selection
+                     multiple = TRUE),
+      actionButton(ns("update_plot"), "Generate plots", class = "btn-primary")
       
       
       
-      
-      box(
-        title = "Study Overview", status = "info", solidHeader = TRUE, width = 7, collapsible = TRUE,
-        tags$p("
+  ),
+  box(
+    title = "Study Overview", status = "info", solidHeader = TRUE, width = 7, collapsible = TRUE,
+    tags$p("
 This study explores the molecular features of high-risk melanomas, using next-generation sequencing on 78 treatment-naive tumors to differentiate benign from malignant forms. A significant finding includes a high-risk melanoma subset with a 122-epigenetic gene signature and TP53 gene deregulation, linked to poor survival. The results highlight the importance of TP53 genes and epigenetic factors in melanoma progression, offering new targets for therapy."),
-        tags$p("Sources: ",  br(),
-               tags$a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5414564/", "Link of the study", target = "_blank"),
-               br(),
-               tags$a(href = "10.1172/jci.insight.92102", "DOI", target = "_blank")
-        ))),
-    
+tags$p("Sources: ",  br(),
+       tags$a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5414564/", "Link of the study", target = "_blank"),
+       br(),
+       tags$a(href = "10.1172/jci.insight.92102", "DOI", target = "_blank")
+))),
     fluidRow(
       tabBox(
         title = "Metadata",
@@ -228,6 +211,7 @@ badal_server <- function(id) {
       req(filtered_data())  # Ensure that the data is available
       DT::datatable(as.data.frame(res), options = list(pageLength = 10, scrollX = TRUE))
     })
+    
     
     
     

@@ -179,7 +179,7 @@ create_volcanoplot <- function(res, padj_cut, log2_cut, gene = NULL) {
   }
   
   # Final layout adjustments
-  plot <- layout(plot, title = "Volcano Plot of DESeq2 Results",
+  plot <- layout(plot, title = "Volcano plot of DESeq2 results of naevi vs melanoma",
                  xaxis = list(title = "Log2 Fold Change"),
                  yaxis = list(title = "-log10 Adjusted p-value"),
                  margin = list(t = 100))
@@ -245,7 +245,7 @@ create_heatmap <- function(dds, input, gene) {
   c <- colData(dds)[1]
   # Create an interactive heatmap with plotly
   fig <- plot_ly(x = colnames(mat.z)[hc_cols$order], y = rownames(mat.z)[hc_rows$order], z = mat.z, type = "heatmap", colorscale = "Bluered_r", showscale = TRUE) %>%
-    layout(title = "Interactive Gene Expression Heatmap with Clustering",
+    layout(title = "Interactive gene expression Heatmap with clustering",
            xaxis = list(title = "Samples"),
            yaxis = list(title = "Genes", autorange = "reversed"),
            margin = list(l = 100, b = 100))
@@ -269,7 +269,7 @@ create_heatmap <- function(dds, input, gene) {
   
   
   # Adjust the layout to ensure the legend is properly visible
-  fig <- layout(fig, legend = list(x = 1.05, y = 0.5))
+  fig <- layout(fig, legend = list(x = 1.05, y = 0.5),margin = list(t = 100))
   
   return(fig)
 }
@@ -294,9 +294,10 @@ creation_pca <- function(dds) {
   colors=custom_colors
 ) %>%
   layout(
-    title = "PCA Plot",
+    title = "PCA plot of naevi vs melanoma",
     xaxis = list(title = "PC1",zeroline = FALSE),
-    yaxis = list(title = "PC2",zeroline = FALSE)
+    yaxis = list(title = "PC2",zeroline = FALSE),
+    margin = list(t = 100)
   )
 
   
