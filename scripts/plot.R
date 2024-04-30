@@ -3,9 +3,9 @@ source("global.R", local = TRUE)
 
 
 create_boxplot <- function(dds,gene , display_genes ){
-  
 
-  
+
+
   filtered_genes <- display_genes
   # Determine the plot title based on the selection
   if (!is.null(gene) && all(gene %in% rownames(filtered_genes))) {
@@ -17,7 +17,7 @@ create_boxplot <- function(dds,gene , display_genes ){
   } else {
     plot_title <- "Top 10 most significant genes"  # Default title
   }
-  
+
   if (nrow(filtered_genes) > 0) {
     # Extract and prepare data for plotting
     counts <- counts(dds, normalized = TRUE)
@@ -26,18 +26,18 @@ create_boxplot <- function(dds,gene , display_genes ){
     log_norm_counts_filtered <- log(df + 0.01)
     df <- as.data.frame(log_norm_counts_filtered)
     col_data_df <- as.data.frame(colData(dds))
-  
+
     if (ncol(df) > 1) {
-      
+
       df_long <- df %>%
         tibble::rownames_to_column("gene_id") %>%
         tidyr::pivot_longer(
           cols = -gene_id,
           names_to = "Sample",
           values_to = "expression"
-          
+
         )
-      
+
     } else {
       # Handle the case with only one column (the gene itself)
       # Assume df has only one column of actual data besides the rownames
@@ -48,14 +48,14 @@ create_boxplot <- function(dds,gene , display_genes ){
                             Sample = sample_names,
                             expression = expression_values,
                             stringsAsFactors = FALSE)
-      
+
     }
     col_data_df <- col_data_df %>%
       rownames_to_column(var = "patient_id")
-    
+
     merged_data <- dplyr::left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
-    
-    
+
+
     # Define a list of colors for the conditions found
     conditions_found <- unique(merged_data$condition)
     colors_chosen <- c( "#D81B60","#1E88E5")  # Blue and Orange
@@ -64,8 +64,8 @@ create_boxplot <- function(dds,gene , display_genes ){
     } else {
       stop("More conditions found than colors provided.")
     }
-    
-    
+
+
     # Generate the plot with dynamic title
     plot<-plot_ly(data = merged_data, x = ~condition, y = ~expression, type = 'box',
             color = ~condition,colors = custom_colors, boxpoints = 'outliers',
@@ -78,6 +78,84 @@ create_boxplot <- function(dds,gene , display_genes ){
   }
   return(plot)
 }
+
+# 
+# create_boxplot <- function(dds,gene , display_genes ){
+#   
+#   
+#   
+#   filtered_genes <- display_genes
+#   # Determine the plot title based on the selection
+#   if (!is.null(gene) && all(gene %in% rownames(filtered_genes))) {
+#     if (length(gene) == 1) {
+#       plot_title <- paste("Expression for", gene)  # Title for single selected gene
+#     } else {
+#       plot_title <- paste("Expression for selected genes")  # Title for multiple selected genes
+#     }
+#   } else {
+#     plot_title <- "Top 10 most significant genes"  # Default title
+#   }
+#   
+#   if (nrow(filtered_genes) > 0) {
+#     # Extract and prepare data for plotting
+#     counts <- counts(dds, normalized = TRUE)
+#     counts_filtered <- counts[rownames(counts) %in% rownames(filtered_genes), ]
+#     df <- as.data.frame(counts_filtered)
+#     log_norm_counts_filtered <- log(df + 0.01)
+#     df <- as.data.frame(log_norm_counts_filtered)
+#     col_data_df <- as.data.frame(colData(dds))
+#     
+#     if (ncol(df) > 1) {
+#       
+#       df_long <- df %>%
+#         tibble::rownames_to_column("gene_id") %>%
+#         tidyr::pivot_longer(
+#           cols = -gene_id,
+#           names_to = "Sample",
+#           values_to = "expression"
+#           
+#         )
+#       
+#     } else {
+#       # Handle the case with only one column (the gene itself)
+#       # Assume df has only one column of actual data besides the rownames
+#       gene_id <- gene
+#       sample_names <- rownames(df)
+#       expression_values <- as.vector(df[[1]])
+#       df_long <- data.frame(gene_id = rep(gene_id, length(expression_values)),
+#                             Sample = sample_names,
+#                             expression = expression_values,
+#                             stringsAsFactors = FALSE)
+#       
+#     }
+#     col_data_df <- col_data_df %>%
+#       rownames_to_column(var = "patient_id")
+#     
+#     merged_data <- dplyr::left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
+#     
+#     
+#     # Define a list of colors for the conditions found
+#     conditions_found <- unique(merged_data$condition)
+#     colors_chosen <- c( "#D81B60","#1E88E5")  # Blue and Orange
+#     if (length(conditions_found) <= length(colors_chosen)) {
+#       custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
+#     } else {
+#       stop("More conditions found than colors provided.")
+#     }
+#     
+#     
+#     # Generate the plot with dynamic title
+#     plot<-plot_ly(data = merged_data, x = ~condition, y = ~expression, type = 'box',
+#                   color = ~condition,colors = custom_colors, boxpoints = 'outliers',
+#                   jitter = 0.3, pointpos = 0,
+#                   text = ~paste("Gene ID:", gene_id)) %>%
+#       layout(title = plot_title,
+#              yaxis = list(title = "Log CPM"),
+#              xaxis = list(title = "Comparison"),
+#              margin = list(t = 100))
+#   }
+#   return(plot)
+# }
 
 
 
