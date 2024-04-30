@@ -79,12 +79,69 @@ kunz_server <- function(id) {
     
     # Load DESeq2 results and CPM values
     dds <- readRDS(file.path("./data/kunz", "Kunz_Deseq2.rds"))
-    res =  results(dds)
+
+    # res$symbol <- dds@rowRanges@elementMetadata@listData[["symbol"]]
+    # res <- res[order(res$padj),]
+    # res <- as.data.frame(res)
+    # res <- res[complete.cases(res),]
     
+    # ################# DUPLICATE GENE I KEEP THE ONE WITH THE LOWEST PVALUE
+    # res <- res[!duplicated(res$symbol, fromLast = TRUE), ]
+    # rownames(res) <- res$symbol  # Reassign row names now without duplicates
+    # 
+    # res <- res[, !names(res) %in% "symbol"]
+    # # Define reactive expression for filtered data
+    # 
  
-    # Define reactive expression for filtered data
     
     
+    # Check for NA in symbols and filter them out
+    if ("symbol" %in% names(mcols(dds))) {
+      na_filter <- !is.na(mcols(dds)$symbol)
+      dds <- dds[na_filter,]  # Keep only rows without NA in 'symbol'
+      gene_symbols <- mcols(dds)$symbol
+    } else {
+      stop("Gene symbols not found in the dataset metadata.")
+    }
+    
+    # For replace instead of remove
+    # # Extract and replace NA in gene symbols
+    # if ("symbol" %in% names(mcols(dds))) {
+    #   gene_symbols <- mcols(dds)$symbol
+    #   na_indices <- which(is.na(gene_symbols))
+    #   gene_symbols[na_indices] <- paste("Unknown_Gene", na_indices, sep="_")
+    #   mcols(dds)$symbol <- gene_symbols  # Update the metadata
+    # } else {
+    #   stop("Gene symbols not found in the dataset metadata.")
+    # }
+    
+    makeUniqueRowNames <- function(names) {
+      counts <- table(names)
+      duplicates <- names[counts[names] > 1]
+      for (d in unique(duplicates)) {
+        idx <- which(names == d)
+        names[idx] <- paste(d, seq_along(idx), sep = "_")
+      }
+      names
+    }
+    
+    # Apply this function to gene_symbols
+    unique_gene_symbols <- makeUniqueRowNames(gene_symbols)
+    
+    # Apply the unique row names to the DDS object
+    if (length(unique_gene_symbols) == nrow(dds)) {
+      rownames(dds) <- unique_gene_symbols
+    } else {
+      stop("The number of unique gene symbols does not match the number of rows in the dataset.")
+    }
+    
+    res <- results(dds)
+    
+    
+    
+    
+    
+
     
     filtered_data <- eventReactive(input$update_plot,{
       padj_threshold <- input$slider_padj
@@ -136,7 +193,7 @@ kunz_server <- function(id) {
       list(
         boxplot = create_boxplot(dds = dds,  gene = gene, display_genes = display_genes()),
         volcano = create_volcanoplot(res = res, gene = gene,padj_cut=padj_cut,log2_cut=log2_cut),
-        heatmap = create_heatmap(dds = dds, gene = gene)
+        heatmap = create_heatmap(dds=dds, gene = gene)
 
       )
     })

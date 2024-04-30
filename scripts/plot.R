@@ -71,109 +71,110 @@ create_boxplot <- function(dds,gene , display_genes ){
 
 
 
-
-
-
-
-
-
-
-
-
-create_volcanoplot <- function(res, input, gene, padj_cut, log2_cut) {
-  # Create the plot
-  res$neg_log10_padj <- -log10(res$padj)  # Transform p-values for plotting
- 
-  
-  res$sig <- ifelse(res$padj < padj_cut & (abs(res$log2FoldChange) >= log2_cut), "Significant", "Not Significant")
-  plot <-plot_ly(data = as.data.frame(res), x = ~log2FoldChange, y = ~neg_log10_padj, type = 'scatter', mode = 'markers',
-                 color = ~sig, colors = c("#E2D4B7", "#AB82C5"),
-                 text = ~paste("Gene:", rownames(res), "<br>log2 Fold Change:", log2FoldChange, "<br>Adjusted p-value:", padj),
-                 marker = list(size = 7,line = list(
-                   color = 'rgb(0, 0, 0)',
-                   width = 1
-                 ))) %>%
-    layout(title = "Volcano Plot of DESeq2 Results",
-           xaxis = list(title = "Log2 Fold Change"),
-           yaxis = list(title = "-log10 Adjusted p-value"),
-           margin = list(t = 100))
-  # Check for specific genes to highlight
-  if (!is.null(gene) && length(gene) > 0) {
-    gene_data <- res[rownames(res) %in% gene, ]
-    if (nrow(gene_data) > 0) {
-      # Add highlighted genes to the plot
-      plot <- add_trace(plot,
-                        x = gene_data$log2FoldChange,
-                        y = gene_data$neg_log10_padj,
-                        type = "scatter",
-                        mode = "markers", color = I("red"),                         
-                        text = ~paste("Gene:", rownames(gene_data), "<br>Log2 Fold Change:", log2FoldChange, "<br>Adjusted p-value:", padj),
-                        name = "Highlighted Genes")
-    } else {
-      # Handle case where no matching genes are found
-      message("No genes found matching the specified list. Please check gene names.")
-    }
-  } else {
-    # Handle case where no genes are specified
-    message("No genes specified for highlighting.")
-  }
-  
-  return(plot)
-}
-# 
-# create_volcanoplot <- function(res, padj_cut, log2_cut, gene = NULL) {
-#   # Categorize significant and non-significant genes
-#   res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut, 
-#                     "Significant", "Not Significant")
+# create_volcanoplot <- function(res, input, gene, padj_cut, log2_cut) {
+#   # Create the plot
+#   res$neg_log10_padj <- -log10(res$padj)  # Transform p-values for plotting
+#  
 #   
-#   # Create the base plot with two traces for significant and non-significant genes
-#   plot <- plot_ly() %>%
-#     add_trace(data = subset(res, sig == "Significant"), 
-#               x = ~log2FoldChange, y = ~neg_log10_padj, 
-#               type = 'scatter', mode = 'markers', color = I("#AB82C5"),
-#               text = ~paste("Gene:", rownames(res), "<br>Log2 Fold Change:", log2FoldChange, 
-#                             "<br>Adjusted p-value:", padj),
-#               marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
-#               name = "Significant") %>%
-#     add_trace(data = subset(res, sig == "Not Significant"),
-#               x = ~log2FoldChange, y = ~neg_log10_padj,
-#               type = 'scatter', mode = 'markers', color = I("#E2D4B7"),
-#               text = ~paste("Gene:", rownames(res), "<br>Log2 Fold Change:", log2FoldChange, 
-#                             "<br>Adjusted p-value:", padj),
-#               marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
-#               name = "Not Significant",
-#               visible = "legendonly") %>%
+#   res$sig <- ifelse(res$padj < padj_cut & (abs(res$log2FoldChange) >= log2_cut), "Significant", "Not Significant")
+#   plot <-plot_ly(data = as.data.frame(res), x = ~log2FoldChange, y = ~neg_log10_padj, type = 'scatter', mode = 'markers',
+#                  color = ~sig, colors = c("#E2D4B7", "#AB82C5"),
+#                  text = ~paste("Gene:", rownames(res), "<br>log2 Fold Change:", log2FoldChange, "<br>Adjusted p-value:", padj),
+#                  marker = list(size = 7,line = list(
+#                    color = 'rgb(0, 0, 0)',
+#                    width = 1
+#                  ))) %>%
 #     layout(title = "Volcano Plot of DESeq2 Results",
 #            xaxis = list(title = "Log2 Fold Change"),
 #            yaxis = list(title = "-log10 Adjusted p-value"),
 #            margin = list(t = 100))
-#   
-#   # Highlight specific genes if provided
+#   # Check for specific genes to highlight
 #   if (!is.null(gene) && length(gene) > 0) {
 #     gene_data <- res[rownames(res) %in% gene, ]
 #     if (nrow(gene_data) > 0) {
+#       # Add highlighted genes to the plot
 #       plot <- add_trace(plot,
-#                         data = gene_data,
-#                         x = ~log2FoldChange,
-#                         y = ~neg_log10_padj,
+#                         x = gene_data$log2FoldChange,
+#                         y = gene_data$neg_log10_padj,
 #                         type = "scatter",
-#                         mode = "markers", 
-#                         color = I("red"),
-#                         text = ~paste("Gene:", rownames(gene_data), "<br>Log2 Fold Change:", log2FoldChange, 
-#                                       "<br>Adjusted p-value:", padj),
+#                         mode = "markers", color = I("red"),                         
+#                         text = ~paste("Gene:", rownames(gene_data), "<br>Log2 Fold Change:", log2FoldChange, "<br>Adjusted p-value:", padj),
 #                         name = "Highlighted Genes")
 #     } else {
+#       # Handle case where no matching genes are found
 #       message("No genes found matching the specified list. Please check gene names.")
 #     }
 #   } else {
+#     # Handle case where no genes are specified
 #     message("No genes specified for highlighting.")
 #   }
 #   
 #   return(plot)
 # }
 
+create_volcanoplot <- function(res, padj_cut, log2_cut, gene = NULL) {
+  # Print the number of entries before filtering
+  cat("Total entries before filtering:", nrow(res), "\n")
+  
+  res$neg_log10_padj <- -log10(res$padj)
+  # Categorize significant and non-significant genes
+  res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut, 
+                    "Significant", "Not Significant")
+  
+  
+  
 
-
+  
+  # Print the count of significant and non-significant entries
+  cat("Significant entries:", sum(res$sig == "Significant"), "\n")
+  cat("Non-significant entries:", sum(res$sig == "Not Significant"), "\n")
+  
+  # Initialize the plotly object
+  plot <- plot_ly()
+  
+  # Add trace for significant genes
+  sig_data <- subset(res, sig == "Significant")
+  plot <- add_trace(plot, data = sig_data, x = sig_data$log2FoldChange, y = sig_data$neg_log10_padj, 
+                    type = 'scatter', mode = 'markers', color = I("#6699CC"),
+                    text = paste("Gene:", rownames(sig_data), "<br>Log2 Fold Change:", sig_data$log2FoldChange, 
+                                 "<br>Adjusted p-value:", sig_data$padj),
+                    marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
+                    name = "Significant")
+  
+  # Add trace for non-significant genes
+  non_sig_data <- subset(res, sig == "Not Significant")
+  plot <- add_trace(plot, data = non_sig_data, x = non_sig_data$log2FoldChange, y = non_sig_data$neg_log10_padj, 
+                    type = 'scatter', mode = 'markers', color = I("#888888"),
+                    text = paste("Gene:", rownames(non_sig_data), "<br>Log2 Fold Change:", non_sig_data$log2FoldChange, 
+                                 "<br>Adjusted p-value:", non_sig_data$padj),
+                    marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
+                    name = "Not Significant", 
+                    visible='legendonly')
+  
+  # Check for specific genes to highlight
+  if (!is.null(gene) && length(gene) > 0) {
+    highlighted_genes <- subset(res, rownames(res) %in% gene)
+    if (nrow(highlighted_genes) > 0) {
+      plot <- add_trace(plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
+                        type = "scatter", mode = "markers", color = I("#D81B60"),
+                        text = paste("Gene:", rownames(highlighted_genes), "<br>Log2 Fold Change:", highlighted_genes$log2FoldChange, 
+                                     "<br>Adjusted p-value:", highlighted_genes$padj),
+                        name = "Highlighted Genes")
+    } else {
+      message("No genes found matching the specified list. Please check gene names.")
+    }
+  } else {
+    message("No genes specified for highlighting.")
+  }
+  
+  # Final layout adjustments
+  plot <- layout(plot, title = "Volcano Plot of DESeq2 Results",
+                 xaxis = list(title = "Log2 Fold Change"),
+                 yaxis = list(title = "-log10 Adjusted p-value"),
+                 margin = list(t = 100))
+  
+  return(plot)
+}
 
 
 

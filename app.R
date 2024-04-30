@@ -6,6 +6,8 @@ library(pheatmap)
 source("modules/home_module.R", local = TRUE)
 source("modules/gide_module.R", local = TRUE)
 source("modules/badal_module.R", local = TRUE)
+source("modules/kunz_module.R", local = TRUE)
+
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
 source("scripts/plot.R", local=TRUE)
@@ -19,6 +21,7 @@ server <- function(input, output, session) {
  home_server("home_module")
  gide_server("gide_module")
  badal_server("badal_module")
+ kunz_server("kunz_module")
 }
 
 # Run the application

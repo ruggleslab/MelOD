@@ -79,10 +79,42 @@ badal_server <- function(id) {
     
     # Load DESeq2 results and CPM values
     dds <- readRDS(file.path("./data/badal", "Badal_Deseq2.rds"))
-    res =  results(dds)
+
+    # Check for NA in symbols and filter them out
+    if ("symbol" %in% names(mcols(dds))) {
+      na_filter <- !is.na(mcols(dds)$symbol)
+      dds <- dds[na_filter,]  # Keep only rows without NA in 'symbol'
+      gene_symbols <- mcols(dds)$symbol
+    } else {
+      stop("Gene symbols not found in the dataset metadata.")
+    }
     
- 
+    makeUniqueRowNames <- function(names) {
+      counts <- table(names)
+      duplicates <- names[counts[names] > 1]
+      for (d in unique(duplicates)) {
+        idx <- which(names == d)
+        names[idx] <- paste(d, seq_along(idx), sep = "_")
+      }
+      names
+    }
+    
+    # Apply this function to gene_symbols
+    unique_gene_symbols <- makeUniqueRowNames(gene_symbols)
+    
+    # Apply the unique row names to the DDS object
+    if (length(unique_gene_symbols) == nrow(dds)) {
+      rownames(dds) <- unique_gene_symbols
+    } else {
+      stop("The number of unique gene symbols does not match the number of rows in the dataset.")
+    }
+    
+    res <- results(dds)
     # Define reactive expression for filtered data
+    
+    
+    
+    
     
     
     
@@ -131,11 +163,11 @@ badal_server <- function(id) {
       # Isolate ensures changes in these inputs do not trigger this reactive block
       gene <- isolate(input$selected_gene)
       padj_cut <-isolate(input$slider_padj)
-      lot2_cut <-isolate(input$slider_log2)
+      log2_cut <-isolate(input$slider_log2)
       # Generate plots
       list(
         boxplot = create_boxplot(dds = dds,  gene = gene, display_genes = display_genes()),
-        volcano = create_volcanoplot(res = res, gene = gene,padj_cut=padj_cut,lot2_cut=lot2_cut),
+        volcano = create_volcanoplot(res = res, gene = gene,padj_cut=padj_cut,log2_cut=log2_cut),
         heatmap = create_heatmap(dds = dds, gene = gene)
 
       )
