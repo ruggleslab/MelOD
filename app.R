@@ -1,7 +1,4 @@
-library(shiny)
-library(shinydashboard)
-library(shinyjs)
-library(pheatmap)
+
 # Source module functions
 source("modules/home_module.R", local = TRUE)
 source("modules/gide_module.R", local = TRUE)
@@ -18,10 +15,12 @@ ui <- dashboardTemplate()
 
 # Define server logic
 server <- function(input, output, session) {
+  
  home_server("home_module")
- gide_server("gide_module")
- badal_server("badal_module")
- kunz_server("kunz_module")
+ kunz_server("kunz_module", session=session)
+ gide_server("gide_module", session=session)
+ badal_server("badal_module", session=session)
+ 
 }
 
 # Run the application

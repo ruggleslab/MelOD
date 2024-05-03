@@ -13,9 +13,9 @@ library(heatmaply)
 library(reshape2)
 library(S4Vectors)
 library(jsonlite)
+library(pheatmap)
 
-
-
+# devtools::install_github("ropensci/plotly")
 
 # Load data once at the start
 # badal_data <- readRDS(file.path("./data/badal", "Badal_Deseq2.rds"))
