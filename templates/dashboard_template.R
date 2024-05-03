@@ -27,7 +27,7 @@ dashboardTemplate <- function() {
         tabItem(tabName = "home", home_ui("home_module")),
         tabItem(tabName = "gide", gide_ui("gide_module")),
         tabItem(tabName = "badal", badal_ui("badal_module")),
-        tabItem(tabName = "kunz", badal_ui("kunz_module")),
+        tabItem(tabName = "kunz", kunz_ui("kunz_module")),
         tabItem(tabName = "about", h1("About Page"))
       ),
       tags$div(class = "footer", tags$p("Rshiny-Seq Ruggles Lab"))
