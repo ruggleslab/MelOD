@@ -7,17 +7,7 @@ create_boxplot <- function(dds,gene , display_genes ){
 
 
   filtered_genes <- display_genes
-  # Determine the plot title based on the selection
-  if (!is.null(gene) && all(gene %in% rownames(filtered_genes))) {
-    if (length(gene) == 1) {
-      plot_title <- paste("Expression for", gene)  # Title for single selected gene
-    } else {
-      plot_title <- paste("Expression for selected genes")  # Title for multiple selected genes
-    }
-  } else {
-    plot_title <- "Top 10 most significant genes"  # Default title
-  }
-
+  
   if (nrow(filtered_genes) > 0) {
     # Extract and prepare data for plotting
     counts <- counts(dds, normalized = TRUE)
@@ -26,21 +16,27 @@ create_boxplot <- function(dds,gene , display_genes ){
     log_norm_counts_filtered <- log(df + 0.01)
     df <- as.data.frame(log_norm_counts_filtered)
     col_data_df <- as.data.frame(colData(dds))
-
+    
+    # Adjust col_data_df to only include patient_id and condition columns
+    
+    col_data_df <- col_data_df %>%
+      rownames_to_column(var = "patient_id") %>%
+      select(patient_id, condition)  # Remove that if I want other columns 
+    
+    
     if (ncol(df) > 1) {
-
+      
       df_long <- df %>%
         tibble::rownames_to_column("gene_id") %>%
         tidyr::pivot_longer(
           cols = -gene_id,
           names_to = "Sample",
           values_to = "expression"
-
+          
         )
-
+      
     } else {
       # Handle the case with only one column (the gene itself)
-      # Assume df has only one column of actual data besides the rownames
       gene_id <- gene
       sample_names <- rownames(df)
       expression_values <- as.vector(df[[1]])
@@ -48,175 +44,77 @@ create_boxplot <- function(dds,gene , display_genes ){
                             Sample = sample_names,
                             expression = expression_values,
                             stringsAsFactors = FALSE)
-
+      
     }
-    col_data_df <- col_data_df %>%
-      rownames_to_column(var = "patient_id")
+    
 
-    merged_data <- dplyr::left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
-
-
+    
+    merged_data <- left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
+    
     # Define a list of colors for the conditions found
     conditions_found <- unique(merged_data$condition)
-    colors_chosen <- c( "#D81B60","#1E88E5")  # Blue and Orange
-    if (length(conditions_found) <= length(colors_chosen)) {
-      custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
+    colors_chosen <- c("#D81B60", "#1E88E5")  # Example colors
+    custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
+    
+    
+    # 
+    # # Create combined variable for x-axis grouping
+    # merged_data$gene_condition <- with(merged_data, paste(gene_id, condition, sep = " - "))
+    # 
+    # # Ordering for the plot to group by genes primarily
+    # merged_data <- merged_data %>%
+    #   mutate(gene_condition = factor(gene_condition, levels = unique(gene_condition[order(gene_id, condition)])))
+    # 
+    # 
+
+    condition_title <- paste(" in ", paste(conditions_found, collapse=" vs "))
+    
+    # Determine the plot title based on the selection
+    # Determine the plot title based on the selection
+    if (!is.null(gene)) {
+      if (length(gene) == 1) {
+        plot_title <- paste("Expressions for", gene, condition_title)  # Title for single selected gene
+      } else {
+        plot_title <- paste("Expressions for multiple genes:", paste(gene, collapse = ", "), condition_title)
+      }
     } else {
-      stop("More conditions found than colors provided.")
+      plot_title <- "Top 5 most significant genes"  # Default title
     }
-
-
-    # Generate the plot with dynamic title
-    plot<-plot_ly(data = merged_data, x = ~condition, y = ~expression, type = 'box',
-            color = ~condition,colors = custom_colors, boxpoints = 'outliers',
-            jitter = 0.3, pointpos = 0,
-            text = ~paste("Gene ID:", gene_id)) %>%
-      layout(title = plot_title,
-             yaxis = list(title = "Log CPM"),
-             xaxis = list(title = "Comparison"),
-             margin = list(t = 100))
+    
+  
+      plot <- plot_ly(merged_data,x=~gene_id, y = ~expression, color = ~factor(condition), 
+                      type = "violin",colors = custom_colors, 
+                      points = 'outliers',
+                      box = list(visible = T),
+                      meanline = list(visible = T),
+                      bandwidth = 0.9,
+                      text = ~paste("Gene ID:", gene_id)) %>%
+        layout(title = plot_title,
+               yaxis = list(title = "Log-normalized Expression"),
+               xaxis = list(title = "Gene - Condition"),
+               margin = list(t = 100),
+               zeroline = F,
+               violinmode = "group")  
   }
+  
   return(plot)
 }
 
-# 
-# create_boxplot <- function(dds,gene , display_genes ){
-#   
-#   
-#   
-#   filtered_genes <- display_genes
-#   # Determine the plot title based on the selection
-#   if (!is.null(gene) && all(gene %in% rownames(filtered_genes))) {
-#     if (length(gene) == 1) {
-#       plot_title <- paste("Expression for", gene)  # Title for single selected gene
-#     } else {
-#       plot_title <- paste("Expression for selected genes")  # Title for multiple selected genes
-#     }
-#   } else {
-#     plot_title <- "Top 10 most significant genes"  # Default title
-#   }
-#   
-#   if (nrow(filtered_genes) > 0) {
-#     # Extract and prepare data for plotting
-#     counts <- counts(dds, normalized = TRUE)
-#     counts_filtered <- counts[rownames(counts) %in% rownames(filtered_genes), ]
-#     df <- as.data.frame(counts_filtered)
-#     log_norm_counts_filtered <- log(df + 0.01)
-#     df <- as.data.frame(log_norm_counts_filtered)
-#     col_data_df <- as.data.frame(colData(dds))
-#     
-#     if (ncol(df) > 1) {
-#       
-#       df_long <- df %>%
-#         tibble::rownames_to_column("gene_id") %>%
-#         tidyr::pivot_longer(
-#           cols = -gene_id,
-#           names_to = "Sample",
-#           values_to = "expression"
-#           
-#         )
-#       
-#     } else {
-#       # Handle the case with only one column (the gene itself)
-#       # Assume df has only one column of actual data besides the rownames
-#       gene_id <- gene
-#       sample_names <- rownames(df)
-#       expression_values <- as.vector(df[[1]])
-#       df_long <- data.frame(gene_id = rep(gene_id, length(expression_values)),
-#                             Sample = sample_names,
-#                             expression = expression_values,
-#                             stringsAsFactors = FALSE)
-#       
-#     }
-#     col_data_df <- col_data_df %>%
-#       rownames_to_column(var = "patient_id")
-#     
-#     merged_data <- dplyr::left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
-#     
-#     
-#     # Define a list of colors for the conditions found
-#     conditions_found <- unique(merged_data$condition)
-#     colors_chosen <- c( "#D81B60","#1E88E5")  # Blue and Orange
-#     if (length(conditions_found) <= length(colors_chosen)) {
-#       custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
-#     } else {
-#       stop("More conditions found than colors provided.")
-#     }
-#     
-#     
-#     # Generate the plot with dynamic title
-#     plot<-plot_ly(data = merged_data, x = ~condition, y = ~expression, type = 'box',
-#                   color = ~condition,colors = custom_colors, boxpoints = 'outliers',
-#                   jitter = 0.3, pointpos = 0,
-#                   text = ~paste("Gene ID:", gene_id)) %>%
-#       layout(title = plot_title,
-#              yaxis = list(title = "Log CPM"),
-#              xaxis = list(title = "Comparison"),
-#              margin = list(t = 100))
-#   }
-#   return(plot)
-# }
 
 
 
 
-# create_volcanoplot <- function(res, input, gene, padj_cut, log2_cut) {
-#   # Create the plot
-#   res$neg_log10_padj <- -log10(res$padj)  # Transform p-values for plotting
-#  
-#   
-#   res$sig <- ifelse(res$padj < padj_cut & (abs(res$log2FoldChange) >= log2_cut), "Significant", "Not Significant")
-#   plot <-plot_ly(data = as.data.frame(res), x = ~log2FoldChange, y = ~neg_log10_padj, type = 'scatter', mode = 'markers',
-#                  color = ~sig, colors = c("#E2D4B7", "#AB82C5"),
-#                  text = ~paste("Gene:", rownames(res), "<br>log2 Fold Change:", log2FoldChange, "<br>Adjusted p-value:", padj),
-#                  marker = list(size = 7,line = list(
-#                    color = 'rgb(0, 0, 0)',
-#                    width = 1
-#                  ))) %>%
-#     layout(title = "Volcano Plot of DESeq2 Results",
-#            xaxis = list(title = "Log2 Fold Change"),
-#            yaxis = list(title = "-log10 Adjusted p-value"),
-#            margin = list(t = 100))
-#   # Check for specific genes to highlight
-#   if (!is.null(gene) && length(gene) > 0) {
-#     gene_data <- res[rownames(res) %in% gene, ]
-#     if (nrow(gene_data) > 0) {
-#       # Add highlighted genes to the plot
-#       plot <- add_trace(plot,
-#                         x = gene_data$log2FoldChange,
-#                         y = gene_data$neg_log10_padj,
-#                         type = "scatter",
-#                         mode = "markers", color = I("red"),                         
-#                         text = ~paste("Gene:", rownames(gene_data), "<br>Log2 Fold Change:", log2FoldChange, "<br>Adjusted p-value:", padj),
-#                         name = "Highlighted Genes")
-#     } else {
-#       # Handle case where no matching genes are found
-#       message("No genes found matching the specified list. Please check gene names.")
-#     }
-#   } else {
-#     # Handle case where no genes are specified
-#     message("No genes specified for highlighting.")
-#   }
-#   
-#   return(plot)
-# }
 
-create_volcanoplot <- function(res, padj_cut, log2_cut, gene = NULL) {
-  # Print the number of entries before filtering
-  cat("Total entries before filtering:", nrow(res), "\n")
+
+
+create_volcanoplot <- function(dds, padj_cut, log2_cut, gene = NULL) {
   
+  res <- results(dds)
   res$neg_log10_padj <- -log10(res$padj)
   # Categorize significant and non-significant genes
   res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut, 
                     "Significant", "Not Significant")
   
-  
-  
-
-  
-  # Print the count of significant and non-significant entries
-  cat("Significant entries:", sum(res$sig == "Significant"), "\n")
-  cat("Non-significant entries:", sum(res$sig == "Not Significant"), "\n")
   
   # Initialize the plotly object
   plot <- plot_ly()
@@ -244,10 +142,12 @@ create_volcanoplot <- function(res, padj_cut, log2_cut, gene = NULL) {
   if (!is.null(gene) && length(gene) > 0) {
     highlighted_genes <- subset(res, rownames(res) %in% gene)
     if (nrow(highlighted_genes) > 0) {
+
       plot <- add_trace(plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
                         type = "scatter", mode = "markers", color = I("#D81B60"),
                         text = paste("Gene:", rownames(highlighted_genes), "<br>Log2 Fold Change:", highlighted_genes$log2FoldChange, 
                                      "<br>Adjusted p-value:", highlighted_genes$padj),
+                        marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
                         name = "Highlighted Genes")
     } else {
       message("No genes found matching the specified list. Please check gene names.")
@@ -256,11 +156,18 @@ create_volcanoplot <- function(res, padj_cut, log2_cut, gene = NULL) {
     message("No genes specified for highlighting.")
   }
   
+
+
+  unique_conditions <- unique(dds$condition)
+  condition_title <- paste("Volcano plot of DESeq2 results of", paste(unique_conditions, collapse=" vs "))
+  
   # Final layout adjustments
-  plot <- layout(plot, title = "Volcano plot of DESeq2 results of naevi vs melanoma",
+  plot <- layout(plot, title = condition_title,
                  xaxis = list(title = "Log2 Fold Change"),
                  yaxis = list(title = "-log10 Adjusted p-value"),
                  margin = list(t = 100))
+  
+
   
   return(plot)
 }
@@ -268,7 +175,7 @@ create_volcanoplot <- function(res, padj_cut, log2_cut, gene = NULL) {
 
 
 
-create_heatmap <- function(dds, input, gene) {
+create_heatmap <- function(dds, input, gene = NULL) {
   # Set cutoffs
   log2FC_cutoff <- 0.05
   padj_cutoff <- 0.05
@@ -278,16 +185,36 @@ create_heatmap <- function(dds, input, gene) {
   res.df <- as.data.frame(res)
   
   # Filter data to keep only significant genes according to cutoffs
-  res.df <- res.df[(abs(res.df$log2FoldChange) > log2FC_cutoff) & (!is.na(res.df$padj) & res.df$padj < padj_cutoff),]
+  res.df.filter <- res.df[(abs(res.df$log2FoldChange) > log2FC_cutoff) & (!is.na(res.df$padj) & res.df$padj < padj_cutoff),]
+  
+  
   
   # Sort by padj (lowest first) and select the top 50 genes
-  res.df <- res.df[order(res.df$padj), ]
-  if (nrow(res.df) > 50) {
-    res.df <- res.df[1:50, ]
+  res.df.filter <- res.df.filter[order(res.df.filter$padj), ]
+  if (nrow(res.df.filter) > 10) {
+    res.df.filter.sub <- res.df.filter[1:10, ]
   }
   
+  print(res.df.filter.sub)
+  # If specific genes are provided, filter to include only these genes as well
+ if (!is.null(gene)) {
+  print(gene)
+   res.df.filter.sub.gene <- subset(res.df, rownames(res.df) %in% gene)
+
+  # Merge filtered subsets (assuming you want to show genes from both criteria: significant and listed in 'gene')
+  if (nrow(res.df.filter.sub.gene) > 0) {
+    res.df.final <- rbind(res.df.filter.sub, res.df.filter.sub.gene)
+    res.df.final <- unique(res.df.final)  # Removing potential duplicates
+  } else {
+    res.df.final <- res.df.filter.sub  # No genes from the specific list are in the filtered subset
+  }
+} else {
+  res.df.final <- res.df.filter.sub  # No specific genes provided, use the top filtered genes
+}
+
+
   # Get normalized counts for the top 50 significant genes
-  mat <- assay(vst(dds))[rownames(res.df),]
+  mat <- assay(vst(dds))[rownames(res.df.final),]
   
   # Standardize the matrix (z-score)
   mat.z <- t(scale(t(mat)))
@@ -301,13 +228,16 @@ create_heatmap <- function(dds, input, gene) {
   # Ordering the matrix according to the clustering
   mat.z <- mat.z[hc_rows$order, hc_cols$order]
   
+  
+  
   # Annotations for conditions
   conditions <- colData(dds)$condition  # Assuming condition info is in colData of DESeqDataSet
   condition_colors <- scales::hue_pal()(length(unique(conditions)))  # Generate colors for conditions
   condition_mapping <- setNames(condition_colors, unique(conditions))
   annotation_colors <- list(conditions = condition_mapping)
   
-  
+ 
+
   
   
   custom_scale <- list(
@@ -323,12 +253,11 @@ create_heatmap <- function(dds, input, gene) {
   c <- colData(dds)[1]
   # Create an interactive heatmap with plotly
   fig <- plot_ly(x = colnames(mat.z)[hc_cols$order], y = rownames(mat.z)[hc_rows$order], z = mat.z, type = "heatmap", colorscale = "Bluered_r", showscale = TRUE) %>%
-    layout(title = "Interactive gene expression Heatmap with clustering",
+    layout(title = "Interactive gene expression clustered heatmap ",
            xaxis = list(title = "Samples"),
            yaxis = list(title = "Genes", autorange = "reversed"),
            margin = list(l = 100, b = 100))
   
-
   # Extract the condition from the DataFrame and map it to the colors
   condition_vector <- sapply(c$condition, function(x) condition_mapping[[x]])
   # Loop through each condition to create separate traces
@@ -345,7 +274,6 @@ create_heatmap <- function(dds, input, gene) {
                      showlegend = TRUE)
   }
   
-  
   # Adjust the layout to ensure the legend is properly visible
   fig <- layout(fig, legend = list(x = 1.05, y = 0.5),margin = list(t = 100))
   
@@ -354,6 +282,7 @@ create_heatmap <- function(dds, input, gene) {
 
 
 creation_pca <- function(dds) {
+  library(plotly)  # Ensure plotly is loaded
   
   vsdata <- vst(dds, blind=FALSE)
   custom_colors <- c("#D81B60","#1E88E5")  # Example colors, adjust as needed
@@ -361,23 +290,79 @@ creation_pca <- function(dds) {
   # Create PCA plot using Plotly
   pca_data <- plotPCA(vsdata, intgroup = "condition", returnData = TRUE)
   
+  # Extract unique conditions to include in the plot title
+  unique_conditions <- unique(pca_data$condition)
+  condition_title <- paste("PCA plot of", paste(unique_conditions, collapse=" vs "))
+  
+  
+  text_labels <- paste("Name:", pca_data$name, ", Condition:", pca_data$condition)
+  
   pca_plot <- plot_ly(
-  data = pca_data,
-  x = ~PC1,
-  y = ~PC2,
-  color = ~condition,
-  text = ~condition,
-  type = "scatter",
-  mode = "markers",
-  colors=custom_colors
-) %>%
-  layout(
-    title = "PCA plot of naevi vs melanoma",
-    xaxis = list(title = "PC1",zeroline = FALSE),
-    yaxis = list(title = "PC2",zeroline = FALSE),
-    margin = list(t = 100)
-  )
-
+    data = pca_data,
+    x = ~PC1,
+    y = ~PC2,
+    color = ~condition,
+    text = text_labels,
+    type = "scatter",
+    mode = "markers",
+    colors = custom_colors
+  ) %>%
+    layout(
+      title = condition_title,  # Use the dynamic title
+      xaxis = list(title = "PC1", zeroline = FALSE),
+      yaxis = list(title = "PC2", zeroline = FALSE),
+      margin = list(t = 100)
+    )
   
   return(pca_plot)  # Return the plot object
 }
+
+
+
+
+plot_mortality <- function(clinical_data){
+  
+  
+    
+    status_summary <- table(clinical_data$`Patient Status`)
+    status_df <- as.data.frame(status_summary)
+    names(status_df) <- c("Status", "Count")
+    
+    plot <- plot_ly(status_df, labels = ~Status, values = ~Count, type = 'pie',
+            textposition = 'inside',
+            textinfo = 'label+percent',
+            insidetextorientation = 'radial',showlegend = FALSE) %>%
+      layout(title = 'Patient Survival Status',
+             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             margin = list(t = 100))
+return(plot)
+}
+
+
+
+
+
+
+plot_gender <- function(clinical_data){
+  
+  
+  status_summary_gender <- table(clinical_data$`Gender`)
+  status_df_gender <- as.data.frame(status_summary_gender)
+  
+  
+  names(status_df_gender) <- c("Status", "Count")
+  
+  
+  plot <- plot_ly(status_df_gender, labels = ~Status, values = ~Count, type = 'pie',
+          textposition = 'inside',
+          textinfo = 'label+percent',
+          insidetextorientation = 'radial',showlegend = FALSE) %>%
+    layout(title = 'Patient Gender Status',
+           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+           margin = list(t = 100))
+  
+  return(plot)
+}
+
