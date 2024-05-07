@@ -28,6 +28,7 @@ shared_ui <- function(id) {
           tags$h3("Parameters", style = "margin-top: 0;"),  # Title for the parameters section
           numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
           numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
+          numericInput(ns("number"), "Number of genes for the heatmap (min. 3)", 10, min = 3, step = 1),
           selectizeInput(ns("selected_gene"), "Gene(s) selection (up ot 10)",
                          choices = NULL,  # Ensure this is accessible here or move to server
                          selected = NULL,  # Default selection
@@ -57,7 +58,8 @@ shared_ui <- function(id) {
         width = 8,# Color theme
         solidHeader = TRUE,            # Gives the box a solid header
         collapsible = TRUE,            # Allows the box to be collapsed
-        plotlyOutput(ns("pca"))   # Placeholder for the plot
+        plotlyOutput(ns("pca")),
+        # downloadablePlotlyUI(ns(id = 'pca_data'))
       ),
       tabBox(
         title = "Metadata",
@@ -95,6 +97,16 @@ shared_ui <- function(id) {
         collapsible = TRUE,      # Allows the box to be collapsed
         plotlyOutput(ns("badal_heatmap_test"))  # Placeholder for the volcano plot
       )),
+    fluidRow(
+      box(
+        title = "Correlation",  # Title of the box
+        status = "primary",
+        width = 12,# Color theme
+        solidHeader = TRUE,      # Gives the box a solid header
+        collapsible = TRUE,      # Allows the box to be collapsed
+        plotlyOutput(ns("correlation"))  # Placeholder for the volcano plot
+      )
+    ),
     fluidRow(
       box(width = 12,title = "DESeq2 Results", status = "info", solidHeader = TRUE, collapsible = TRUE, DT::dataTableOutput(ns("filtered_results"))),
       
@@ -189,7 +201,7 @@ server_shared <- function(dds ,clinical_data, id) {
         print(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
       } else {
         # Return top 5 genes as default
-        return(head(all_genes, 5))
+        return(head(all_genes, 3))
       }
     })
     
@@ -202,11 +214,13 @@ server_shared <- function(dds ,clinical_data, id) {
       gene <- isolate(input$selected_gene)
       padj_cut <-isolate(input$slider_padj)
       log2_cut <-isolate(input$slider_log2)
+      number <-isolate(input$number)
       # Generate plots
       list(
         boxplot = create_boxplot(dds = dds,  gene = gene, display_genes = display_genes()),
         volcano = create_volcanoplot(dds = dds, gene = gene,padj_cut=padj_cut,log2_cut=log2_cut),
-        heatmap = create_heatmap(dds=dds, gene = gene)
+        heatmap = create_heatmap(dds=dds,padj_cut=padj_cut,log2_cut=log2_cut,number=number, gene=gene),
+        correlation = create_correlation(dds=dds,padj_cut=padj_cut,log2_cut=log2_cut,number=number, gene=gene)
         
       )
     })
@@ -229,6 +243,13 @@ server_shared <- function(dds ,clinical_data, id) {
     output$badal_heatmap_test <- renderPlotly({
       req(plot_data())  # Make sure plot_data is available before rendering
       plot_data()$heatmap
+    })
+    
+    # Correlation Plot
+    
+    output$correlation <- renderPlotly({
+      req(plot_data())  # Make sure plot_data is available before rendering
+      plot_data()$correlation
     })
     
     ############################### if want just filtered result display filtered_data()

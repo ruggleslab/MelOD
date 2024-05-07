@@ -11,7 +11,9 @@ dashboardTemplate <- function() {
                            menuItem("BulkRNA", tabName = "bulkrna_tab",
                                     menuSubItem("Gide et al. 2019", tabName = "gide"),
                                     menuSubItem("Badal et al. 2018", tabName = "badal"),
-                                    menuSubItem("Kunz, Schartl 2018", tabName = "kunz")
+                                    menuSubItem("Kunz, Schartl 2018", tabName = "kunz"),
+                                    menuSubItem("Fischer, Davies 2019", tabName = "fischer")
+                                    
                            )
                   ),
                   menuItem("Query by genes", tabName = "genes", icon = icon("search")),
@@ -28,6 +30,7 @@ dashboardTemplate <- function() {
         tabItem(tabName = "gide", gide_ui("gide_module")),
         tabItem(tabName = "badal", badal_ui("badal_module")),
         tabItem(tabName = "kunz", kunz_ui("kunz_module")),
+        tabItem(tabName = "fischer", fischer_ui("fischer_module")),
         tabItem(tabName = "about", h1("About Page"))
       ),
       tags$div(class = "footer", tags$p("Rshiny-Seq Ruggles Lab"))
