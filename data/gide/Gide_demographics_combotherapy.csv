@@ -1,0 +1,41 @@
+Unique_ID,Patient_ID,Treatment_Type,Treatment_Patient_number,Age (Years),Sex,Treatment,Best RECIST response,Progression Free Survival (Days),Overall Survival (Days),Site of PRE Biopsy,Days to EDT Biopsy,Site of EDT Biopsy,Progressed,Last Followup Status,RNA Sequencing
+Combo_1_PRE,Combo_1,Combo,1,42,F,Ipilimumab + Pembrolizumab,PD,15,689,SQ,7,SQ,Yes,Alive,PRE
+Combo_1_EDT,Combo_1,Combo,1,42,F,Ipilimumab + Pembrolizumab,PD,15,689,SQ,7,SQ,Yes,Alive,EDT
+Combo_2_PRE,Combo_2,Combo,2,41,M,Ipilimumab + Pembrolizumab,PD,34,530,LN,-,-,Yes,Alive,PRE
+Combo_4_EDT,Combo_4,Combo,4,48,M,Ipilimumab + Nivolumab,PD,39,129,SQ,12,SQ,Yes,Alive,EDT
+Combo_6_PRE,Combo_6,Combo,6,75,M,Ipilimumab + Nivolumab,PD,41,108,LN,-,-,Yes,"Dead, melanoma",PRE
+Combo_7_PRE,Combo_7,Combo,7,59,M,Ipilimumab + Nivolumab,PR,81,169,SQ,8,SQ,Yes,Alive,PRE
+Combo_8_PRE,Combo_8,Combo,8,55,M,Ipilimumab + Pembrolizumab,PD,81,637,LN,-,-,Yes,Alive,PRE
+Combo_9_EDT,Combo_9,Combo,9,56,M,Ipilimumab + Pembrolizumab,PD,81,156,LN,9,SQ,Yes,"Dead, melanoma",EDT
+Combo_10_PRE,Combo_10,Combo,10,51,M,Ipilimumab + Pembrolizumab,PD,81,176,LN,-,-,Yes,"Dead, melanoma",PRE
+Combo_12_PRE,Combo_12,Combo,12,55,F,Ipilimumab + Nivolumab,PD,82,293,Lung,-,-,Yes,Alive,PRE
+Combo_13_PRE,Combo_13,Combo,13,68,F,Ipilimumab + Nivolumab,PR,108,357,SQ,8,SQ,Yes,"Dead, melanoma",PRE
+Combo_13_EDT,Combo_13,Combo,13,68,F,Ipilimumab + Nivolumab,PR,108,357,SQ,8,SQ,Yes,"Dead, melanoma",EDT
+Combo_14_PRE,Combo_14,Combo,14,47,F,Ipilimumab + Pembrolizumab,SD,123,691,SQ,-,-,Yes,Alive,PRE
+Combo_15_PRE,Combo_15,Combo,15,57,M,Ipilimumab + Pembrolizumab,SD,152,660,SQ,-,-,Yes,"Dead, melanoma",PRE
+Combo_17_PRE,Combo_17,Combo,17,48,F,Ipilimumab + Nivolumab,PR,196,196,LN,-,-,No,Alive,PRE
+Combo_19_PRE,Combo_19,Combo,19,56,M,Ipilimumab + Pembrolizumab,SD,301,635,SQ,15,SQ,Yes,Alive,PRE
+Combo_19_EDT,Combo_19,Combo,19,56,M,Ipilimumab + Pembrolizumab,SD,301,635,SQ,15,SQ,Yes,Alive,EDT
+Combo_20_PRE,Combo_20,Combo,20,57,M,Ipilimumab + Pembrolizumab,SD,386,538,LN,-,-,Yes,Alive,PRE
+Combo_21_PRE,Combo_21,Combo,21,63,M,Ipilimumab + Nivolumab,PR,410,410,SQ,-,-,No,Alive,PRE
+Combo_23_PRE,Combo_23,Combo,23,51,F,Ipilimumab + Pembrolizumab,PR,506,506,Brain,-,-,No,Alive,PRE
+Combo_24_PRE,Combo_24,Combo,24,34,M,Ipilimumab + Nivolumab,PR,509,1203,LN,-,-,Yes,Alive,PRE
+Combo_25_PRE,Combo_25,Combo,25,67,F,Ipilimumab + Pembrolizumab,SD,518,518,LN,-,-,No,"Dead, melanoma",PRE
+Combo_26_PRE,Combo_26,Combo,26,75,M,Ipilimumab + Pembrolizumab,CR,544,544,LN,-,-,No,Alive,PRE
+Combo_27_PRE,Combo_27,Combo,27,49,M,Ipilimumab + Pembrolizumab,CR,546,546,Abdomen,5,SQ,No,Alive,PRE
+Combo_27_EDT,Combo_27,Combo,27,49,M,Ipilimumab + Pembrolizumab,CR,546,546,Abdomen,5,SQ,No,Alive,EDT
+Combo_32_PRE,Combo_32,Combo,32,71,M,Ipilimumab + Pembrolizumab,CR,597,597,LN,-,-,No,Alive,PRE
+Combo_33_PRE,Combo_33,Combo,33,73,M,Ipilimumab + Pembrolizumab,PR,609,609,SQ,9,SQ,No,Alive,PRE
+Combo_33_EDT,Combo_33,Combo,33,73,M,Ipilimumab + Pembrolizumab,PR,609,609,SQ,9,SQ,No,Alive,EDT
+Combo_34_PRE,Combo_34,Combo,34,51,M,Ipilimumab + Pembrolizumab,CR,623,623,Lung,-,-,No,Alive,PRE
+Combo_35_PRE,Combo_35,Combo,35,72,M,Ipilimumab + Pembrolizumab,CR,627,627,SQ,9,SQ,No,Alive,PRE
+Combo_35_EDT,Combo_35,Combo,35,72,M,Ipilimumab + Pembrolizumab,CR,627,627,SQ,9,SQ,No,Alive,EDT
+Combo_36_PRE,Combo_36,Combo,36,74,F,Ipilimumab + Pembrolizumab,CR,637,637,SQ,6,SQ,No,Alive,PRE
+Combo_36_EDT,Combo_36,Combo,36,74,F,Ipilimumab + Pembrolizumab,CR,637,637,SQ,6,SQ,No,Alive,EDT
+Combo_37_PRE,Combo_37,Combo,37,76,M,Ipilimumab + Pembrolizumab,PR,637,637,LN,-,-,No,Alive,PRE
+Combo_44_PRE,Combo_44,Combo,44,68,M,Ipilimumab + Pembrolizumab,PR,695,695,SQ,-,-,No,Alive,PRE
+Combo_45_PRE,Combo_45,Combo,45,70,M,Ipilimumab + Pembrolizumab,CR,721,721,Mucosa,8,SQ,No,Alive,PRE
+Combo_46_PRE ,Combo_46,Combo,46,54,F,Ipilimumab + Pembrolizumab,CR,721,721,Lung,-,-,No,Alive,PRE 
+Combo_47_PRE,Combo_47,Combo,47,24,F,Ipilimumab + Pembrolizumab,PR,732,732,SQ,-,-,No,Alive,PRE
+Combo_49_PRE,Combo_49,Combo,49,36,M,Ipilimumab + Pembrolizumab,CR,775,775,LN,-,-,No,Alive,PRE
+Combo_50_PRE,Combo_50,Combo,50,68,M,Ipilimumab + Pembrolizumab,PR,904,904,LN,-,-,No,Alive,PRE
