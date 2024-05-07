@@ -5,7 +5,6 @@ source("global.R", local = TRUE)
 create_boxplot <- function(dds,gene , display_genes ){
 
 
-
   filtered_genes <- display_genes
   
   if (nrow(filtered_genes) > 0) {
@@ -78,7 +77,7 @@ create_boxplot <- function(dds,gene , display_genes ){
         plot_title <- paste("Expressions for multiple genes:", paste(gene, collapse = ", "), condition_title)
       }
     } else {
-      plot_title <- "Top 5 most significant genes"  # Default title
+      plot_title <- "Top 3 most significant genes"  # Default title
     }
     
   
@@ -96,6 +95,7 @@ create_boxplot <- function(dds,gene , display_genes ){
                zeroline = F,
                violinmode = "group")  
   }
+  
   
   return(plot)
 }
@@ -122,7 +122,7 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, gene = NULL) {
   # Add trace for significant genes
   sig_data <- subset(res, sig == "Significant")
   plot <- add_trace(plot, data = sig_data, x = sig_data$log2FoldChange, y = sig_data$neg_log10_padj, 
-                    type = 'scatter', mode = 'markers', color = I("#1E88E5"),
+                    type = 'scattergl', mode = 'markers', color = I("#1E88E5"),
                     text = paste("Gene:", rownames(sig_data), "<br>Log2 Fold Change:", sig_data$log2FoldChange, 
                                  "<br>Adjusted p-value:", sig_data$padj),
                     marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
@@ -131,7 +131,7 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, gene = NULL) {
   # Add trace for non-significant genes
   non_sig_data <- subset(res, sig == "Not Significant")
   plot <- add_trace(plot, data = non_sig_data, x = non_sig_data$log2FoldChange, y = non_sig_data$neg_log10_padj, 
-                    type = 'scatter', mode = 'markers', color = I("#888888"),
+                    type = 'scattergl', mode = 'markers', color = I("#888888"),
                     text = paste("Gene:", rownames(non_sig_data), "<br>Log2 Fold Change:", non_sig_data$log2FoldChange, 
                                  "<br>Adjusted p-value:", non_sig_data$padj),
                     marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
@@ -144,7 +144,7 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, gene = NULL) {
     if (nrow(highlighted_genes) > 0) {
 
       plot <- add_trace(plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
-                        type = "scatter", mode = "markers", color = I("#D81B60"),
+                        type = "scattergl", mode = "markers", color = I("#D81B60"),
                         text = paste("Gene:", rownames(highlighted_genes), "<br>Log2 Fold Change:", highlighted_genes$log2FoldChange, 
                                      "<br>Adjusted p-value:", highlighted_genes$padj),
                         marker = list(size = 7, line = list(color = 'rgb(0, 0, 0)', width = 1)),
@@ -175,32 +175,30 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, gene = NULL) {
 
 
 
-create_heatmap <- function(dds, input, gene = NULL) {
-  # Set cutoffs
-  log2FC_cutoff <- 0.05
-  padj_cutoff <- 0.05
-  
+create_heatmap <- function(dds, input, padj_cut, log2_cut, number, gene = NULL) {
+
+
   # Obtain results and convert to dataframe
   res <- results(dds)
   res.df <- as.data.frame(res)
   
   # Filter data to keep only significant genes according to cutoffs
-  res.df.filter <- res.df[(abs(res.df$log2FoldChange) > log2FC_cutoff) & (!is.na(res.df$padj) & res.df$padj < padj_cutoff),]
+  res.df.filter <- res.df[(abs(res.df$log2FoldChange) > log2_cut) & (!is.na(res.df$padj) & res.df$padj < padj_cut),]
   
-  
-  
+
   # Sort by padj (lowest first) and select the top 50 genes
   res.df.filter <- res.df.filter[order(res.df.filter$padj), ]
-  if (nrow(res.df.filter) > 10) {
-    res.df.filter.sub <- res.df.filter[1:10, ]
+  if (nrow(res.df.filter) > number) {
+    res.df.filter.sub <- res.df.filter[0:number, ]
+  }else{
+    message("Not enought genes. Try lower number")
   }
   
-  print(res.df.filter.sub)
   # If specific genes are provided, filter to include only these genes as well
  if (!is.null(gene)) {
-  print(gene)
    res.df.filter.sub.gene <- subset(res.df, rownames(res.df) %in% gene)
-
+   
+   
   # Merge filtered subsets (assuming you want to show genes from both criteria: significant and listed in 'gene')
   if (nrow(res.df.filter.sub.gene) > 0) {
     res.df.final <- rbind(res.df.filter.sub, res.df.filter.sub.gene)
@@ -213,77 +211,160 @@ create_heatmap <- function(dds, input, gene = NULL) {
 }
 
 
-  # Get normalized counts for the top 50 significant genes
+  # Get normalized counts 
   mat <- assay(vst(dds))[rownames(res.df.final),]
   
   # Standardize the matrix (z-score)
   mat.z <- t(scale(t(mat)))
   
-  # Clustering rows and columns
-  dist_rows <- dist(mat.z)  # Calculating the distance between rows
-  dist_cols <- dist(t(mat.z))  # Calculating the distance between columns
-  hc_rows <- hclust(dist_rows)  # Clustering rows
-  hc_cols <- hclust(dist_cols)  # Clustering columns
-  
-  # Ordering the matrix according to the clustering
-  mat.z <- mat.z[hc_rows$order, hc_cols$order]
-  
-  
-  
   # Annotations for conditions
-  conditions <- colData(dds)$condition  # Assuming condition info is in colData of DESeqDataSet
-  condition_colors <- scales::hue_pal()(length(unique(conditions)))  # Generate colors for conditions
-  condition_mapping <- setNames(condition_colors, unique(conditions))
-  annotation_colors <- list(conditions = condition_mapping)
+  conditions <- colData(dds)$condition 
   
- 
+  condition_colors <- scales::hue_pal()(length(unique(conditions)))  # Generate colors for conditions
+
+  preferred_colors <- c("#D81B60","#1E88E5")
+  
+  # Check the number of unique conditions and match colors accordingly
+  if (length(unique(conditions)) == length(preferred_colors)) {
+    # Assign colors to each unique condition
+    condition_mapping <- setNames(preferred_colors, unique(conditions))
+  } else {
+    stop("The number of conditions does not match the number of provided colors.")
+  }
+
+  conditions <- data.frame("Conditions" = conditions, check.names = F)
+  
+    
+  # Create a vector of colors
+  selection <- rep("None", nrow(mat.z))
+  # Highlight selected genes
+  selection[rownames(mat.z) %in% gene] <- "Selected genes"
+  selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
+  
 
   
-  
-  custom_scale <- list(
-    list(0.0, "rgb(255, 245, 240)"),  # Very light pink
-    list(0.2, "rgb(254, 224, 210)"),  # Light salmon
-    list(0.4, "rgb(252, 187, 161)"),  # Soft pink
-    list(0.6, "rgb(252, 146, 114)"),  # Warm pink
-    list(0.8, "rgb(251, 106, 74)"),   # Strong pink
-    list(1.0, "rgb(222, 45, 38)")     # Deep pinkish red
+   
+  fig <- heatmaply(mat.z,
+            plot_method="plotly",
+            branches_lwd = 0.01,
+            subplot_widths = c(0.94,0.01,0.05),
+            grid_gap = 0.5,
+            fontsize_row = 8,
+            fontsize_col = 6,
+            key.title = "Z-score",
+            label_names = c("Gene", "Sample", "Z-score"),
+            colors = rev(colorRampPalette(brewer.pal(3, "RdBu"))(256)),
+            col_side_colors = conditions,
+            col_side_palette = condition_mapping,
+            row_side_colors = selection,
+            row_side_palette = selection_mapping,
+            colorbar_thickness = 20,
+
+
   )
-  
-  
-  c <- colData(dds)[1]
-  # Create an interactive heatmap with plotly
-  fig <- plot_ly(x = colnames(mat.z)[hc_cols$order], y = rownames(mat.z)[hc_rows$order], z = mat.z, type = "heatmap", colorscale = "Bluered_r", showscale = TRUE) %>%
-    layout(title = "Interactive gene expression clustered heatmap ",
-           xaxis = list(title = "Samples"),
-           yaxis = list(title = "Genes", autorange = "reversed"),
-           margin = list(l = 100, b = 100))
-  
-  # Extract the condition from the DataFrame and map it to the colors
-  condition_vector <- sapply(c$condition, function(x) condition_mapping[[x]])
-  # Loop through each condition to create separate traces
-  unique_conditions <- unique(c$condition)
-  for(cond in unique_conditions) {
-    # Indices for current condition
-    indices <- which(c$condition == cond)
-    
-    fig <- add_trace(fig, x = rownames(c)[indices], y = rep("Categories", length(indices)),
-                     mode = 'markers', type = 'scatter',
-                     marker = list(color = condition_mapping[[cond]], size = 5, symbol = "square"),
-                     
-                     name = cond,  # Assign the name for the legend
-                     showlegend = TRUE)
-  }
-  
-  # Adjust the layout to ensure the legend is properly visible
-  fig <- layout(fig, legend = list(x = 1.05, y = 0.5),margin = list(t = 100))
+
   
   return(fig)
 }
 
 
-creation_pca <- function(dds) {
-  library(plotly)  # Ensure plotly is loaded
+
+
+create_correlation <- function(dds, input, padj_cut, log2_cut, number, gene = NULL) {
   
+  
+  # Obtain results and convert to dataframe
+  res <- results(dds)
+  res.df <- as.data.frame(res)
+  
+  # Filter data to keep only significant genes according to cutoffs
+  res.df.filter <- res.df[(abs(res.df$log2FoldChange) > log2_cut) & (!is.na(res.df$padj) & res.df$padj < padj_cut),]
+  
+  
+  # Sort by padj (lowest first) and select the top 50 genes
+  res.df.filter <- res.df.filter[order(res.df.filter$padj), ]
+  if (nrow(res.df.filter) > number) {
+    res.df.filter.sub <- res.df.filter[1:number, ]
+  }else{
+    message("Not enought genes. Try lower number")
+  }
+  
+  # If specific genes are provided, filter to include only these genes as well
+  if (!is.null(gene)) {
+    res.df.filter.sub.gene <- subset(res.df, rownames(res.df) %in% gene)
+    
+    # Merge filtered subsets (assuming you want to show genes from both criteria: significant and listed in 'gene')
+    if (nrow(res.df.filter.sub.gene) > 0) {
+      res.df.final <- rbind(res.df.filter.sub, res.df.filter.sub.gene)
+      res.df.final <- unique(res.df.final)  # Removing potential duplicates
+    } else {
+      res.df.final <- res.df.filter.sub  # No genes from the specific list are in the filtered subset
+    }
+  } else {
+    res.df.final <- res.df.filter.sub  # No specific genes provided, use the top filtered genes
+  }
+  
+  
+  # Get normalized counts 
+  mat <- assay(vst(dds))[rownames(res.df.final),]
+  # Calculate the correlation matrix of the selected genes
+
+  
+  correlation_matrix <- cor(t(mat))
+  
+  # Calculate the matrix of p-values for correlations
+  p_matrix <- outer(1:ncol(mat), 1:ncol(mat), Vectorize(function(i, j) {
+    cor.test(mat[, i], mat[, j], method = "pearson")$p.value
+  }))
+  # Adjust p-values slightly to avoid -Inf from log10(0)
+  p_matrix[p_matrix == 0] <- .Machine$double.eps
+  point_sizes <- -log10(p_matrix)
+  point_sizes[is.infinite(point_sizes)] <- max(point_sizes[!is.infinite(point_sizes)], na.rm = TRUE)
+  
+  
+  
+  # Create a vector of colors
+  selection <- rep("None", nrow(correlation_matrix))
+  # Highlight selected genes
+  selection[rownames(correlation_matrix) %in% gene] <- "Selected genes"
+  selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  fig <- heatmaply_cor(correlation_matrix,
+                   plot_method="plotly",
+                   node_type = "scatter",
+                   point_size_mat = point_sizes,  # use the adjusted point sizes
+                   point_size_name = "-log10(p-value)",
+                   label_names = c("x", "y", "Correlation"),
+                   subplot_widths = c(0.94,0.01,0.05),
+                   fontsize_row = 8,
+                   fontsize_col = 6,
+                   colors = rev(colorRampPalette(brewer.pal(3, "RdBu"))(256)),
+                   colorbar_thickness = 20,
+                   row_side_colors = selection,
+                   row_side_palette = selection_mapping,
+
+  )
+  
+  
+  return(fig)
+}
+
+
+
+
+
+
+
+creation_pca <- function(dds) {
+
   vsdata <- vst(dds, blind=FALSE)
   custom_colors <- c("#D81B60","#1E88E5")  # Example colors, adjust as needed
   
@@ -314,7 +395,16 @@ creation_pca <- function(dds) {
       margin = list(t = 100)
     )
   
-  return(pca_plot)  # Return the plot object
+
+  
+  callModule(downloadablePlotly, 
+             id = 'pca_data', 
+             plot = pca_plot, 
+             filename = 'pca.csv', 
+             content = function(file) {write.csv(pca_data, file)})
+  
+ return (pca_plot)
+
 }
 
 
@@ -323,7 +413,6 @@ creation_pca <- function(dds) {
 plot_mortality <- function(clinical_data){
   
   
-    
     status_summary <- table(clinical_data$`Patient Status`)
     status_df <- as.data.frame(status_summary)
     names(status_df) <- c("Status", "Count")
@@ -340,6 +429,34 @@ return(plot)
 }
 
 
+
+plot_mortality_curve <- function(clinical_data){
+  
+
+  clinical_data$Status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
+  
+  # Create a survival object
+  surv_obj <- Surv(time = clinical_data$Overall.Survival..Days, event = clinical_data$Status)
+  
+  # Fit a survival model
+  fit <- survfit(surv_obj ~ 1)
+  
+  # Plot using plotly
+  plot <- plot_ly() %>%
+    add_trace(
+      type = 'scatter',
+      mode = 'lines+markers',
+      x = fit$time, 
+      y = fit$surv,
+      line = list(color = 'blue')
+    ) %>%
+    layout(
+      title = "Survival Curve",
+      xaxis = list(title = "Days"),
+      yaxis = list(title = "Survival Probability")
+    )
+  return(plot)
+}
 
 
 

@@ -14,10 +14,11 @@ library(reshape2)
 library(S4Vectors)
 library(jsonlite)
 library(pheatmap)
+library(RColorBrewer)
+library(shinydlplot)
+library(survival)
+library(readxl)
 
-# devtools::install_github("ropensci/plotly")
+options(shiny.plot.res=96)
 
-# Load data once at the start
-# badal_data <- readRDS(file.path("./data/badal", "Badal_Deseq2.rds"))
-# badal_res <- results(badal_data)
 
