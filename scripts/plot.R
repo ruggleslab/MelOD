@@ -246,6 +246,7 @@ create_heatmap <- function(dds, input, padj_cut, log2_cut, number, gene = NULL) 
    
   fig <- heatmaply(mat.z,
             plot_method="plotly",
+            limits = c(-2,2),
             branches_lwd = 0.01,
             subplot_widths = c(0.94,0.01,0.05),
             grid_gap = 0.5,
@@ -270,91 +271,43 @@ create_heatmap <- function(dds, input, padj_cut, log2_cut, number, gene = NULL) 
 
 
 
-create_correlation <- function(dds, input, padj_cut, log2_cut, number, gene = NULL) {
-  
+create_correlation <- function(dds, gene, padj_cut, log2_cut, number) {
+  if (is.null(gene)) {
+    stop("Please provide a gene of interest.")
+  }
   
   # Obtain results and convert to dataframe
   res <- results(dds)
   res.df <- as.data.frame(res)
   
   # Filter data to keep only significant genes according to cutoffs
-  res.df.filter <- res.df[(abs(res.df$log2FoldChange) > log2_cut) & (!is.na(res.df$padj) & res.df$padj < padj_cut),]
+  significant_genes <- res.df[(abs(res.df$log2FoldChange) > log2_cut) & (!is.na(res.df$padj) & res.df$padj < padj_cut),]
   
   
-  # Sort by padj (lowest first) and select the top 50 genes
-  res.df.filter <- res.df.filter[order(res.df.filter$padj), ]
-  if (nrow(res.df.filter) > number) {
-    res.df.filter.sub <- res.df.filter[1:number, ]
-  }else{
-    message("Not enought genes. Try lower number")
-  }
+  # Get normalized counts
+  vst_transformed <- vst(dds)
+  mat <- assay(vst_transformed)[rownames(significant_genes),]
   
-  # If specific genes are provided, filter to include only these genes as well
-  if (!is.null(gene)) {
-    res.df.filter.sub.gene <- subset(res.df, rownames(res.df) %in% gene)
-    
-    # Merge filtered subsets (assuming you want to show genes from both criteria: significant and listed in 'gene')
-    if (nrow(res.df.filter.sub.gene) > 0) {
-      res.df.final <- rbind(res.df.filter.sub, res.df.filter.sub.gene)
-      res.df.final <- unique(res.df.final)  # Removing potential duplicates
-    } else {
-      res.df.final <- res.df.filter.sub  # No genes from the specific list are in the filtered subset
-    }
-  } else {
-    res.df.final <- res.df.filter.sub  # No specific genes provided, use the top filtered genes
-  }
+  # Calculate the Spearman correlation specifically for the selected gene with others
+  gene_index <- which(rownames(mat) == gene)
+  correlations <- sapply(seq_len(ncol(mat)), function(i) {
+    cor(mat[, gene_index], mat[, i], method = "spearman")
+  })
   
-  
-  # Get normalized counts 
-  mat <- assay(vst(dds))[rownames(res.df.final),]
-  # Calculate the correlation matrix of the selected genes
-
-  
-  correlation_matrix <- cor(t(mat))
-  
-  # Calculate the matrix of p-values for correlations
-  p_matrix <- outer(1:ncol(mat), 1:ncol(mat), Vectorize(function(i, j) {
-    cor.test(mat[, i], mat[, j], method = "pearson")$p.value
-  }))
-  # Adjust p-values slightly to avoid -Inf from log10(0)
-  p_matrix[p_matrix == 0] <- .Machine$double.eps
-  point_sizes <- -log10(p_matrix)
-  point_sizes[is.infinite(point_sizes)] <- max(point_sizes[!is.infinite(point_sizes)], na.rm = TRUE)
+  # Create a scatter plot of the correlations
+  plot_data <- data.frame(Gene = rownames(mat), Correlation = correlations)
   
   
   
-  # Create a vector of colors
-  selection <- rep("None", nrow(correlation_matrix))
-  # Highlight selected genes
-  selection[rownames(correlation_matrix) %in% gene] <- "Selected genes"
-  selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
+  # Generate the 
+  p <- ggplot(plot_data, aes(x = reorder(Gene, -Correlation), y = Correlation, fill = Correlation)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
+    labs(title = paste("Spearman Correlation with", gene), x = "Genes", y = "Spearman Correlation") +
+    theme_minimal()
   
-  
-  
-  
-  
-  
-  
-  
-  
-  fig <- heatmaply_cor(correlation_matrix,
-                   plot_method="plotly",
-                   node_type = "scatter",
-                   point_size_mat = point_sizes,  # use the adjusted point sizes
-                   point_size_name = "-log10(p-value)",
-                   label_names = c("x", "y", "Correlation"),
-                   subplot_widths = c(0.94,0.01,0.05),
-                   fontsize_row = 8,
-                   fontsize_col = 6,
-                   colors = rev(colorRampPalette(brewer.pal(3, "RdBu"))(256)),
-                   colorbar_thickness = 20,
-                   row_side_colors = selection,
-                   row_side_palette = selection_mapping,
-
-  )
-  
-  
-  return(fig)
+  return(p)
 }
 
 
@@ -453,7 +406,7 @@ plot_mortality_curve <- function(clinical_data){
     layout(
       title = "Survival Curve",
       xaxis = list(title = "Days"),
-      yaxis = list(title = "Survival Probability")
+      yaxis = list(title = "Survival Probability",range = c(0, 1))
     )
   return(plot)
 }
