@@ -9,6 +9,7 @@ blurbs_info <- fromJSON(blurbs)
 
 
 shared_ui <- function(id) { 
+  
   Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]  
   ns <- NS(id)
   
@@ -23,7 +24,7 @@ shared_ui <- function(id) {
     fluidRow(
       box(title = "Inputs", status = "warning",
           collapsible = TRUE,
-          solidHeader = TRUE, width = 5,
+          solidHeader = TRUE, width = 3,
           
           tags$h3("Parameters", style = "margin-top: 0;"),  # Title for the parameters section
           numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
@@ -40,62 +41,61 @@ shared_ui <- function(id) {
           
       ),
       box(
-        title = "Study Overview", status = "info", solidHeader = TRUE, width = 6, collapsible = TRUE,
+        title = "Study Overview", status = "info", solidHeader = TRUE, width = 9, collapsible = TRUE,
         tags$h2(Id_info$title),
         tags$h3("Lead Author: ", Id_info$lead_author),
         tags$p(Id_info$abstract),
         tags$p("Read the full paper: ", tags$a(href = Id_info$paper_link, "PubMed", target = "_blank")),
         tags$p("DOI: ", tags$a(href = paste("https://doi.org/", Id_info$doi, sep = ""), Id_info$doi, target = "_blank")),
-        tags$p("Data Access: ", tags$a(href = Id_info$data_link, "ENA Dataset", target = "_blank")),
-        tags$p(Id_info$data_explanation)
+        tags$p("Data Access: ", tags$a(href = Id_info$data_link, "ENA Dataset", target = "_blank"))
       )),
     
     fluidRow(
       
       box(
-        title = "PCA",  # Title of the box
-        status = "primary",  
+        title = HTML(paste("PCA", 
+                           actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")),downloadButton(ns('pca_data'),  label = "", icon = icon("save-file", lib = "glyphicon")))),
+        status = "primary", 
         width = 8,# Color theme
         solidHeader = TRUE,            # Gives the box a solid header
-        collapsible = TRUE,            # Allows the box to be collapsed
-        plotlyOutput(ns("pca")),
-        # downloadablePlotlyUI(ns(id = 'pca_data'))
+        collapsible = TRUE,    
+        plotlyOutput(ns(id = 'pca_plot'))
+        
       ),
       tabBox(
         title = "Metadata",
         # The id lets us use input$tabset1 on the server to find the current tab
         id = "tabset1", 
         width = 4,
-        tabPanel("Mortality", plotlyOutput(ns("mortality"))),
-        tabPanel("Gender", plotlyOutput(ns("gender")))
+        tabPanel("Mortality", plotlyOutput(ns("mortality_data"))),
+        tabPanel("Gender", plotlyOutput(ns("gender_data")))
       )),
     
     fluidRow(
       
       box(
-        title = "Boxplot",  # Title of the box
+        title = HTML(paste("Differential gene expression", 
+                           actionLink(ns("info_violin_plot"), label = "", icon = icon("info-circle")),downloadButton(ns('violin_data'),  label = "", icon = icon("save-file", lib = "glyphicon")))),
         status = "primary", 
-        width = 7,
-        solidHeader = TRUE,            # Gives the box a solid header
-        collapsible = TRUE,            # Allows the box to be collapsed
-        plotlyOutput(ns("badal_test"))   # Placeholder for the plot
-      ),
-      box(
-        title = "Volcano Plot",  # Title of the box
-        status = "primary",  
-        width = 5,
-        solidHeader = TRUE,            # Gives the box a solid header
-        collapsible = TRUE,            # Allows the box to be collapsed
-        plotlyOutput(ns("volcano_plot"))  # Placeholder for the plot
-      )),
+        width = 12,
+        solidHeader = TRUE,
+        collapsible = TRUE, 
+        column(6,
+               plotlyOutput(ns("volcano_plot"))
+        ),
+        column(6,
+               plotlyOutput(ns(id = 'violin_plot')))        
+          # Placeholder for the plot
+      ) ),
     fluidRow(
       box(
-        title = "Heatmap",  # Title of the box
+        title = HTML(paste("Heatmap", 
+                           actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")),downloadButton(ns('heatmap_data'),  label = "", icon = icon("save-file", lib = "glyphicon")))),
         status = "primary",
         width = 12,# Color theme
         solidHeader = TRUE,      # Gives the box a solid header
         collapsible = TRUE,      # Allows the box to be collapsed
-        plotlyOutput(ns("badal_heatmap_test"))  # Placeholder for the volcano plot
+        plotlyOutput(ns("heatmap_plot"))
       )),
     fluidRow(
       box(
@@ -116,9 +116,14 @@ shared_ui <- function(id) {
 }
 
 
+
+
 server_shared <- function(dds ,clinical_data, id) {
   moduleServer(id, function(input, output, session) {
-  
+    
+    
+    #################### GENES NAMES FUNCTIONS ###################
+    
     # Check for NA in symbols and filter them out
     if ("symbol" %in% names(mcols(dds))) {
       na_filter <- !is.na(mcols(dds)$symbol)
@@ -148,45 +153,69 @@ server_shared <- function(dds ,clinical_data, id) {
       stop("The number of unique gene symbols does not match the number of rows in the dataset.")
     }
     
+    
     res <- results(dds)
     
+    #################### FILTERED GENES FUNCTION VIOlIN OLD ###################
     
-    
-
-    filtered_data <- eventReactive(input$update_plot,{
-      padj_threshold <- input$slider_padj
-      log2_thresholds <- input$slider_log2
-      if (is.numeric(padj_threshold) && !is.na(padj_threshold)) {
-        filtered_genes <- res[
-          !is.na(res$padj) & res$padj < padj_threshold &
-            (res$log2FoldChange <= -log2_thresholds | res$log2FoldChange >= log2_thresholds),
-          
-          , drop = FALSE
-        ]
-        filtered_genes[order(filtered_genes$padj), ]
-      }
-    }, ignoreNULL = FALSE)
-    
+    # filtered_data_combined <- eventReactive(input$update_plot, {
+    #   # Retrieve threshold inputs
+    #   padj_threshold <- input$slider_padj
+    #   log2_thresholds <- input$slider_log2
+    #   
+    #   # Initialize a list to store the results
+    #   results_list <- list()
+    #   
+    #   # Filtering based on p-adjusted value
+    #   if (is.numeric(padj_threshold) && !is.na(padj_threshold)) {
+    #     filtered_genes_padj <- res[
+    #       !is.na(res$padj) & res$padj < padj_threshold, 
+    #       , drop = FALSE
+    #     ]
+    #     filtered_genes_padj <- filtered_genes_padj[order(filtered_genes_padj$log2FoldChange, filtered_genes_padj$padj), ]
+    #     results_list$padj_filtered <- filtered_genes_padj
+    #   } else {
+    #     results_list$padj_filtered <- NULL
+    #   }
+    #   
+    #   # Filtering based on log2 fold change thresholds
+    #   if (is.numeric(log2_thresholds) && !is.na(log2_thresholds)) {
+    #     filtered_genes_foldchange <- res[
+    #       !is.na(res$padj) & (res$log2FoldChange <= -log2_thresholds | res$log2FoldChange >= log2_thresholds),
+    #       , drop = FALSE
+    #     ]
+    #     filtered_genes_foldchange <- filtered_genes_foldchange[order(filtered_genes_foldchange$log2FoldChange, filtered_genes_foldchange$padj), ]
+    #     results_list$foldchange_filtered <- filtered_genes_foldchange
+    #   } else {
+    #     results_list$foldchange_filtered <- NULL
+    #   }
+    #   
+    #   # Return the list of filtered data
+    #   return(results_list)
+    # }, ignoreNULL = FALSE)
+    # 
+    #################### FILTERED GENES FUNCTION ###################
     
     filter_and_order_by_padj <- function(results_data) {
       # Ensure the padj column exists
       if (!"padj" %in% names(results_data)) {
         stop("The provided data does not have a 'padj' column.")
       }
-      
+
       # Filter rows where padj is not NA and order by padj
       filtered_data <- results_data[!is.na(results_data$padj), ]
-      ordered_data <- filtered_data[order(filtered_data$padj), ]
-      
+      ordered_data <- filtered_data[order(filtered_data$log2FoldChange, filtered_data$padj), ]
+
       return(ordered_data)
     }
-    
+
     filtered_res <- filter_and_order_by_padj(res)
-    
-    ####################################################### see if I do choices = rownames(filtered_data())
+
     observe({
       updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res), server = TRUE)
     })
+
+    #################### SELECTED GENES FUNCTION ###################
     
     
     display_genes <- reactive({
@@ -198,7 +227,6 @@ server_shared <- function(dds ,clinical_data, id) {
       if (!is.null(selected_genes) && all(selected_genes %in% rownames(all_genes))) {
         # Return only the selected genes
         return(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
-        print(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
       } else {
         # Return top 5 genes as default
         return(head(all_genes, 3))
@@ -206,88 +234,148 @@ server_shared <- function(dds ,clinical_data, id) {
     })
     
     
-    #############################################
+    #################### PLOT DATA FUNCTION ###################
     
     # Event reactive for updating the plots only when the button is clicked
     plot_data <- eventReactive(input$update_plot, {
+    
       # Isolate ensures changes in these inputs do not trigger this reactive block
+      # filtered_data_padj <-  filtered_data_combined()$padj_filtered
+      # filtered_data_foldchange <- filtered_data_combined()$foldchange_filtered
       gene <- isolate(input$selected_gene)
       padj_cut <-isolate(input$slider_padj)
       log2_cut <-isolate(input$slider_log2)
       number <-isolate(input$number)
-      # Generate plots
+      
       list(
-        boxplot = create_boxplot(dds = dds,  gene = gene, display_genes = display_genes()),
-        volcano = create_volcanoplot(dds = dds, gene = gene,padj_cut=padj_cut,log2_cut=log2_cut),
-        heatmap = create_heatmap(dds=dds,padj_cut=padj_cut,log2_cut=log2_cut,number=number, gene=gene),
-        correlation = create_correlation(dds=dds,padj_cut=padj_cut,log2_cut=log2_cut,number=number, gene=gene)
-        
-      )
+      violin= create_boxplot(dds = dds,  gene = gene, display_genes = display_genes(), padj_cut=padj_cut,log2_cut=log2_cut),
+      volcano =create_volcanoplot(dds = dds, gene = gene,padj_cut=padj_cut,log2_cut=log2_cut),
+      heatmap = create_heatmap(dds=dds,padj_cut=padj_cut,log2_cut=log2_cut,number=number, gene=gene))
+      # correlation = create_correlation(dds=dds,padj_cut=padj_cut,log2_cut=log2_cut,number=number, gene=gene)
     })
     
-    # Creating a Plotly boxplot reactively
-    output$badal_test <- renderPlotly({
-      shiny::req(filtered_data())  # Ensure that the data is available
-      plot_data()$boxplot
+    # colnames(clinical_data) <- as.character(unlist(clinical_data[2,]))
+    # clinical_data <- clinical_data[-c(1, 2), ]
+    # plot_mortality(clinical_data)
+    # plot_gender(clinical_data)
+    
+    #################### PCA PLOT ###################
+    
+    pca_data_reactive <- reactive({
+      pca_data <- pca_data(dds)  # Assuming pca_data() is a function fetching or calculating PCA data
+      pca_data
     })
     
+    # Generate PCA plot with Plotly
+    output$pca_plot <- renderPlotly({
+      req(pca_data_reactive())  # Ensure pca_data is available and only render the plot when it is
+      creation_pca(pca_data_reactive())  # Assuming creation_pca() generates a Plotly plot
+    })
     
-    # Volcano Plot
+    # Download handler for PCA data
+    output$pca_data <- downloadHandler(
+      filename = function() {
+        paste("pca", "_", Sys.Date(), '.csv', sep = '')
+      },
+      content = function(file) {
+        req(pca_data_reactive())  # Ensure data is available before attempting to write
+        write.csv(pca_data_reactive(), file)
+      }
+    )
+    
+    # Observer for displaying PCA plot information using shinyalert
+    observeEvent(input$info_pca_plot, {
+      shinyalert(title = "PCA Plot Information", html = TRUE,
+                 text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
+    })
+    
+   
+    #################### VIOLIN PLOT ###################
+    
+    output$violin_plot <- renderPlotly({
+      plot_data()$violin
+    })
+    
+    observeEvent(input$info_violin_plot, {
+      shinyalert(title = "Violin Plot Information", html = TRUE,  # Enable HTML content
+        text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">'
+      )})
+  
+    
+    #################### VOLCANO PLOT ###################
+
+  
+    
     output$volcano_plot <- renderPlotly({
       
-      req(plot_data())  # Make sure plot_data is available before rendering
       plot_data()$volcano
     })
     
-    # Heatmap Plot
-    output$badal_heatmap_test <- renderPlotly({
-      req(plot_data())  # Make sure plot_data is available before rendering
+    observeEvent(input$info_volcano_plot, {
+      shinyalert(title = "Volcano Plot Information", html = TRUE,  # Enable HTML content
+                 text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">'
+      )})
+    
+    
+    
+    
+
+    selected_genes <- reactiveVal(vector("list", 0))
+    
+    # Observer to handle plot clicks and update selected genes list
+    observe({
+      brush_data <- event_data("plotly_click")
+      if (!is.null(brush_data)) {
+        # Retrieve current list of selected genes
+        current_genes <- selected_genes()
+        new_gene <- brush_data$customdata
+        
+        # Add the new gene if it's not already in the list
+        if (!(new_gene %in% current_genes)) {
+          current_genes <- c(current_genes, new_gene)
+          selected_genes(current_genes)
+          
+          # Update the selectize input with the new list of genes
+          updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res), selected = current_genes)
+        }
+      } else {
+        print("No points selected.")
+      }
+    })
+    
+    
+    
+    
+
+    #################### HEATMAP PLOT ###################
+    
+    output$heatmap_plot <- renderPlotly({
       plot_data()$heatmap
     })
     
-    # Correlation Plot
+    observeEvent(input$info_heatmap_plot, {
+      shinyalert(title = "Volcano Plot Information", html = TRUE,  # Enable HTML content
+                 text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">'
+      )})
     
-    output$correlation <- renderPlotly({
-      req(plot_data())  # Make sure plot_data is available before rendering
-      plot_data()$correlation
-    })
     
-    ############################### if want just filtered result display filtered_data()
+    #################### HEATMAP PLOT ###################
+    
     output$filtered_results <- DT::renderDataTable({
-      req(filtered_data())  # Ensure that the data is available
-      
-      # Convert the result to a data frame and include DataTables options with export buttons
       DT::datatable(
         as.data.frame(res),
         extensions = 'Buttons',  # Enable buttons extension for DataTables
         options = list(
           dom = 'Blfrtip',  # Define the table control elements to appear on the page: B-buttons, f-filtering input, r-processing display element, t-the table, i-table information summary, p-pagination control
-          buttons = c('copy', 'csv', 'excel'),  # Include buttons for copying to clipboard, exporting to CSV, and Excel
+          buttons = c('copy', 'csv', 'excel'), 
           pageLength = 10,
           scrollX = TRUE
         )
       )
     })
-    
-    colnames(clinical_data) <- as.character(unlist(clinical_data[2,]))
-    clinical_data <- clinical_data[-c(1, 2), ]
-    
-    output$mortality <- renderPlotly({
-      plot_mortality(clinical_data)
-    })
-    
-    
-    output$gender <- renderPlotly({
-      plot_gender(clinical_data)
-    })
-    
-    
-    output$pca <- renderPlotly({
-      creation_pca(dds= dds)
-    })
-    
   })
 }
+
 
 
 

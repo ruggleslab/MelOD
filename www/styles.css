@@ -7,6 +7,20 @@
 */
 
 
+.glyphicon {
+    top: 0px; 
+}
+
+.btn {
+    display: inline;
+}
+.btn-default {
+  border-color: transparent;
+}
+
+.fa-solid, .fas {
+margin-left: 10px;
+}
 
 .home{
   text-align: center;
@@ -103,7 +117,7 @@ x.skin-blue .main-header .navbar .sidebar-toggle:hover {
 
 
 .footer {
-  height: 50px;
+  height: 35px;
   padding: 10px;
   color:#FFF5EE;
   background-color: #6699CC;
