@@ -29,7 +29,7 @@ shared_ui <- function(id) {
           tags$h3("Parameters", style = "margin-top: 0;"),  # Title for the parameters section
           numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
           numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
-          numericInput(ns("number"), "Number of genes for the heatmap (min. 3)", 10, min = 3, step = 1),
+          numericInput(ns("number"), "Number of genes for the heatmap (min. 2 if no genes selected)", 10, min = 0, step = 1),
           selectizeInput(ns("selected_gene"), "Gene(s) selection (up ot 10)",
                          choices = NULL,  # Ensure this is accessible here or move to server
                          selected = NULL,  # Default selection
@@ -67,7 +67,7 @@ shared_ui <- function(id) {
         # The id lets us use input$tabset1 on the server to find the current tab
         id = "tabset1", 
         width = 4,
-        tabPanel("Mortality", plotlyOutput(ns("mortality_data"))),
+        tabPanel("Mortality", plotlyOutput(ns("mortality"))),
         tabPanel("Gender", plotlyOutput(ns("gender_data")))
       )),
     
@@ -124,36 +124,7 @@ server_shared <- function(dds ,clinical_data, id) {
     
     #################### GENES NAMES FUNCTIONS ###################
     
-    # Check for NA in symbols and filter them out
-    if ("symbol" %in% names(mcols(dds))) {
-      na_filter <- !is.na(mcols(dds)$symbol)
-      dds <- dds[na_filter,]  # Keep only rows without NA in 'symbol'
-      gene_symbols <- mcols(dds)$symbol
-    } else {
-      stop("Gene symbols not found in the dataset metadata.")
-    }
-    
-    makeUniqueRowNames <- function(names) {
-      counts <- table(names)
-      duplicates <- names[counts[names] > 1]
-      for (d in unique(duplicates)) {
-        idx <- which(names == d)
-        names[idx] <- paste(d, seq_along(idx), sep = "_")
-      }
-      names
-    }
-    
-    # Apply this function to gene_symbols
-    unique_gene_symbols <- makeUniqueRowNames(gene_symbols)
-    
-    # Apply the unique row names to the DDS object
-    if (length(unique_gene_symbols) == nrow(dds)) {
-      rownames(dds) <- unique_gene_symbols
-    } else {
-      stop("The number of unique gene symbols does not match the number of rows in the dataset.")
-    }
-    
-    
+    dds <- gene_names_dds(dds)
     res <- results(dds)
     
     #################### FILTERED GENES FUNCTION VIOlIN OLD ###################
@@ -344,6 +315,26 @@ server_shared <- function(dds ,clinical_data, id) {
     })
     
     
+    observe({
+      brush_data <- event_data("plotly_selected")
+      if (!is.null(brush_data)) {
+        current_genes <- selected_genes()
+        new_genes <- brush_data$customdata  # Array of custom data from brushed points
+        print(new_genes)
+        # Filter new genes to add only those not already selected
+        new_genes_to_add <- new_genes[!new_genes %in% current_genes]
+        if (length(new_genes_to_add) > 0) {
+          current_genes <- c(current_genes, new_genes_to_add)
+          selected_genes(current_genes)
+          
+          # Update the selectize input with the new list of genes
+          updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res), selected = current_genes)
+        }
+      } else {
+        print("No points selected.")
+      }
+    })
+    
     
     
 
@@ -360,10 +351,37 @@ server_shared <- function(dds ,clinical_data, id) {
     
     
     #################### HEATMAP PLOT ###################
+
+    
+
+    # Filter results based on selected genes, if any
+    filtered_res_table <- reactive({
+      res <- as.data.frame(res)
+      if (is.null(selected_genes()) || length(selected_genes()) == 0) {
+        res
+      } else {
+        res[rownames(res) %in% selected_genes(), ]  # Filter to show only selected genes
+      }
+    })
+
+   
+
+    if (id == 'gide'){
+    output$mortality <- renderPlotly({
+      plot_mortality_curve(clinical_data)
+      
+    })
+    } else {
+      output$mortality <- renderPlotly({
+        plot_mortality(clinical_data)
+      
+    })}
+    
+    
     
     output$filtered_results <- DT::renderDataTable({
       DT::datatable(
-        as.data.frame(res),
+        filtered_res_table(),
         extensions = 'Buttons',  # Enable buttons extension for DataTables
         options = list(
           dom = 'Blfrtip',  # Define the table control elements to appear on the page: B-buttons, f-filtering input, r-processing display element, t-the table, i-table information summary, p-pagination control
@@ -375,9 +393,6 @@ server_shared <- function(dds ,clinical_data, id) {
     })
   })
 }
-
-
-
 
 
 

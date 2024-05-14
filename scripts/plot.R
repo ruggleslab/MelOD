@@ -1,9 +1,9 @@
 source("global.R", local = TRUE)
 
-create_boxplot <- function(dds, gene, display_genes, padj_cut,log2_cut) {
+create_boxplot <- function(dds , display_genes, padj_cut,log2_cut) {
   
   filtered_genes <- display_genes
-  
+  gene = rownames(filtered_genes)
   
   # Case if we displaying more than 1 gene (3 default)
   if (nrow(filtered_genes) > 0) {
@@ -135,14 +135,12 @@ create_boxplot <- function(dds, gene, display_genes, padj_cut,log2_cut) {
 
 
 
-
-
-
-
-create_volcanoplot <- function(dds, padj_cut, log2_cut, gene = NULL) {
+create_volcanoplot <- function(dds, padj_cut, log2_cut, display_genes) {
   
   res <- results(dds)
   res$neg_log10_padj <- -log10(res$padj)
+  
+  gene <- rownames(display_genes)
   # Categorize significant and non-significant genes
   res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut, 
                     "Significant", "Not Significant")
@@ -159,7 +157,7 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, gene = NULL) {
                                  "<br>Adjusted p-value:", sig_data$padj),
                     marker = list(size = 7, line = list(color = "#10528b", width = 1)),
                     customdata = rownames(sig_data),
-                    name = "Significant")
+                    name = "Significant") 
   
   # Add trace for non-significant genes
   non_sig_data <- subset(res, sig == "Not Significant")
@@ -169,25 +167,25 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, gene = NULL) {
                                  "<br>Adjusted p-value:", non_sig_data$padj),
                     marker = list(size = 7, line = list(color = "#888888", width = 1)),
                     name = "Not Significant", 
+                    customdata = rownames(non_sig_data),
                     visible='legendonly')
   
-  # Check for specific genes to highlight
-  if (!is.null(gene) && length(gene) > 0) {
-    highlighted_genes <- subset(res, rownames(res) %in% gene)
-    if (nrow(highlighted_genes) > 0) {
 
-      plot <- add_trace(plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
-                        type = "scattergl", mode = "markers", color = I("#D81B60"),
-                        text = paste("Gene:", rownames(highlighted_genes), "<br>Log2 Fold Change:", highlighted_genes$log2FoldChange, 
-                                     "<br>Adjusted p-value:", highlighted_genes$padj),
-                        marker = list(size = 7, line = list(color = "#82103a", width = 1)),
-                        name = "Highlighted Genes")
-    } else {
-      message("No genes found matching the specified list. Please check gene names.")
+  if (!is.null(gene) && length(gene) > 0) {
+        highlighted_genes <- subset(res, rownames(res) %in% gene)
+        if (nrow(highlighted_genes) > 0) {
+            plot <- add_trace(plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
+                              type = "scattergl", mode = "markers", color = I("#D81B60"),
+                              text = paste("Gene:", rownames(highlighted_genes), "<br>Log2 Fold Change:", highlighted_genes$log2FoldChange, 
+                                           "<br>Adjusted p-value:", highlighted_genes$padj),
+                              marker = list(size = 7, line = list(color = "#82103a", width = 1)),
+                              name = "Highlighted Genes")
+        } else {
+            message("No genes found matching the specified list. Please check gene names.")
+        }
     }
-  } else {
-    message("No genes specified for highlighting.")
-  }
+
+  
   
 
 
@@ -268,19 +266,20 @@ create_heatmap <- function(dds, input, padj_cut, log2_cut, number, gene = NULL) 
   conditions <- data.frame("Conditions" = conditions, check.names = F)
   
     
+  # Create a vector of colors
+  selection <- rep("None", nrow(mat.z))
+  # Highlight selected genes
+  selection[rownames(mat.z) %in% gene] <- "Selected genes"
+  selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
   
-  # Assuming 'mat.z' is your matrix and 'gene' is the vector of selected genes
-  # Create a new vector for row labels with HTML for coloring
-  row_labels <- rownames(mat.z)
-  selected_genes <- row_labels %in% gene
-  row_labels[selected_genes] <- paste0('<span style="color:red;">', row_labels[selected_genes], '</span>')
-  print(row_labels)
-  # Your heatmaply call
+  
+  
+    # Your heatmaply call
   plot <- heatmaply(mat.z,
                     plot_method = "plotly",
                     limits = c(-2, 2),
                     branches_lwd = 0.01,
-                    subplot_widths = c(0.95, 0.05),
+                    subplot_widths = c(0.95,0.005, 0.045),
                     grid_gap = 0.5,
                     fontsize_row = 8,
                     fontsize_col = 6,
@@ -289,8 +288,8 @@ create_heatmap <- function(dds, input, padj_cut, log2_cut, number, gene = NULL) 
                     colors = rev(colorRampPalette(brewer.pal(3, "RdBu"))(256)),
                     col_side_colors = conditions,  # Assuming 'conditions' is predefined
                     col_side_palette = condition_mapping,  # Assuming 'condition_mapping' is predefined
-                    row_side_colors = NULL,  # No row side colors used for selection
-                    row_text = row_labels,  # pUse modified row labels
+                    row_side_colors = selection,
+                    row_side_palette = selection_mapping,
                     colorbar_thickness = 20
   )
 
@@ -406,7 +405,7 @@ plot_mortality_curve <- function(clinical_data){
       xaxis = list(title = "Days"),
       yaxis = list(title = "Survival Probability",range = c(0, 1))
     )
-  
+  return(plot)
 }
 
 

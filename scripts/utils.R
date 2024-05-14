@@ -1,41 +1,11 @@
 source("global.R", local = TRUE)
 
-# calculate_correlations <- function(dds, filepath) {
-#   # Obtain results and convert to dataframe
-# 
-#     # Filter data to keep only significant genes according to cutoffs
-#   
-#   res <- results(dds)
-#   res.df <- as.data.frame(res)
-#   
-#   # Get normalized counts
-#   vst_transformed <- vst(dds)
-#   mat <- assay(vst_transformed)[rownames(res.df),]
-#   mat <- t(mat)  # Transpose matrix so genes are rows
-#   
-#   # Calculate the Spearman correlation matrix and p-values
-#   corr_results <- rcorr(as.matrix(mat), type = "spearman")
-#   correlation_matrix <- corr_results$r
-#   p_values_matrix <- corr_results$P
-#   
-#   # Convert the matrices to long format suitable for exporting
-#   correlation_df <- as.data.frame(as.table(correlation_matrix))
-#   names(correlation_df) <- c("RowGene", "ColGene", "Correlation")
-#   p_values_df <- as.data.frame(as.table(p_values_matrix))
-#   names(p_values_df) <- c("RowGene", "ColGene", "PValue")
-#   
-#   # Merge correlation and p-values data
-#   result_df <- merge(correlation_df, p_values_df, by = c("RowGene", "ColGene"))
-#   
-#   # Save to CSV
-#   write.csv(result_df, file = filepath, row.names = FALSE)
-#   
-#   return(paste("Correlations and p-values calculated and saved to", filepath))
-# }
+
 
 
 # Main plotting function
 add_significance_annotations <- function(merged_data, plot,padj_cut) {
+ 
   
   results <- merged_data %>%
     split(.$gene_id) %>%
@@ -145,18 +115,92 @@ return(pca_data)
 }
 
 
-
-volcano_data <- function(dds){
-  res <- results(dds)
-  res$neg_log10_padj <- -log10(res$padj)
-  # Categorize significant and non-significant genes
-  res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut, 
-                    "Significant", "Not Significant")
+gene_names_dds <- function(dds){
+  # Check for NA in symbols and filter them out
+  if ("symbol" %in% names(mcols(dds))) {
+    na_filter <- !is.na(mcols(dds)$symbol)
+    dds <- dds[na_filter,]  # Keep only rows without NA in 'symbol'
+    gene_symbols <- mcols(dds)$symbol
+  } else {
+    stop("Gene symbols not found in the dataset metadata.")
+  }
   
-  return(res)
+  makeUniqueRowNames <- function(names) {
+    counts <- table(names)
+    duplicates <- names[counts[names] > 1]
+    for (d in unique(duplicates)) {
+      idx <- which(names == d)
+      names[idx] <- paste(d, seq_along(idx), sep = "_")
+    }
+    names
+  }
+  
+  # Apply this function to gene_symbols
+  unique_gene_symbols <- makeUniqueRowNames(gene_symbols)
+  
+  # Apply the unique row names to the DDS object
+  if (length(unique_gene_symbols) == nrow(dds)) {
+    rownames(dds) <- unique_gene_symbols
+  } else {
+    stop("The number of unique gene symbols does not match the number of rows in the dataset.")
+  }
+  dds
+  
 }
 
 
 
 
+# Helper function to filter and order genes
+filter_and_order_by_padj <- function(results_data) {
+  if (!"padj" %in% names(results_data)) {
+    stop("The provided data does not have a 'padj' column.")
+  }
+  filtered_data <- results_data[!is.na(results_data$padj), ]
+  ordered_data <- filtered_data[order(filtered_data$log2FoldChange, filtered_data$padj), ]
+  return(ordered_data)
+}
+
+# Function to display selected genes
+get_display_genes <- function(all_genes, selected_genes) {
+  if (!is.null(selected_genes) && all(selected_genes %in% rownames(all_genes))) {
+    return(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
+  } else {
+    return(head(all_genes, 3))  # Or adjust the default count
+  }
+}
+
+
+
+
+calculate_correlations <- function(dds, filepath) {
+  
+  dds <- gene_names_dds(dds)
+  res <- results(dds)
+  res.df <- as.data.frame(res)
+  
+  # Get normalized counts
+  vst_transformed <- vst(dds)
+  mat <- assay(vst_transformed)[rownames(res.df),]
+  mat <- t(mat)  # Transpose matrix so genes are rows
+  
+  # Calculate the Spearman correlation matrix and p-values
+  corr_results <- rcorr(as.matrix(mat), type = "spearman")
+  correlation_matrix <- corr_results$r
+  p_values_matrix <- corr_results$P
+  
+  # Convert the matrices to long format suitable for exporting
+  correlation_df <- as.data.frame(as.table(correlation_matrix))
+  names(correlation_df) <- c("RowGene", "ColGene", "Correlation")
+  p_values_df <- as.data.frame(as.table(p_values_matrix))
+  names(p_values_df) <- c("RowGene", "ColGene", "PValue")
+  
+  # Merge correlation and p-values data
+  result_df <- merge(correlation_df, p_values_df, by = c("RowGene", "ColGene"))
+  
+  # Save to CSV
+  write.csv(result_df, file = filepath, row.names = FALSE)
+  
+  return(paste("Correlations and p-values calculated and saved to", filepath))
+}
 

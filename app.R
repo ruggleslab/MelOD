@@ -1,4 +1,3 @@
-
 # Source module functions
 source("modules/home_module.R", local = TRUE)
 source("modules/gide_module.R", local = TRUE)
@@ -11,36 +10,45 @@ source("templates/dashboard_template.R", local = TRUE)
 source("scripts/plot.R", local=TRUE)
 source("scripts/utils.R", local=TRUE)
 
+library(shiny)
+library(shinydashboard)
 
 # Define UI using the sourced template
 ui <- dashboardTemplate()
 
 # Define server logic
 server <- function(input, output, session) {
+  # Initialize reactive values for tracking loaded modules and the current tab
+  modules_loaded <- reactiveValues(home = FALSE, gide = FALSE, badal = FALSE, kunz = FALSE, fischer = FALSE, single=FALSE, proteomic=FALSE, genes=FALSE,about=FALSE)
   
-  modules_loaded <- reactiveValues(home = FALSE, gide = FALSE, badal = FALSE, kunz = FALSE, fischer = FALSE)
+  current_tab <- reactiveVal()
   
+  # Function to reset module-specific data
+  reset_module <- function(module_name) {
+    if (exists(paste0("reset_", module_name), envir = globalenv())) {
+      do.call(paste0("reset_", module_name), list())
+    }
+  }
+  
+  # Load or reset modules based on tab changes
   observeEvent(input$tabs, {
-    if (!modules_loaded$home && input$tabs == "home") {
-      home_server("home_module")
-      modules_loaded$home <- TRUE
+    new_tab <- input$tabs
+    
+    # Reset previous module if switching tabs
+    old_tab <- current_tab()
+    if (!is.null(old_tab) && old_tab != new_tab) {
+      reset_module(old_tab)
+      modules_loaded[[old_tab]] <- FALSE  # Mark as unloaded
     }
-    if (!modules_loaded$gide && input$tabs == "gide") {
-      gide_server("gide_module", session = session)
-      modules_loaded$gide <- TRUE
+    
+    # Load module if not already loaded
+    if (!modules_loaded[[new_tab]]) {
+      do.call(paste0(new_tab, "_server"), list(id = paste0(new_tab, "_module"), session = session))
+      modules_loaded[[new_tab]] <- TRUE
     }
-    if (!modules_loaded$badal && input$tabs == "badal") {
-      badal_server("badal_module", session = session)
-      modules_loaded$badal <- TRUE
-    }
-    if (!modules_loaded$kunz && input$tabs == "kunz") {
-      kunz_server("kunz_module", session = session)
-      modules_loaded$kunz <- TRUE
-    }
-    if (!modules_loaded$fischer && input$tabs == "fischer") {
-      fischer_server("fischer_module", session = session)
-      modules_loaded$fischer <- TRUE
-    }
+    
+    # Update the current active tab
+    current_tab(new_tab)
   }, ignoreInit = TRUE)
 }
 
