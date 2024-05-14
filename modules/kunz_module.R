@@ -24,7 +24,7 @@ source("./templates/template_test.R", local = TRUE)
 kunz_ui <- function(id) {
 
   fluidPage(
-    add_busy_spinner(spin = "fading-circle", color = "#6699CC"),
+    add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
     
     fluidRow(
     blurb_explanation_ui("kunz")),

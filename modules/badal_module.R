@@ -23,7 +23,7 @@ source("./templates/template_test.R", local = TRUE)
 
 badal_ui <- function(id) {
   fluidPage(
-    add_busy_spinner(spin = "fading-circle", color = "#6699CC"),
+    add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
     # Your existing UI elements
     fluidRow(
       blurb_explanation_ui("badal")
