@@ -7,8 +7,9 @@ source("modules/fischer_module.R", local = TRUE)
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
 # Source scripts files 
-source("scripts/plot.R", local=TRUE)
-source("scripts/utils.R", local=TRUE)
+source("scripts/utils.R", local = TRUE)
+source("scripts/plotting.R", local = TRUE)
+source("scripts/data_processing.R", local = TRUE)
 
 library(shiny)
 library(shinydashboard)

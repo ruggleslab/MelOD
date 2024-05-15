@@ -259,7 +259,7 @@ selection_server <- function(dds, clinical_data, id) {
 shared_server_utilities <- function(dds) {
 
   # Apply gene names preprocessing function to dds
- 
+  
   dds_processed <- gene_names_dds(dds)
   res <- results(dds_processed)
   filtered_genes <- filter_and_order_by_padj(res)
@@ -279,11 +279,11 @@ input_server <- function(dds, clinical_data, id) {
   moduleServer(id, function(input, output, session) {
     # Check the number of items in `dds` and adjust accordingly
  
-    
-
+   
     # Use the selected `dds` within a reactive context
     utilities <- reactive({
       dds <- global_selected_dds()
+ 
       shared_server_utilities(dds)
     })
     
@@ -313,10 +313,9 @@ pca_metadata_server <- function(dds ,clinical_data, id) {
   moduleServer(id, function(input, output, session) {
     
 
-    # Generate PCA plot with Plotly
     output$pca_plot <- renderPlotly({
-      req(pca_data_reactive())  # Ensure pca_data is available and only render the plot when it is
-      creation_pca(pca_data_reactive())  # Assuming creation_pca() generates a Plotly plot
+      req(pca_data_reactive())  
+      creation_pca(pca_data_reactive())  
     })
     
     # Download handler for PCA data
@@ -346,7 +345,6 @@ pca_metadata_server <- function(dds ,clinical_data, id) {
     })
       
     
-
    
     if (id == 'kunz'){
       
@@ -381,187 +379,80 @@ pca_metadata_server <- function(dds ,clinical_data, id) {
 
 
 
-    
-
-
-
-
-
-
-differential_gene_server <- function(dds ,clinical_data, id) {
+differential_gene_server <- function(dds, clinical_data, id) {
   moduleServer(id, function(input, output, session) {
-    
-    
+    #' Initialize Reactives
+    #' 
+    #' @description Initializes the reactive expressions for the module
     selected_dds <- reactive({ global_selected_dds() })
-  
-
-    # Use this reactive dds in the shared_server_utilities
-    utilities <- reactive({
-      shared_server_utilities(selected_dds())
+    utilities <- reactive({ shared_server_utilities(selected_dds()) })
+    filtered_res <- reactive({ utilities()$filtered_genes })
+    dds_processed <- reactive({ utilities()$dds })
+    display_genes <- reactive({ get_display_genes(filtered_res(), input$selected_gene) })
+    selected_genes_plotly <- reactiveVal(character(0))
+    
+    #' Plot Data with Reset Functionality
+    #' 
+    #' @description Generates the plot data and resets selected genes
+    #' @return A list containing the violin and volcano plots
+    plot_data <- eventReactive(c(input$update_plot,input$reset_selection ),{
+      selected_genes_plotly(character(0))  # Reset selected genes
+      generate_plot_data(dds_processed(), display_genes(), input$slider_padj, input$slider_log2)
     })
     
-    # Access filtered genes and dds for other operations
-    filtered_res <- reactive({
-      utilities()$filtered_genes
-    })
+    #' Render Plots
+    #' 
+    #' @description Renders the violin and volcano plots
+    render_plots(output, plot_data)
     
-    dds_processed <- reactive({
-      utilities()$dds
-    })
+    #' Download Handlers
+    #' 
+    #' @description Sets up the download handlers for exporting data
+    download_handlers(output, display_genes)
     
-    # Define reactive for display_genes using filtered_res
-    display_genes <- reactive({
-      get_display_genes(filtered_res(), input$selected_gene)
-    })
+    #' Event Observers
+    #' 
+    #' @description Sets up observers for plot interactions and gene selection
+    event_observers(input, session, display_genes, filtered_res, selected_genes_plotly)
     
-    selected_genes_plotly <- reactiveVal(vector("list", 0))
- 
-    
-    # Handle plot updates together with reset functionality
-    plot_data <- eventReactive(c(input$update_plot, input$update_plot), {
-      
-      
-      
-      list(
-        violin = create_boxplot(dds = dds_processed(), 
-                                display_genes = display_genes(), 
-                                padj_cut = input$slider_padj, log2_cut = input$slider_log2),
-        
-        volcano = create_volcanoplot(dds = dds_processed(), display_genes = display_genes(),
-                                     padj_cut = input$slider_padj, log2_cut = input$slider_log2)
-      )
-      
-      
-    })
-    
-  
-    # Rendering plots
-    output$violin_plot <- renderPlotly({ plot_data()$violin })
-    output$volcano_plot <- renderPlotly({ plot_data()$volcano })
-    
-    
-
-    output$violin_data <- downloadHandler(
-      filename = function() {
-        paste("violin", "_", Sys.Date(), '.csv', sep = '')
-      },
-      content = function(file) {
-        req(display_genes())  # Ensure data is available before attempting to write
-        write.csv(display_genes(), file)
-      }
-    )
-    
-    
-    # Alert popups for plot information
-    observeEvent(input$info_violin_plot, {
-      shinyalert(title = "Violin Plot Information", html = TRUE,
-                 text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')})
-    
-    
-  
-    
-    # Observers for updating selected genes
-    observeEvent(event_data("plotly_click"), {
-      updateSelectedGenes(event_data("plotly_click")$customdata)
-    })
-    
-    observeEvent(event_data("plotly_selected"), {
-      updateSelectedGenes(event_data("plotly_selected")$customdata)
-    })
-    
-    # Function to update selected genes
-    updateSelectedGenes <- function(new_genes) {
-      if (is.null(new_genes)) return
-      current_genes <- selected_genes_plotly() %||% character(0)
-      selected_genes_plotly(unique(c(current_genes, new_genes)))
-      updateSelectizeInput(session, "selected_gene", choices = isolate(rownames(filtered_res())), selected = selected_genes_plotly())
-    }
-    
-    
-    
-    filtered_res_table <- reactive({
-      res <- results(dds_processed())
-      res <- as.data.frame(res)
-      if (!is.null(input$selected_gene) && length(input$selected_gene) > 0)
-        res[rownames(res) %in% input$selected_gene, ]
-      else
-        res
-    })
-  
-    output$filtered_results <- DT::renderDataTable({
-      DT::datatable(filtered_res_table(), extensions = 'Buttons', options = list(dom = 'Blrtip', buttons = c('copy', 'csv', 'excel'), pageLength = 10, scrollX = TRUE))
-    })
+    #' Filtered Results Table
+    #' 
+    #' @description Renders the filtered results table
+    output$filtered_results <- render_filtered_results_table(dds_processed, input, selected_genes_plotly)
   })
 }
 
 
 
-
-
-
-
-heatmap_server <- function(dds ,clinical_data, id) {
+heatmap_server <- function(dds, clinical_data, id) {
   moduleServer(id, function(input, output, session) {
-
-    # Obtain the selected dds from a global reactive value
-    selected_dds <- reactive({
-      global_selected_dds()
-    })
+    #' Initialize Reactives
+    #' 
+    #' @description Initializes the reactive expressions for the module
+    selected_dds <- reactive({ global_selected_dds() })
+    utilities <- reactive({ shared_server_utilities(selected_dds()) })
+    filtered_res <- reactive({ utilities()$filtered_genes })
+    dds_processed <- reactive({ utilities()$dds })
     
-    # Use this reactive dds in the shared_server_utilities
-    utilities <- reactive({
-      shared_server_utilities(selected_dds())
-    })
-    
-    # Access filtered genes and dds for other operations
-    filtered_res <- reactive({
-      utilities()$filtered_genes
-    })
-    
-    dds_processed <- reactive({
-      utilities()$dds
-    })
-    
-    
-
-    #################### PLOT DATA FUNCTION ###################
-    
-    # Event reactive for updating the plots only when the button is clicked
+    #' Plot Data with Reset Functionality
+    #' 
+    #' @description Generates the heatmap plot data and resets selected genes
+    #' @return A list containing the heatmap plot
     plot_data <- eventReactive(c(input$update_plot, input$reset_selection), {
-      
-
-      gene <- isolate(input$selected_gene)
-      padj_cut <-isolate(input$slider_padj)
-      log2_cut <-isolate(input$slider_log2)
-      number <-isolate(input$number)
-      
-      list(
-        heatmap = create_heatmap(dds=dds_processed(),padj_cut=padj_cut,log2_cut=log2_cut,number=number, gene=gene))
+      generate_heatmap_plot_data(dds_processed(), isolate(input$slider_padj), isolate(input$slider_log2), isolate(input$number), isolate(input$selected_gene))
     })
     
-    #################### HEATMAP PLOT ###################
+    #' Render Plots
+    #' 
+    #' @description Renders the heatmap plot
+    render_heatmap_plots(output, plot_data)
     
-    output$heatmap_plot <- renderPlotly({
-      plot_data()$heatmap
-    })
-    
-    observeEvent(input$info_heatmap_plot, {
-      shinyalert(title = "Volcano Plot Information", html = TRUE,  # Enable HTML content
-                 text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">'
-      )})
-    
-    
-
-
-    
-    
-})}
-    
-
-
-
-
-
+    #' Event Observers
+    #' 
+    #' @description Sets up observers for plot interactions
+    event_observers_heatmap(input)
+  })
+}
 
 
 

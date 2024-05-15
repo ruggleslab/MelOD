@@ -32,8 +32,8 @@ gide_server <- function(id, session) {
   clinical_data <- list(read.csv(file.path("./data/gide/mono", "Gide_demographics_monotherapy.csv"), sep=','), read.csv(file.path("./data/gide/combo", "Gide_demographics_combotherapy.csv"), sep=','))
   selection_server(dds,clinical_data,"gide")
   selection_list_server(dds,clinical_data,"gide")
-  input_server(dds = dds,clinical_data = clinical_data, "gide")
-  pca_metadata_server(dds = dds,clinical_data = clinical_data, "gide")
+  input_server(dds ,clinical_data = clinical_data, "gide")
+  pca_metadata_server(dds,clinical_data = clinical_data, "gide")
   differential_gene_server(dds = dds,clinical_data = clinical_data, "gide")
   heatmap_server(dds = dds,clinical_data = clinical_data, "gide")
   
