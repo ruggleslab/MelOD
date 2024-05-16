@@ -1,12 +1,11 @@
-source("global.R", local = TRUE)
-
-
-
-
-# Main plotting function
-add_significance_annotations <- function(merged_data, plot,padj_cut) {
- 
-  
+#' Add Significance Annotations
+#' 
+#' @description Adds significance annotations to a plot
+#' @param merged_data Data containing gene expressions and conditions
+#' @param plot The plot object to which annotations will be added
+#' @param padj_cut Adjusted p-value cutoff
+#' @return The plot with added significance annotations
+add_significance_annotations <- function(merged_data, plot, padj_cut) {
   results <- merged_data %>%
     split(.$gene_id) %>%
     lapply(function(df) {
@@ -14,7 +13,7 @@ add_significance_annotations <- function(merged_data, plot,padj_cut) {
         test <- wilcox.test(expression ~ condition, data = df)
         p.value <- test$p.value
       } else {
-        p.value <- NA  # More than two conditions or other issues
+        p.value <- NA
       }
       return(p.value)
     })
@@ -24,8 +23,6 @@ add_significance_annotations <- function(merged_data, plot,padj_cut) {
     p_value = unlist(results)
   )
   
-  
-  # Function to calculate midpoints between groups
   calculate_midpoints <- function(data) {
     unique_genes <- unique(data$gene_id)
     midpoints <- setNames(numeric(length(unique_genes)), unique_genes)
@@ -33,28 +30,26 @@ add_significance_annotations <- function(merged_data, plot,padj_cut) {
     for (gene in unique_genes) {
       conditions <- unique(data$condition[data$gene_id == gene])
       if (length(conditions) == 2) {
-        
-        midpoints[gene] <- mean(c(which(unique_genes == gene) - 0.2, which(unique_genes == gene) + 0.2)-1)
+        midpoints[gene] <- mean(c(which(unique_genes == gene) - 0.2, which(unique_genes == gene) + 0.2) - 1)
       } else {
-        midpoints[gene] <- NA  # Handle other cases or skip
+        midpoints[gene] <- NA
       }
     }
     return(midpoints)
   }
   
-  # Calculate midpoints based on your merged_data
   midpoints <- calculate_midpoints(merged_data)
   shape_list <- list()
   annotation_list <- list()
-  # Assuming 'plot' is already initialized and setup as you described
+  
   for (i in 1:nrow(p_values)) {
     if (!is.na(p_values$p_value[i]) && !is.na(midpoints[p_values$gene_id[i]])) {
       text_value <- if (p_values$p_value[i] < padj_cut) {
         paste("p =", signif(p_values$p_value[i], 3))
       } else {
-        "N.S."  # Not significant
+        "N.S."
       }
-      annotation_list[[length(annotation_list)+1]] <-  list(
+      annotation_list[[length(annotation_list) + 1]] <- list(
         x = midpoints[p_values$gene_id[i]],
         y = 1.1,
         text = text_value,
@@ -62,7 +57,7 @@ add_significance_annotations <- function(merged_data, plot,padj_cut) {
         showarrow = FALSE,
         font = list(family = "Arial", size = 10)
       )
-            
+      
       shape_list[[length(shape_list) + 1]] <- list(
         type = "line",
         line = list(color = "black", width = 1),
@@ -90,9 +85,9 @@ add_significance_annotations <- function(merged_data, plot,padj_cut) {
         y1 = 0.99,
         xref = "x", yref = "paper"
       )
-        
     }
   }
+  
   plot <- plot %>%
     layout(
       annotations = annotation_list,
@@ -103,57 +98,11 @@ add_significance_annotations <- function(merged_data, plot,padj_cut) {
 }
 
 
-
-#################### PCA DATA ###################
-
-
-pca_data <- function(dds){
-vsdata <- vst(dds, blind=FALSE)
-# Create PCA plot using Plotly
-pca_data <- plotPCA(vsdata, intgroup = "condition", returnData = TRUE)
-return(pca_data)
-}
-
-
-gene_names_dds <- function(dds){
-  
-  # Check for NA in symbols and filter them out
-  if ("symbol" %in% names(mcols(dds))) {
-    na_filter <- !is.na(mcols(dds)$symbol)
-    dds <- dds[na_filter,]  # Keep only rows without NA in 'symbol'
-    gene_symbols <- mcols(dds)$symbol
-  } else {
-    stop("Gene symbols not found in the dataset metadata.")
-  }
-  
-  makeUniqueRowNames <- function(names) {
-    counts <- table(names)
-    duplicates <- names[counts[names] > 1]
-    for (d in unique(duplicates)) {
-      idx <- which(names == d)
-      names[idx] <- paste(d, seq_along(idx), sep = "_")
-    }
-    names
-  }
-  
-  # Apply this function to gene_symbols
-  unique_gene_symbols <- makeUniqueRowNames(gene_symbols)
-  
-  # Apply the unique row names to the DDS object
-  if (length(unique_gene_symbols) == nrow(dds)) {
-    rownames(dds) <- unique_gene_symbols
-  } else {
-    stop("The number of unique gene symbols does not match the number of rows in the dataset.")
-  }
-
-  dds
-
-}
-
-
-
-
-# Helper function to filter and order genes
+#' Filter and Order by padj
+#' 
+#' @description Filters and orders genes by adjusted p-value
+#' @param results_data Data containing results of DESeq2 analysis
+#' @return Filtered and ordered data
 filter_and_order_by_padj <- function(results_data) {
   if (!"padj" %in% names(results_data)) {
     stop("The provided data does not have a 'padj' column.")
@@ -163,56 +112,99 @@ filter_and_order_by_padj <- function(results_data) {
   return(ordered_data)
 }
 
-
-# Function to display selected genes
+#' Get Display Genes
+#' 
+#' @description Retrieves the genes to display based on the selected genes
+#' @param all_genes All available genes
+#' @param selected_genes Selected genes to display
+#' @return A dataframe of genes to display
 get_display_genes <- function(all_genes, selected_genes) {
   if (!is.null(selected_genes) && all(selected_genes %in% rownames(all_genes))) {
     return(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
   } else {
-    return(head(all_genes, 3))  # Or adjust the default count
+    return(head(all_genes, 3))
   }
 }
 
 
 
+#' Global Selected DDS
+#' 
+#' @description Creates a reactive value to store the globally selected DDS
+global_selected_dds <- reactiveVal()
 
-calculate_correlations <- function(dds, filepath) {
+#' Global Selected Clinical Data
+#' 
+#' @description Creates a reactive value to store the globally selected clinical data
+global_selected_clinical_data <- reactiveVal()
+
+#' Shared Server Utilities
+#' 
+#' @description Provides shared utilities for server modules
+#' @param dds DESeq2 dataset
+#' @return A list of utilities including processed DDS and filtered genes
+shared_server_utilities <- function(dds) {
+  dds_processed <- gene_names_dds(dds)
+  res <- results(dds_processed)
+  filtered_genes <- filter_and_order_by_padj(res)
   
-  dds <- gene_names_dds(dds)
-  res <- results(dds)
-  res.df <- as.data.frame(res)
-  
-  # Get normalized counts
-  vst_transformed <- vst(dds)
-  mat <- assay(vst_transformed)[rownames(res.df),]
-  mat <- t(mat)  # Transpose matrix so genes are rows
-  
-  # Calculate the Spearman correlation matrix and p-values
-  corr_results <- rcorr(as.matrix(mat), type = "spearman")
-  correlation_matrix <- corr_results$r
-  p_values_matrix <- corr_results$P
-  
-  # Convert the matrices to long format suitable for exporting
-  correlation_df <- as.data.frame(as.table(correlation_matrix))
-  names(correlation_df) <- c("RowGene", "ColGene", "Correlation")
-  p_values_df <- as.data.frame(as.table(p_values_matrix))
-  names(p_values_df) <- c("RowGene", "ColGene", "PValue")
-  
-  # Merge correlation and p-values data
-  result_df <- merge(correlation_df, p_values_df, by = c("RowGene", "ColGene"))
-  
-  # Save to CSV
-  write.csv(result_df, file = filepath, row.names = FALSE)
-  
-  return(paste("Correlations and p-values calculated and saved to", filepath))
+  list(
+    dds = dds_processed,
+    filtered_genes = filtered_genes,
+    display_genes = function(selected_genes) get_display_genes(filtered_genes, selected_genes)
+  )
 }
 
 
 
+#' Generate PCA Data
+#' 
+#' @description Generates the PCA data from the selected DESeq2 dataset
+#' @return PCA data
+generate_pca_data <- function() {
+  dds <- global_selected_dds()
+  pca_data(dds)
+}
 
+#' Render PCA Plots
+#' 
+#' @description Renders the PCA plot
+#' @param output Shiny output object
+#' @param pca_data_reactive Reactive expression containing the PCA data
+render_pca_plots <- function(output, pca_data_reactive) {
+  output$pca_plot <- renderPlotly({
+    req(pca_data_reactive())
+    creation_pca(pca_data_reactive())
+  })
+}
 
+#' Download PCA Data
+#' 
+#' @description Sets up the download handler for PCA data
+#' @param output Shiny output object
+#' @param pca_data_reactive Reactive expression containing the PCA data
+download_pca_data <- function(output, pca_data_reactive) {
+  output$pca_data <- downloadHandler(
+    filename = function() {
+      paste("pca", "_", Sys.Date(), '.csv', sep = '')
+    },
+    content = function(file) {
+      req(pca_data_reactive())
+      write.csv(pca_data_reactive(), file)
+    }
+  )
+}
 
-
+#' Event Observers for PCA
+#' 
+#' @description Sets up observers for PCA plot interactions
+#' @param input Shiny input object
+event_observers_pca <- function(input) {
+  observeEvent(input$info_pca_plot, {
+    shinyalert(title = "PCA Plot Information", html = TRUE,
+               text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
+  })
+}
 
 
 
@@ -325,12 +317,6 @@ render_filtered_results_table <- function(dds_processed, input, selected_genes_p
     ))
   })
 }
-
-
-
-
-
-
 
 
 

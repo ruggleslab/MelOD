@@ -3,18 +3,15 @@ source("global.R", local = TRUE)
 
 
 
+#' Create Correlation plot
+#' 
+#' @description Creates a correlation plot for the given data (spearman)
+#' @param correlation_data Data for correlation plot
+#' @param gene Selected gene name to filter the data 
+#' @return A plotly object representing the correlation plot
+plot_correlation <- function(correlation_data, gene) {
 
-
-
-
-plot_correlation <- function(filepath, gene) {
-  # Load the data
-  
-  filepath <- (file.path("./data/kunz/correlation.csv"))
-  
-  correlation_data <- read.csv(filepath)
-  
-  # Filter for the specific gene
+    # Filter for the specific gene
   gene_data <- subset(correlation_data, RowGene == gene | ColGene == gene)
   
   # Manipulate data for plotting
@@ -38,9 +35,14 @@ plot_correlation <- function(filepath, gene) {
 
 
 
-creation_pca <- function(pca_data) {
 
-  # Extract unique conditions to include in the plot title
+#' Create PCA Plot
+#' 
+#' @description Creates a PCA plot for the given data
+#' @param pca_data Data for PCA plot
+#' @return A plotly object representing the PCA plot
+creation_pca <- function(pca_data) {
+  
   unique_conditions <- unique(pca_data$condition)
   condition_title <- paste("PCA plot of", paste(unique_conditions, collapse=" vs "))
   text_labels <- paste("Name:", pca_data$name, ", Condition:", pca_data$condition)
@@ -63,35 +65,41 @@ creation_pca <- function(pca_data) {
       margin = list(t = 100)
     )
   
-return(pca_plot)
+  return(pca_plot)
   
 }
 
 
-
-
-plot_mortality <- function(clinical_data){
+#' Plot Gender
+#' 
+#' @description Plots the gender data
+#' @param clinical_data Clinical data for the plot
+#' @return A plotly object representing the gender plot
+plot_gender <- function(clinical_data) {
+  
+  status_summary_gender <- table(clinical_data$`Gender`)
+  status_df_gender <- as.data.frame(status_summary_gender)
   
   
-    status_summary <- table(clinical_data$`Patient Status`)
-    status_df <- as.data.frame(status_summary)
-    names(status_df) <- c("Status", "Count")
-    
-    plot <- plot_ly(status_df, labels = ~Status, values = ~Count, type = 'pie',
-            textposition = 'inside',
-            textinfo = 'label+percent',
-            insidetextorientation = 'radial',showlegend = FALSE) %>%
-      layout(title = 'Patient Survival Status',
-             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             margin = list(t = 100))
-    
+  names(status_df_gender) <- c("Status", "Count")
+  
+  
+  plot <- plot_ly(status_df_gender, labels = ~Status, values = ~Count, type = 'pie',
+                  textposition = 'inside',
+                  textinfo = 'label+percent',
+                  insidetextorientation = 'radial',showlegend = FALSE) %>%
+    layout(title = 'Patient Gender Status',
+           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+           margin = list(t = 100))
 }
 
-
-
-plot_mortality_curve <- function(clinical_data){
-  
+#' Plot Mortality Curve
+#' 
+#' @description Plots the mortality curve
+#' @param clinical_data Clinical data for the plot
+#' @return A plotly object representing the mortality curve
+plot_mortality_curve <- function(clinical_data) {
   clinical_data$Status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
   
   # Create a survival object
@@ -120,26 +128,7 @@ plot_mortality_curve <- function(clinical_data){
 
 
 
-plot_gender <- function(clinical_data){
-  
-  
-  status_summary_gender <- table(clinical_data$`Gender`)
-  status_df_gender <- as.data.frame(status_summary_gender)
-  
-  
-  names(status_df_gender) <- c("Status", "Count")
-  
-  
-  plot <- plot_ly(status_df_gender, labels = ~Status, values = ~Count, type = 'pie',
-          textposition = 'inside',
-          textinfo = 'label+percent',
-          insidetextorientation = 'radial',showlegend = FALSE) %>%
-    layout(title = 'Patient Gender Status',
-           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-           margin = list(t = 100))
-  
-}
+
 
 
 
