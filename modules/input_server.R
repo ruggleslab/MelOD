@@ -17,7 +17,7 @@ input_server <- function(dds, clinical_data, id) {
     # Observe for changes in the filtered genes and update the select input
     observe({
       filtered_res <- utilities()$filtered_genes
-      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res), server = TRUE)
+      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res), server = TRUE, selected = NULL)
     })
     
     # Create a reactive expression for displaying genes

@@ -6,18 +6,22 @@
 kunz_ui <- function(id) {
   fluidPage(
     add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
-    
-    fluidRow(blurb_explanation_ui("kunz")),
-    
     fluidRow(
-      column(5, input_ui("kunz")),
-      column(7, blurb_study_ui("kunz"))
-    ),
-    
-    pca_metadata_ui("kunz"),
-    differential_gene_ui("kunz"),
-    deseq2_table_ui("kunz"),
-    heatmap_ui("kunz")
+      blurb_study_ui("kunz")),
+    fluidRow(
+      column(6, blurb_data_ui("kunz")),
+      column(6, blurb_comparison_ui("kunz"))),
+    fluidRow(
+      column(6,pca_ui("kunz")),
+      column(6,metadata_ui("kunz"))),
+    fluidRow(
+      column(6,input_ui("kunz")),
+      column(6,volcano_ui("kunz"))),
+    fluidRow(
+      column(6,deseq2_table_ui("kunz")),
+      column(6,violin_ui("kunz"))),
+    fluidRow(
+      heatmap_ui("kunz"))
   )
 }
 

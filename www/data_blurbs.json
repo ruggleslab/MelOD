@@ -16,7 +16,9 @@
         "paper_link": "https://pubmed.ncbi.nlm.nih.gov/30753825/",
         "doi": "10.1016/j.ccell.2019.01.003",
         "data_link": "https://www.ebi.ac.uk/ena/browser/view/PRJEB23709",
-        "data_explanation": "73 total samples, 41 anti-PD-1 monotherapy (20 Responders, 21 Non Responders), 32 combined anti-PD-1 and anti-CTLA-4 (18 Responders, 14 Non Responders). The ground truth for the comparison was Responder vs. Non Responder."
+        "data_explanation": "73 total samples, 41 anti-PD-1 monotherapy (20 Responders, 21 Non Responders), 32 combined anti-PD-1 and anti-CTLA-4 (18 Responders, 14 Non Responders).",
+        "data_comparison": " The ground truth for the comparison was Responder vs. Non Responder."
+
     },
 
     "badal_info" : {
@@ -26,7 +28,8 @@
         "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5414564/",
         "doi": "10.1172/jci.insight.92102",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98394",
-        "data_explanation": "78 total samples, 27 benign, 51 melanoma. The ground truth for the comparison was Melanoma vs. Benign."
+        "data_explanation": "78 total samples, 27 benign, 51 melanoma.",
+        "data_comparison": "The ground truth for the comparison was Melanoma vs. Benign."
     },
 
     "kunz_info" : {
@@ -36,7 +39,9 @@
         "paper_link": "https://www.nature.com/articles/s41388-018-0385-y",
         "doi": "10.1038/s41388-018-0385-y",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE112509",
-        "data_explanation": "80 total samples, 23 melanocytic nevi, 57 primary melanomas. The ground truth for the comparison was Naevi vs. Melanoma."
+        "data_explanation": "80 total samples, 23 melanocytic nevi, 57 primary melanomas.",
+        "data_comparison": "The ground truth for the comparison was Naevi vs. Melanoma."
+
     },
 
     "fischer_info" : {
@@ -46,6 +51,8 @@
         "paper_link": "https://aacrjournals.org/cancerdiscovery/article/9/5/628/42007/Molecular-Profiling-Reveals-Unique-Immune-and",
         "doi": "10.1158/2159-8290.CD-18-1489",
         "data_link": "https://ega-archive.org/datasets/EGAD00001005046",
-        "data_explanation": "135 total samples, 86 melanoma brain metastases, 49 extracranial metastases (from various locations). The ground truth for the comparison was Brain Metastases vs. Extracranial Metastases. Samples were collected from 80 patients with some patients contributing multiple samples from different locations (both brain and extracranial)."
+        "data_explanation": "135 total samples, 86 melanoma brain metastases, 49 extracranial metastases (from various locations). Samples were collected from 80 patients with some patients contributing multiple samples from different locations (both brain and extracranial).",
+        "data_comparison": " The ground truth for the comparison was Brain Metastases vs. Extracranial Metastases."
+
     }
 }

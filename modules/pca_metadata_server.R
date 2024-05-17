@@ -3,7 +3,7 @@ pca_metadata_server <- function(dds, clinical_data, id) {
     #' Reactive expression for PCA data
     #' 
     #' @description Generates the PCA data from the selected DESeq2 dataset
-    #' @return PCA data
+    #' @return PCA data (dds)
     pca_data_reactive <- reactive({
       generate_pca_data()
     })
@@ -11,7 +11,12 @@ pca_metadata_server <- function(dds, clinical_data, id) {
     #' Render PCA Plots
     #' 
     #' @description Renders the PCA plot
-    render_pca_plots(output, pca_data_reactive)
+    render_pca_plots(input, output, pca_data_reactive)
+    
+    #' Render Variance Plots
+    #' 
+    #' @description Renders the Variance plot
+    render_variance_plots(output, pca_data_reactive)
     
     #' Download PCA Data
     #' 

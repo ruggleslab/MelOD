@@ -10,7 +10,7 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
     split(.$gene_id) %>%
     lapply(function(df) {
       if (nlevels(factor(df$condition)) == 2) {
-        test <- wilcox.test(expression ~ condition, data = df)
+        test <- t.test(expression ~ condition, data = df)
         p.value <- test$p.value
       } else {
         p.value <- NA
@@ -23,18 +23,17 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
     p_value = unlist(results)
   )
   
+  # Calculate midpoints for annotations
   calculate_midpoints <- function(data) {
     unique_genes <- unique(data$gene_id)
-    midpoints <- setNames(numeric(length(unique_genes)), unique_genes)
-    
-    for (gene in unique_genes) {
+    midpoints <- sapply(unique_genes, function(gene) {
       conditions <- unique(data$condition[data$gene_id == gene])
       if (length(conditions) == 2) {
-        midpoints[gene] <- mean(c(which(unique_genes == gene) - 0.2, which(unique_genes == gene) + 0.2) - 1)
+        return(mean(c(which(unique_genes == gene) - 0.2, which(unique_genes == gene) + 0.2) - 1))
       } else {
-        midpoints[gene] <- NA
+        return(NA)
       }
-    }
+    })
     return(midpoints)
   }
   
@@ -42,15 +41,18 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
   shape_list <- list()
   annotation_list <- list()
   
-  for (i in 1:nrow(p_values)) {
-    if (!is.na(p_values$p_value[i]) && !is.na(midpoints[p_values$gene_id[i]])) {
-      text_value <- if (p_values$p_value[i] < padj_cut) {
-        paste("p =", signif(p_values$p_value[i], 3))
+  # Add annotations and shapes for significant p-values
+  for (i in seq_along(p_values$gene_id)) {
+    gene_id <- p_values$gene_id[i]
+    p_value <- p_values$p_value[i]
+    if (!is.na(p_value) && !is.na(midpoints[gene_id])) {
+      text_value <- if (p_value < padj_cut) {
+        paste("p =", signif(p_value, 3))
       } else {
         "N.S."
       }
       annotation_list[[length(annotation_list) + 1]] <- list(
-        x = midpoints[p_values$gene_id[i]],
+        x = midpoints[gene_id],
         y = 1.1,
         text = text_value,
         xref = "x", yref = "paper",
@@ -61,27 +63,27 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
       shape_list[[length(shape_list) + 1]] <- list(
         type = "line",
         line = list(color = "black", width = 1),
-        x0 = midpoints[p_values$gene_id[i]] - 0.2,
+        x0 = midpoints[gene_id] - 0.2,
         y0 = 1,
-        x1 = midpoints[p_values$gene_id[i]] + 0.2,
+        x1 = midpoints[gene_id] + 0.2,
         y1 = 1,
         xref = "x", yref = "paper"
       )
       shape_list[[length(shape_list) + 1]] <- list(
         type = "line",
         line = list(color = "black", width = 1),
-        x0 = midpoints[p_values$gene_id[i]] - 0.2,
+        x0 = midpoints[gene_id] - 0.2,
         y0 = 1,
-        x1 = midpoints[p_values$gene_id[i]] - 0.2,
+        x1 = midpoints[gene_id] - 0.2,
         y1 = 0.99,
         xref = "x", yref = "paper"
       )
       shape_list[[length(shape_list) + 1]] <- list(
         type = "line",
         line = list(color = "black", width = 1),
-        x0 = midpoints[p_values$gene_id[i]] + 0.2,
+        x0 = midpoints[gene_id] + 0.2,
         y0 = 1,
-        x1 = midpoints[p_values$gene_id[i]] + 0.2,
+        x1 = midpoints[gene_id] + 0.2,
         y1 = 0.99,
         xref = "x", yref = "paper"
       )
@@ -159,8 +161,8 @@ shared_server_utilities <- function(dds) {
 
 #' Generate PCA Data
 #' 
-#' @description Generates the PCA data from the selected DESeq2 dataset
-#' @return PCA data
+#' @description Generates the PCA data from pca_data function(data_processing.R) from the selected DESeq2 dataset
+#' @return PCA data (size factor and vsdata)
 generate_pca_data <- function() {
   dds <- global_selected_dds()
   pca_data(dds)
@@ -171,12 +173,29 @@ generate_pca_data <- function() {
 #' @description Renders the PCA plot
 #' @param output Shiny output object
 #' @param pca_data_reactive Reactive expression containing the PCA data
-render_pca_plots <- function(output, pca_data_reactive) {
+render_pca_plots <- function(input, output, pca_data_reactive) {
   output$pca_plot <- renderPlotly({
     req(pca_data_reactive())
-    creation_pca(pca_data_reactive())
+    pca_data <- pca_data_reactive()$pca_data
+    size_by = input$size_by
+    color_by = input$color_by
+    creation_pca(pca_data, size_by = size_by, color_by = color_by)
   })
 }
+
+#' Render PCA Plots
+#' 
+#' @description Renders the PCA plot
+#' @param output Shiny output object
+#' @param pca_data_reactive Reactive expression containing the PCA data
+render_variance_plots <- function(output, pca_data_reactive) {
+  output$variance_plot <- renderPlotly({
+    req(pca_data_reactive())
+    vsa_data <- pca_data_reactive()$vsdata
+    variance_explained_plot(vsa_data)
+  })
+}
+
 
 #' Download PCA Data
 #' 
@@ -190,10 +209,12 @@ download_pca_data <- function(output, pca_data_reactive) {
     },
     content = function(file) {
       req(pca_data_reactive())
-      write.csv(pca_data_reactive(), file)
+      pca_data <- pca_data_reactive()$pca_data
+      write.csv(pca_data, file)
     }
   )
 }
+
 
 #' Event Observers for PCA
 #' 
@@ -202,11 +223,10 @@ download_pca_data <- function(output, pca_data_reactive) {
 event_observers_pca <- function(input) {
   observeEvent(input$info_pca_plot, {
     shinyalert(title = "PCA Plot Information", html = TRUE,
-               text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
+               text = 'What Size Factors Mean:
+Size factors are used in DESeq2 to normalize the count data, accounting for differences in sequencing depth and other technical biases between samples. They ensure that the comparison of gene expression levels across samples is fair and not influenced by these technical variations.')
   })
 }
-
-
 
 
 
@@ -354,4 +374,3 @@ event_observers_heatmap <- function(input) {
                text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
   })
 }
-

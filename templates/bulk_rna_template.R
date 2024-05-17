@@ -3,20 +3,7 @@ source("global.R", local = TRUE)
 blurbs <- "./www/data_blurbs.json" 
 blurbs_info <- fromJSON(blurbs)
 
-#' Blurb Explanation UI
-#' 
-#' @description Creates the UI component for explaining the data used in the analysis
-#' @param id Module ID
-#' @return A Shiny UI element
-blurb_explanation_ui <- function(id) {
-  Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
-  box(
-    title = "Explanation of data used in analysis:", status = "info",
-    collapsible = TRUE,
-    solidHeader = TRUE, width = 12,
-    tags$p(Id_info$data_explanation)
-  )
-}
+
 
 #' Blurb Study UI
 #' 
@@ -36,45 +23,78 @@ blurb_study_ui <- function(id) {
   )
 }
 
-
-#' Gide Selector UI
+#' Blurb Data UI
 #' 
-#' @description Creates the UI component for selecting comparisons in the Gide study
+#' @description Creates the UI component for explaining the data used in the analysis
 #' @param id Module ID
 #' @return A Shiny UI element
-gide_selector_ui <- function(id) {
-  ns <- NS(id)
+blurb_data_ui <- function(id) {
+  Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
   box(
-    background = 'orange', width = 12,
-    radioButtons(
-      label = "Select comparison",
-      inputId = ns("selection"),
-      choices = c("Combotherapy", "Monotherapy"),
-      selected = "Combotherapy",
-      inline = TRUE
-    ),
-    uiOutput(ns("debug_selection"))
+    title = "Data used in analysis", status = "info",
+    collapsible = TRUE,
+    solidHeader = TRUE, width = 12,
+    tags$p(Id_info$data_explanation)
   )
 }
 
-#' Badal Selector UI
+#' Blurb Comparison UI
 #' 
-#' @description Creates the UI component for selecting comparisons in the Badal study
+#' @description Creates the UI component for explaining the comparison done in the analysis
 #' @param id Module ID
 #' @return A Shiny UI element
-badal_selector_ui <- function(id) {
-  ns <- NS(id)
+blurb_comparison_ui <- function(id) {
+  Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
   box(
-    background = 'orange', width = 12,
-    radioButtons(
-      label = "Select comparison",
-      inputId = ns("selection_badal"),
-      choices = c("Gene", "Tumor Stage"),
-      selected = "Gene",
-      inline = TRUE
-    ),
-    uiOutput(ns("debug_selection"))
+    status = "warning",
+    background = "orange", width = 12,
+    tags$p(Id_info$data_comparison)
   )
+}
+
+#' PCA UI
+#' 
+#' @description Creates the UI component for displaying PCA plot
+#' @param id Module ID
+#' @return A Shiny UI element (box)
+pca_ui <- function(id) {
+  ns <- NS(id)
+    tabBox(
+      title = HTML(paste("PCA", actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('pca_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
+      width = 12,
+      tabPanel("PCA",
+      plotlyOutput(ns(id = 'pca_plot')),
+      selectInput(
+        inputId = ns("size_by"),
+        label = "Size by:",
+        choices = c("Constant" = "constant", "Size Factor" = "size_factor"),
+        selected = "constant"
+      ),
+      selectInput(
+        inputId = ns("color_by"),
+        label = "Color by:",
+        choices = c("Condition" = "condition", "Sample" = "sample"),
+        selected = "condition"
+        )),
+      tabPanel('Variance',plotlyOutput(ns(id = 'variance_plot')))
+    )
+}
+
+
+#' Metadata UI
+#' 
+#' @description Creates the UI component for displaying metadata plots
+#' @param id Module ID
+#' @return A Shiny UI element (tab box)
+metadata_ui <- function(id){
+  ns <- NS(id)
+  tabBox(
+    title = "Metadata",
+    id = "tabset1",
+    width = 12,
+    tabPanel("Mortality", plotlyOutput(ns("mortality"))),
+    tabPanel("Gender", plotlyOutput(ns("gender_data")))
+    )
 }
 
 
@@ -98,51 +118,46 @@ input_ui <- function(id) {
   )
 }
 
-#' PCA Metadata UI
+#' Volcano UI
 #' 
-#' @description Creates the UI component for displaying PCA plots and metadata
+#' @description Creates the UI component for displaying volcano plot
 #' @param id Module ID
 #' @return A Shiny UI element
-pca_metadata_ui <- function(id) {
+volcano_ui <- function(id) {
   ns <- NS(id)
   fluidRow(
     box(
-      title = HTML(paste("PCA", actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('pca_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
-      status = "primary",
-      width = 8,
-      solidHeader = TRUE,
-      collapsible = TRUE,
-      plotlyOutput(ns(id = 'pca_plot'))
-    ),
-    tabBox(
-      title = "Metadata",
-      id = "tabset1",
-      width = 4,
-      tabPanel("Mortality", plotlyOutput(ns("mortality"))),
-      tabPanel("Gender", plotlyOutput(ns("gender_data")))
-    )
-  )
-}
-
-#' Differential Gene UI
-#' 
-#' @description Creates the UI component for displaying differential gene expression plots
-#' @param id Module ID
-#' @return A Shiny UI element
-differential_gene_ui <- function(id) {
-  ns <- NS(id)
-  fluidRow(
-    box(
-      title = HTML(paste("Differential gene expression", actionLink(ns("info_violin_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('violin_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Volcano plot", actionLink(ns("info_volcano_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('volcano_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
       status = "primary",
       width = 12,
       solidHeader = TRUE,
       collapsible = TRUE,
-      column(6, plotlyOutput(ns("volcano_plot"))),
-      column(6, plotlyOutput(ns(id = 'violin_plot')))
+       plotlyOutput(ns("volcano_plot")),
     )
   )
 }
+
+
+#' Violin UI
+#' 
+#' @description Creates the UI component for displaying violin plot
+#' @param id Module ID
+#' @return A Shiny UI element
+violin_ui <- function(id) {
+  ns <- NS(id)
+  fluidRow(
+    box(
+      title = HTML(paste("Violin plot", actionLink(ns("info_violin_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('violin_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
+      status = "primary",
+      width = 12,
+      solidHeader = TRUE,
+      collapsible = TRUE,
+      plotlyOutput(ns(id = 'violin_plot'))
+    )
+  )
+}
+
+
 
 #' Heatmap UI
 #' 
@@ -151,15 +166,14 @@ differential_gene_ui <- function(id) {
 #' @return A Shiny UI element
 heatmap_ui <- function(id) {
   ns <- NS(id)
-  fluidRow(
-    box(
+  box(
       title = HTML(paste("Heatmap", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('heatmap_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
       status = "primary",
       width = 12,
       solidHeader = TRUE,
       collapsible = TRUE,
       plotlyOutput(ns("heatmap_plot"))
-    )
+    
   )
 }
 

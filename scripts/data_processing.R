@@ -2,12 +2,18 @@
 #' 
 #' @description Processes DESeq2 dataset for PCA analysis
 #' @param dds DESeq2 dataset
-#' @return PCA data
+#' @return A list containing PCA data and the variance stabilized transformed data
 pca_data <- function(dds) {
   vsdata <- vst(dds, blind = FALSE)
   pca_data <- plotPCA(vsdata, intgroup = "condition", returnData = TRUE)
-  return(pca_data)
+  
+  # Extract size factors and add them to the PCA data
+  size_factors <- sizeFactors(dds)
+  pca_data$size_factor <- size_factors[rownames(pca_data)]
+  
+  return(list(pca_data = pca_data, vsdata = vsdata))
 }
+
 
 #' Gene Names DDS
 #' 

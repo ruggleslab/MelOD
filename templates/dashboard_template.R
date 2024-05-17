@@ -30,15 +30,15 @@ dashboardTemplate <- function() {
         tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
       ),
       tabItems(
-        tabItem(tabName = "home", home_ui("home_module")),
-        tabItem(tabName = "gide", gide_ui("gide_module")),
-        tabItem(tabName = "badal", badal_ui("badal_module")),
-        tabItem(tabName = "kunz", kunz_ui("kunz_module")),
-        tabItem(tabName = "fischer", fischer_ui("fischer_module")),
-        tabItem(tabName = "single", home_ui("home_module")),
-        tabItem(tabName = "proteomic", home_ui("home_module")),
-        tabItem(tabName = "genes", home_ui("home_module")),
-        tabItem(tabName = "about", home_ui("home_module"))
+        tabItem(tabName = "home", home_ui("home_template")),
+        tabItem(tabName = "gide", gide_ui("gide_template")),
+        tabItem(tabName = "badal", badal_ui("badal_template")),
+        tabItem(tabName = "kunz", kunz_ui("kunz_template")),
+        tabItem(tabName = "fischer", fischer_ui("fischer_template")),
+        tabItem(tabName = "single", home_ui("home_template")),
+        tabItem(tabName = "proteomic", home_ui("home_template")),
+        tabItem(tabName = "genes", home_ui("home_template")),
+        tabItem(tabName = "about", home_ui("home_template"))
       ),
       tags$div(class = "footer", tags$p("Rshiny-Seq Ruggles Lab"))
     )

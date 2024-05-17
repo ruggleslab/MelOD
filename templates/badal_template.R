@@ -6,19 +6,64 @@
 badal_ui <- function(id) {
   fluidPage(
     add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
-    # Your existing UI elements
+    
+    
+    fluidRow(blurb_study_ui("badal")),
+    
     fluidRow(
-      blurb_explanation_ui("badal")
-    ),
-    column(6,
-           column(12, input_ui("badal")),
-           column(12, badal_selector_ui('badal'))),
-    column(6,
-           blurb_study_ui("badal")),
-    pca_metadata_ui("badal"),
-    differential_gene_ui("badal"),
+      column(5, pca_ui("badal")),
+      column(7, fluidRow(blurb_data_ui("badal")), fluidRow(metadata_ui("badal")))),
+    # fluidRow(
+    #   column(6,input_ui("badal")),
+    #   column(6,volcano_ui("badal"))),
+    # fluidRow(
+    #   column(6,violin_ui("badal")),
+    #   column(6,deseq2_table_ui("badal"))),
+    # heatmap_ui("badal")
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    # fluidRow(
+    #   blurb_explanation_ui("badal")
+    # ),
+    # column(6,
+    #        column(12, input_ui("badal")),
+    #        column(12, badal_selector_ui('badal'))),
+    # column(6,
+    #        blurb_study_ui("badal")),
+    # pca_metadata_ui("badal"),
+    # differential_gene_ui("badal"),
     deseq2_table_ui("badal"),
     heatmap_ui("badal")
+  )
+}
+
+#' Badal Selector UI
+#' 
+#' @description Creates the UI component for selecting comparisons in the Badal study
+#' @param id Module ID
+#' @return A Shiny UI element
+badal_selector_ui <- function(id) {
+  ns <- NS(id)
+  box(
+    background = 'orange', width = 12,
+    radioButtons(
+      label = "Select comparison",
+      inputId = ns("selection_badal"),
+      choices = c("Gene", "Tumor Stage"),
+      selected = "Gene",
+      inline = TRUE
+    ),
+    uiOutput(ns("debug_selection"))
   )
 }
 

@@ -8,13 +8,35 @@ fischer_ui <- function(id) {
   fluidPage(
     add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
     
+    
+    
+    
+    fluidRow(blurb_study_ui("fischer")),
+    
     fluidRow(
-      blurb_explanation_ui("fischer")),
-    fluidRow(
-      column(5, input_ui("fischer")),
-      column(7,  blurb_study_ui("fischer"))),
-    pca_metadata_ui("fischer"),
-    differential_gene_ui("fischer"),
+      column(5, pca_ui("fischer")),
+      column(7, fluidRow(blurb_data_ui("fischer")), fluidRow(metadata_ui("fischer")))),
+    # fluidRow(
+    #   column(6,input_ui("fischer")),
+    #   column(6,volcano_ui("fischer"))),
+    # fluidRow(
+    #   column(6,violin_ui("fischer")),
+    #   column(6,deseq2_table_ui("fischer"))),
+    # heatmap_ui("fischer")
+    # 
+    
+    
+    
+    
+    # 
+    # 
+    # fluidRow(
+    #   blurb_explanation_ui("fischer")),
+    # fluidRow(
+    #   column(5, input_ui("fischer")),
+    #   column(7,  blurb_study_ui("fischer"))),
+    # pca_metadata_ui("fischer"),
+    # differential_gene_ui("fischer"),
     deseq2_table_ui("fischer"),
     heatmap_ui("fischer"),
 
