@@ -299,6 +299,9 @@ event_observers <- function(input, session, display_genes, filtered_res, selecte
       selected_genes_plotly(character(0))
     }
   })
+  # Reset the variable at the end
+  selected_genes_plotly(NULL)
+  
 }
 
 #' Update Selected Genes
@@ -374,3 +377,13 @@ event_observers_heatmap <- function(input) {
                text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
   })
 }
+
+#' Update Gene Choices
+#' 
+#' @description Update the selectInput for genes based on dds
+update_correlation_genes_choices <- function(session,filtered_res) {
+observe({
+  updateSelectizeInput(session, "gene_of_interest", choices = isolate(rownames(filtered_res())))
+})
+}
+

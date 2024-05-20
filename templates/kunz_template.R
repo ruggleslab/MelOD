@@ -21,15 +21,17 @@ kunz_ui <- function(id) {
       column(6,deseq2_table_ui("kunz")),
       column(6,violin_ui("kunz"))),
     fluidRow(
-      heatmap_ui("kunz"))
-  )
+      heatmap_ui("kunz")),
+    fluidRow(
+      column(12, correlation_ui("kunz"))  
+    ))
 }
 
 #' Kunz Server
 #'
 #' @description Sets up the server logic for the Kunz analysis tab
 kunz_server <- function() {
-
+  
   # Load data
   dds <- list(readRDS(file.path("./data/kunz", "Kunz_Deseq2.rds")))
   clinical_data <- list(read.csv(file = "./data/badal/clinical_data.csv", sep = ";"))
@@ -37,8 +39,9 @@ kunz_server <- function() {
   # Initialize servers
   selection_server(dds, clinical_data, "kunz")
   input_server(dds, clinical_data, "kunz")
-  pca_metadata_server(dds, clinical_data, "kunz")
   differential_gene_server(dds, clinical_data, "kunz")
+  pca_metadata_server(dds, clinical_data, "kunz")
   heatmap_server(dds, clinical_data, "kunz")
+  correlation_server(dds, "kunz")  
 }
 

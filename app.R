@@ -3,6 +3,8 @@ source("modules/differential_gene_server.R", local = TRUE)
 source("modules/heatmap_server.R", local = TRUE)
 source("modules/pca_metadata_server.R", local = TRUE)
 source("modules/input_server.R", local = TRUE)
+source("modules/correlation_server.R", local = TRUE)
+
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
 source("templates/home_template.R", local = TRUE)
@@ -11,11 +13,15 @@ source("templates/badal_template.R", local = TRUE)
 source("templates/kunz_template.R", local = TRUE)
 source("templates/fischer_template.R", local = TRUE)
 source("templates/bulk_rna_template.R", local = TRUE)
+
+source("templates/shiny_cell_template.R", local = TRUE)
+
 # Source scripts files 
 source("scripts/selection.R", local = TRUE)
 source("scripts/utils.R", local = TRUE)
 source("scripts/plotting.R", local = TRUE)
 source("scripts/data_processing.R", local = TRUE)
+
 
 library(shiny)
 library(shinydashboard)

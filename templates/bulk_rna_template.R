@@ -59,25 +59,35 @@ blurb_comparison_ui <- function(id) {
 #' @return A Shiny UI element (box)
 pca_ui <- function(id) {
   ns <- NS(id)
-    tabBox(
-      title = HTML(paste("PCA", actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('pca_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
-      width = 12,
-      tabPanel("PCA",
-      plotlyOutput(ns(id = 'pca_plot')),
-      selectInput(
-        inputId = ns("size_by"),
-        label = "Size by:",
-        choices = c("Constant" = "constant", "Size Factor" = "size_factor"),
-        selected = "constant"
-      ),
-      selectInput(
-        inputId = ns("color_by"),
-        label = "Color by:",
-        choices = c("Condition" = "condition", "Sample" = "sample"),
-        selected = "condition"
-        )),
-      tabPanel('Variance',plotlyOutput(ns(id = 'variance_plot')))
+  tabBox(
+    title = HTML(paste("PCA", actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('pca_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
+    width = 12,
+    tabPanel("PCA",
+             plotlyOutput(ns('pca_plot')),
+             fluidRow(
+               column(6,
+                      selectInput(
+                        inputId = ns("size_by"),
+                        label = "Size by:",
+                        choices = c("Constant" = "constant", "Size Factor" = "size_factor"),
+                        selected = "constant"
+                      )
+               ),
+               column(6,
+                      selectInput(
+                        inputId = ns("color_by"),
+                        label = "Color by:",
+                        choices = c("Condition" = "condition", "Sample" = "sample"),
+                        selected = "condition"
+                      )
+               )
+             )
+             
+    ),
+    tabPanel("Variance",
+             plotlyOutput(ns('variance_plot'))
     )
+  )
 }
 
 
@@ -178,23 +188,40 @@ heatmap_ui <- function(id) {
 }
 
 #' Correlation UI
-#' 
-#' @description Creates the UI component for displaying correlation plots
+#'
+#' @description Creates the UI layout for the correlation plot
 #' @param id Module ID
-#' @return A Shiny UI element
+#' @return A Shiny UI element for the correlation plot
 correlation_ui <- function(id) {
   ns <- NS(id)
-  fluidRow(
-    box(
-      title = "Correlation",
-      status = "primary",
-      width = 12,
-      solidHeader = TRUE,
-      collapsible = TRUE,
-      plotlyOutput(ns("correlation"))
+  tabBox(
+    title = HTML(paste("Correlation", actionLink(ns("info_correlation_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('correlation_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
+    width = 12,
+    tabPanel("Correlation",
+             plotlyOutput(ns('correlation_plot')),
+             fluidRow(
+               column(6,
+                      selectizeInput(
+                        inputId = ns("gene_of_interest"),
+                        label = "Gene of Interest",
+                        choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 11)
+                      )
+               ),
+               column(6,
+                      numericInput(
+                        inputId = ns("correlation_threshold"),
+                        label = "Correlation Threshold",
+                        value = 0.4,
+                        min = 0,
+                        max = 1,
+                        step = 0.1
+                      )
+               )
+             )
     )
   )
 }
+
 
 #' DESeq2 Table UI
 #' 

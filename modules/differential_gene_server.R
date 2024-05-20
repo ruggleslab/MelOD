@@ -15,7 +15,6 @@ differential_gene_server <- function(dds, clinical_data, id) {
     #' @description Generates the plot data and resets selected genes
     #' @return A list containing the violin and volcano plots
     plot_data <- eventReactive(c(input$update_plot,input$reset_selection ),{
-      selected_genes_plotly(character(0))  # Reset selected genes
       generate_plot_data(dds_processed(), display_genes(), input$slider_padj, input$slider_log2)
     })
     

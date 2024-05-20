@@ -6,46 +6,24 @@
 badal_ui <- function(id) {
   fluidPage(
     add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
-    
-    
     fluidRow(blurb_study_ui("badal")),
-    
+    fluidRow(column(6, blurb_data_ui("badal")),
+             column(6, fluidRow(blurb_comparison_ui("badal"),
+                                gide_selector_ui("badal")))),
     fluidRow(
-      column(5, pca_ui("badal")),
-      column(7, fluidRow(blurb_data_ui("badal")), fluidRow(metadata_ui("badal")))),
-    # fluidRow(
-    #   column(6,input_ui("badal")),
-    #   column(6,volcano_ui("badal"))),
-    # fluidRow(
-    #   column(6,violin_ui("badal")),
-    #   column(6,deseq2_table_ui("badal"))),
-    # heatmap_ui("badal")
-    # 
-    # 
-    # 
-    # 
-    # 
-    # 
-    # 
-    # 
-    # 
-    # 
-    # 
-    # 
-    # fluidRow(
-    #   blurb_explanation_ui("badal")
-    # ),
-    # column(6,
-    #        column(12, input_ui("badal")),
-    #        column(12, badal_selector_ui('badal'))),
-    # column(6,
-    #        blurb_study_ui("badal")),
-    # pca_metadata_ui("badal"),
-    # differential_gene_ui("badal"),
-    deseq2_table_ui("badal"),
-    heatmap_ui("badal")
+      column(6,pca_ui("badal")),
+      column(6,metadata_ui("badal"))),
+    fluidRow(
+      column(6,input_ui("badal")),
+      column(6,volcano_ui("badal"))),
+    fluidRow(
+      column(6,deseq2_table_ui("badal")),
+      column(6,violin_ui("badal"))),
+    fluidRow(
+      heatmap_ui("badal"))
   )
 }
+
 
 #' Badal Selector UI
 #' 

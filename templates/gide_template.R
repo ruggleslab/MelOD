@@ -7,11 +7,6 @@ gide_ui <- function(id) {
   
   fluidPage(
     add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
-    
-    
-    
-
-    
     fluidRow(blurb_study_ui("gide")),
     fluidRow(column(6, blurb_data_ui("gide")),
              column(6, fluidRow(blurb_comparison_ui("gide"),
@@ -19,35 +14,17 @@ gide_ui <- function(id) {
     fluidRow(
       column(6,pca_ui("gide")),
       column(6,metadata_ui("gide"))),
-    # fluidRow(
-    #   column(6,input_ui("gide")),
-    #   column(6,volcano_ui("gide"))),
-    # fluidRow(
-    #   column(6,violin_ui("gide")),
-    #   column(6,deseq2_table_ui("gide"))),
-    # heatmap_ui("gide")
-    # 
-    # 
-    # 
-    # 
-    # 
-    # fluidRow(
-    #   blurb_explanation_ui("gide")),
-    #   column(6,
-    #   column(12,
-    #   input_ui("gide")),
-    #   column(12,gide_selector_ui('gide'))),
-    # column(6,
-    #   blurb_study_ui("gide")),
-    # 
-    # pca_metadata_ui('gide'),
-    # differential_gene_ui('gide'),
-    deseq2_table_ui('gide'),
-    heatmap_ui('gide')
-    
-  
+    fluidRow(
+      column(6,input_ui("gide")),
+      column(6,volcano_ui("gide"))),
+    fluidRow(
+      column(6,deseq2_table_ui("gide")),
+      column(6,violin_ui("gide"))),
+    fluidRow(
+      heatmap_ui("gide"))
   )
 }
+
 
 #' Gide Selector UI
 #' 

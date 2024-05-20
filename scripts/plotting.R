@@ -1,34 +1,5 @@
 source("global.R", local = TRUE)
 
-
-#' Create Correlation plot
-#' 
-#' @description Creates a correlation plot for the given data (spearman)
-#' @param correlation_data Data for correlation plot
-#' @param gene Selected gene name to filter the data 
-#' @return A plotly object representing the correlation plot
-plot_correlation <- function(correlation_data, gene) {
-
-    # Filter for the specific gene
-  gene_data <- subset(correlation_data, RowGene == gene | ColGene == gene)
-  
-  # Manipulate data for plotting
-  gene_data$OtherGene <- ifelse(gene_data$RowGene == gene, gene_data$ColGene, gene_data$RowGene)
-  gene_data <- gene_data[, c("OtherGene", "Correlation")]
-  
-  # Generate the plot
-  library(ggplot2)
-  p <- ggplot(gene_data, aes(x = reorder(OtherGene, -Correlation), y = Correlation, fill = Correlation)) +
-    geom_bar(stat = "identity") +
-    coord_flip() +
-    scale_fill_gradient2(low = "#1E88E5", high = "#D81B60", mid = "white", midpoint = 0) +
-    labs(title = paste("Spearman Correlation with", gene), x = "Other Genes", y = "Spearman Correlation") +
-    theme_minimal()
-  
-  return(p)
-}
-
-
 #' Create PCA Plot
 #' 
 #' @description Creates a PCA plot for the given data
@@ -194,11 +165,15 @@ plot_mortality_curve <- function(clinical_data) {
 #' @param log2_cut Log2 fold change cutoff
 #' @return A plotly object representing the boxplot
 create_boxplot <- function(dds, display_genes, padj_cut, log2_cut) {
-  if (nrow(display_genes) > 0) {
+  if (length(display_genes) > 0) {
+    # Ensure display_genes is a data frame
+    if (!is.data.frame(display_genes)) {
+      display_genes <- data.frame(gene_id = display_genes, stringsAsFactors = FALSE)
+    }
     # Process and filter data
     gene <- rownames(display_genes)
     counts <- counts(dds, normalized = TRUE)
-    counts_filtered <- counts[rownames(counts) %in% gene, ]
+    counts_filtered <- counts[rownames(counts) %in% gene, , drop = FALSE]
     df <- as.data.frame(log(counts_filtered + 0.01))
     
     # Prepare sample metadata
@@ -433,7 +408,61 @@ create_heatmap <- function(dds, padj_cut, log2_cut, number, gene) {
   return(plot)
 }
 
-
-
-
-
+  
+# Function to calculate and plot correlations with p-values using cor.test in a loop
+analyze_gene_correlations <- function(dds, gene_of_interest, threshold = 0.4) {
+  
+  # Extract the counts matrix from the DESeq2 result
+  counts_matrix <- counts(dds, normalized = TRUE)
+  
+  # Transpose the counts matrix so that genes are columns
+  counts_matrix <- t(counts_matrix)
+  
+  # Convert the counts matrix to a data.table
+  data_dt <- as.data.table(counts_matrix)
+  
+  # Check if the gene of interest exists in the data
+  if (!(gene_of_interest %in% colnames(data_dt))) {
+    stop(paste("Gene", gene_of_interest, "not found in the data."))
+  }
+  
+  # Subset the data to get the expression levels of the gene of interest
+  gene_expr <- data_dt[[gene_of_interest]]
+  
+  # Initialize vectors to store correlations and p-values
+  correlations <- numeric(ncol(data_dt))
+  p_values <- numeric(ncol(data_dt))
+  
+  # Calculate the correlation and p-value for each gene
+  for (i in seq_along(data_dt)) {
+    test_result <- cor.test(gene_expr, data_dt[[i]], use = "complete.obs")
+    correlations[i] <- test_result$estimate
+    p_values[i] <- test_result$p.value
+  }
+  
+  # Convert the results to a data.table
+  results_dt <- data.table(gene = colnames(data_dt), correlation = correlations, p_value = p_values)
+  
+  # Filter correlations based on the threshold
+  filtered_results <- results_dt[abs(correlation) >= threshold]
+  
+  # Calculate -log10(p_value)
+  filtered_results[, log_p_value := -log10(p_value)]
+  
+  # Create a custom color palette
+  color_palette <- rev(colorRampPalette(brewer.pal(3, "RdBu"))(256))
+  
+  # Create a U-plot with plotly
+  plot <- plot_ly(filtered_results, x = ~correlation, y = ~log_p_value, type = 'scatter', mode = 'markers',
+                  marker = list(size = 10, color = ~correlation, colorscale = color_palette, showscale = TRUE, line = list(width = 1, color = 'black')),
+                  text = ~paste("Gene: ", gene, "<br>Correlation: ", round(correlation, 2), "<br>-log10(p-value): ", round(log_p_value, 2)))
+  
+  # Customize the plot layout
+  plot <- plot %>%
+    layout(title = paste("Correlation and P-values of", gene_of_interest, "with other genes"),
+           xaxis = list(title = "Correlation Coefficient"),
+           yaxis = list(title = "-log10(p-value)"),
+           showlegend = FALSE)
+  
+  return(plot)
+}

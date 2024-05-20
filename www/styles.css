@@ -149,3 +149,58 @@ x.skin-blue .main-header .navbar .sidebar-toggle:hover {
   background-color:#6699CC ;
   color:#FFF5EE;
 }
+
+
+
+/*for the title, infor and dl button of tabBox*/
+
+.nav>li{
+  display: inline-flex;
+}
+
+.nav>li>a {
+    padding: 7px 10px;
+}
+
+/*change the orange color boxes*/
+.bg-orange {
+    background-color: #FFA812!important;
+}
+
+/*change the orange color boxes warning*/
+
+.box.box-solid.box-warning>.box-header {
+    color: #fff;
+    background: #FFA812;
+    background-color: #FFA812;
+}
+.box.box-solid.box-warning {
+    border: 1px solid #FFA812;
+}
+
+
+/*change the orange color boxes info*/
+
+.box.box-solid.box-info>.box-header {
+    color: #fff;
+    background: #9CB5C9;
+    background-color: #9CB5C9;
+}
+.box.box-solid.box-info {
+    border: 1px solid #9CB5C9;
+}
+.box.box-info {
+    border-top-color: #9CB5C9;
+}
+
+
+/*change the orange color boxes primary*/
+
+.box.box-solid.box-primary>.box-header {
+    color: #fff;
+    background: #6699CC;
+    background-color: #6699CC;
+}
+.box.box-solid.box-primary {
+    border: 1px solid #6699CC;
+}

@@ -50,6 +50,3 @@ gene_names_dds <- function(dds) {
   dds
 }
 
-
-
-
