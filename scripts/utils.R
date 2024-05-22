@@ -158,112 +158,15 @@ shared_server_utilities <- function(dds) {
 }
 
 
-
-#' Generate PCA Data
-#' 
-#' @description Generates the PCA data from pca_data function(data_processing.R) from the selected DESeq2 dataset
-#' @return PCA data (size factor and vsdata)
-generate_pca_data <- function() {
-  dds <- global_selected_dds()
-  pca_data(dds)
-}
-
-#' Render PCA Plots
-#' 
-#' @description Renders the PCA plot
-#' @param output Shiny output object
-#' @param pca_data_reactive Reactive expression containing the PCA data
-render_pca_plots <- function(input, output, pca_data_reactive) {
-  output$pca_plot <- renderPlotly({
-    req(pca_data_reactive())
-    pca_data <- pca_data_reactive()$pca_data
-    size_by = input$size_by
-    color_by = input$color_by
-    creation_pca(pca_data, size_by = size_by, color_by = color_by)
-  })
-}
-
-#' Render PCA Plots
-#' 
-#' @description Renders the PCA plot
-#' @param output Shiny output object
-#' @param pca_data_reactive Reactive expression containing the PCA data
-render_variance_plots <- function(output, pca_data_reactive) {
-  output$variance_plot <- renderPlotly({
-    req(pca_data_reactive())
-    vsa_data <- pca_data_reactive()$vsdata
-    variance_explained_plot(vsa_data)
-  })
-}
-
-
-#' Download PCA Data
-#' 
-#' @description Sets up the download handler for PCA data
-#' @param output Shiny output object
-#' @param pca_data_reactive Reactive expression containing the PCA data
-download_pca_data <- function(output, pca_data_reactive) {
-  output$pca_data <- downloadHandler(
-    filename = function() {
-      paste("pca", "_", Sys.Date(), '.csv', sep = '')
-    },
-    content = function(file) {
-      req(pca_data_reactive())
-      pca_data <- pca_data_reactive()$pca_data
-      write.csv(pca_data, file)
-    }
-  )
-}
-
-
-#' Event Observers for PCA
-#' 
-#' @description Sets up observers for PCA plot interactions
-#' @param input Shiny input object
-event_observers_pca <- function(input) {
-  observeEvent(input$info_pca_plot, {
-    shinyalert(title = "PCA Plot Information", html = TRUE,
-               text = 'What Size Factors Mean:
-Size factors are used in DESeq2 to normalize the count data, accounting for differences in sequencing depth and other technical biases between samples. They ensure that the comparison of gene expression levels across samples is fair and not influenced by these technical variations.')
-  })
-}
-
-
-
-#' Generate Plot Data
-#' 
-#' @description Generates the data for the violin and volcano plots
-#' @param dds Processed DESeq2 dataset
-#' @param display_genes Genes to display
-#' @param padj_cut Adjusted p-value cutoff
-#' @param log2_cut Log2 fold change cutoff
-#' @return A list containing the violin and volcano plots
-generate_plot_data <- function(dds, display_genes, padj_cut, log2_cut) {
-  list(
-    violin = create_boxplot(dds = dds, display_genes = display_genes, padj_cut = padj_cut, log2_cut = log2_cut),
-    volcano = create_volcanoplot(dds = dds, display_genes = display_genes, padj_cut = padj_cut, log2_cut = log2_cut)
-  )
-}
-
-#' Render Plots
-#' 
-#' @description Renders the violin and volcano plots
-#' @param output Shiny output object
-#' @param plot_data Reactive expression containing the plot data
-render_plots <- function(output, plot_data) {
-  output$violin_plot <- renderPlotly({ plot_data()$violin })
-  output$volcano_plot <- renderPlotly({ plot_data()$volcano })
-}
-
 #' Download Handlers
 #' 
 #' @description Sets up the download handlers for exporting data
 #' @param output Shiny output object
 #' @param display_genes Reactive expression containing the genes to display
-download_handlers <- function(output, display_genes) {
+download_handlers <- function(output,name, display_genes) {
   output$violin_data <- downloadHandler(
     filename = function() {
-      paste("violin", "_", Sys.Date(), '.csv', sep = '')
+      paste(name, "_", Sys.Date(), '.csv', sep = '')
     },
     content = function(file) {
       req(display_genes())
@@ -280,28 +183,29 @@ download_handlers <- function(output, display_genes) {
 #' @param display_genes Reactive expression containing the genes to display
 #' @param filtered_res Reactive expression containing the filtered results
 #' @param selected_genes_plotly Reactive value for selected genes
-event_observers <- function(input, session, display_genes, filtered_res, selected_genes_plotly) {
+#' @param tab_id The ID of the tab to observe
+event_observers <- function(input, session, display_genes, filtered_res, selected_genes_plotly, new_genes) {
+ 
+
   observeEvent(input$info_violin_plot, {
     shinyalert(title = "Violin Plot Information", html = TRUE,
                text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
   })
   
-  observeEvent(event_data("plotly_click"), {
-    update_selected_genes(event_data("plotly_click")$customdata, selected_genes_plotly, session, filtered_res)
-  })
-  
-  observeEvent(event_data("plotly_selected"), {
-    update_selected_genes(event_data("plotly_selected")$customdata, selected_genes_plotly, session, filtered_res)
-  })
-  
-  observeEvent(input$selected_gene, {
-    if (length(input$selected_gene) == 0) {
-      selected_genes_plotly(character(0))
-    }
-  })
-  # Reset the variable at the end
-  selected_genes_plotly(NULL)
-  
+#  
+# # Function to update genes and reset the plotly event data
+#   update <- function(event_data_type) {
+#     observeEvent(event_data(event_data_type), {
+#       new_genes(event_data(event_data_type)$customdata)
+#       update_selected_genes(new_genes(), selected_genes_plotly, session, filtered_res)
+#       
+#     })
+#   }
+#   
+#   update("plotly_click")
+#   update("plotly_selected")
+#   
+
 }
 
 #' Update Selected Genes
@@ -312,10 +216,10 @@ event_observers <- function(input, session, display_genes, filtered_res, selecte
 #' @param session Shiny session object
 #' @param filtered_res Reactive expression containing the filtered results
 update_selected_genes <- function(new_genes, selected_genes_plotly, session, filtered_res) {
-  if (is.null(new_genes)) return
   current_genes <- selected_genes_plotly()
   selected_genes_plotly(unique(c(current_genes, new_genes)))
-  updateSelectizeInput(session, "selected_gene", choices = isolate(rownames(filtered_res())), selected = selected_genes_plotly())
+  updateSelectizeInput(session, "selected_gene", choices = isolate(rownames(filtered_res())), server = TRUE, selected = selected_genes_plotly())
+  
 }
 
 
@@ -326,14 +230,14 @@ update_selected_genes <- function(new_genes, selected_genes_plotly, session, fil
 #' @param input Shiny input object
 #' @param selected_genes_plotly Reactive value for selected genes
 #' @return A datatable containing the filtered results
-render_filtered_results_table <- function(dds_processed, input, selected_genes_plotly) {
+render_filtered_results_table <- function(dds_processed, input) {
   DT::renderDataTable({
     res <- results(dds_processed())
     res <- as.data.frame(res)
     if (!is.null(input$selected_gene) && length(input$selected_gene) > 0)
       res <- res[rownames(res) %in% input$selected_gene, ]
     DT::datatable(res, extensions = 'Buttons', options = list(
-      dom = 'Blrtip',
+      dom = 'lrBtip',
       buttons = c('copy', 'csv', 'excel'),
       pageLength = 10,
       scrollX = TRUE
@@ -343,40 +247,6 @@ render_filtered_results_table <- function(dds_processed, input, selected_genes_p
 
 
 
-#' Generate Heatmap Plot Data
-#' 
-#' @description Generates the data for the heatmap plot
-#' @param dds Processed DESeq2 dataset
-#' @param padj_cut Adjusted p-value cutoff
-#' @param log2_cut Log2 fold change cutoff
-#' @param number Number of top genes to display
-#' @param gene Specific gene to display
-#' @return A list containing the heatmap plot
-generate_heatmap_plot_data <- function(dds, padj_cut, log2_cut, number, gene) {
-  list(
-    heatmap = create_heatmap(dds = dds, padj_cut = padj_cut, log2_cut = log2_cut, number = number, gene = gene)
-  )
-}
-
-#' Render Heatmap Plots
-#' 
-#' @description Renders the heatmap plot
-#' @param output Shiny output object
-#' @param plot_data Reactive expression containing the plot data
-render_heatmap_plots <- function(output, plot_data) {
-  output$heatmap_plot <- renderPlotly({ plot_data()$heatmap })
-}
-
-#' Event Observers for Heatmap
-#' 
-#' @description Sets up observers for plot interactions
-#' @param input Shiny input object
-event_observers_heatmap <- function(input) {
-  observeEvent(input$info_heatmap_plot, {
-    shinyalert(title = "Heatmap Plot Information", html = TRUE,
-               text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
-  })
-}
 
 #' Update Gene Choices
 #' 

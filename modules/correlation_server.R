@@ -3,9 +3,9 @@
 #' @description Sets up the server logic for the correlation analysis
 #' @param dds DESeq2 dataset
 #' @param id Module ID
-correlation_server <- function(dds, id) {
+correlation_server <- function(id) {
   moduleServer(id, function(input, output, session) {
-    ns <- session$ns
+  
     
     #' Initialize Reactives
     #' 
@@ -15,28 +15,28 @@ correlation_server <- function(dds, id) {
     filtered_res <- reactive({ utilities()$filtered_genes })
     dds_processed <- reactive({ utilities()$dds })
     display_genes <- reactive({ get_display_genes(filtered_res(), input$selected_gene) })
-    selected_genes_plotly <- reactiveVal(character(0))
     
     update_correlation_genes_choices(session, filtered_res)
     
-    #' Reactive expression for correlation data
+    #' Generate and Plot Data with Reset Functionality
     #' 
-    #' @description Generates the correlation data from the selected DESeq2 dataset
-    #' @return Correlation data
-    correlation_data_reactive <- reactive({
-      req(input$gene_of_interest)
-      req(input$correlation_threshold)
-      req(dds_processed())
-      analyze_gene_correlations(dds_processed(), gene_of_interest = input$gene_of_interest, threshold = input$correlation_threshold)
+    #' @description Generates the plot data and resets selected genes, then renders plots
+    plot_data <- eventReactive(c(input$update_plot, input$reset_selection), {
+      list(
+        correlation = analyze_gene_correlations(dds_processed(), display_genes=display_genes(), gene_of_interest = input$gene_of_interest, threshold = input$correlation_threshold)
+      )
     })
     
-    #' Render Correlation Plot
+    #' Render Plots
     #' 
     #' @description Renders the correlation plot
-    output$correlation_plot <- renderPlotly({
-      req(correlation_data_reactive())
-      correlation_data_reactive()
-    })
+    #' @param output Shiny output object
+    #' @param plot_data Reactive expression containing the plot data
+    render_plots <- function(output, plot_data) {
+      output$correlation_plot <- renderPlotly({ plot_data()$correlation })
+    }
+    
+    render_plots(output, plot_data)
     
     #' Event Observers
     #' 
@@ -45,6 +45,5 @@ correlation_server <- function(dds, id) {
       shinyalert(title = "Correlation Plot Information", html = TRUE,
                  text = 'The correlation plot displays the correlation coefficients and their significance for each gene relative to the gene of interest.')
     })
-    
   })
 }

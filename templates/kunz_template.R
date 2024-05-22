@@ -21,10 +21,9 @@ kunz_ui <- function(id) {
       column(6,deseq2_table_ui("kunz")),
       column(6,violin_ui("kunz"))),
     fluidRow(
-      heatmap_ui("kunz")),
-    fluidRow(
-      column(12, correlation_ui("kunz"))  
-    ))
+      column(8,heatmap_ui("kunz")),
+      column(4, correlation_ui("kunz")))
+   )
 }
 
 #' Kunz Server
@@ -38,10 +37,12 @@ kunz_server <- function() {
   
   # Initialize servers
   selection_server(dds, clinical_data, "kunz")
-  input_server(dds, clinical_data, "kunz")
-  differential_gene_server(dds, clinical_data, "kunz")
-  pca_metadata_server(dds, clinical_data, "kunz")
-  heatmap_server(dds, clinical_data, "kunz")
-  correlation_server(dds, "kunz")  
+  input_server("kunz")
+  differential_gene_server("kunz")
+
+  pca_metadata_server("kunz")
+  heatmap_server("kunz")
+  correlation_server("kunz")  
 }
+
 

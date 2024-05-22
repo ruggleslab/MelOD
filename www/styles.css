@@ -1,15 +1,6 @@
-
-
 /* styles.css */
 
-
-
-
-
-/*home page
-*/
-
-
+/* Home Page */
 .glyphicon {
     top: 0px; 
 }
@@ -18,45 +9,37 @@
     display: inline;
 }
 .btn-default {
-  border-color: transparent;
+    border-color: transparent;
 }
 
 .fa-solid, .fas {
-margin-left: 10px;
+    margin-left: 10px;
 }
 
-.home{
-  text-align: center;
+.home {
+    text-align: center;
 }
 
 /* Change background color of the page */
 body {
-  background-color: #FFF5EE; /* Change this to the desired background color */
+    background-color: #FFF5EE; /* Background color of the entire page */
 }
 
 /* Change background color of the title */
 h2.home {
-  background-color: #6699CC; /* Change this to the desired background color */
-  color: #FFF5EE; /* Change this to the desired text color */
-  padding: 10px; /* Add padding for better appearance */
+    background-color: #6699CC; /* Background color of the title */
+    color: #FFF5EE; /* Text color of the title */
+    padding: 10px; /* Padding for better appearance */
 }
 
-
-
-
-
-/*-------------------------------------------------*/
-
-
-.navbar-default .navbar-toggle .icon-bar{
-
-      background-color: #FFF5EE;
-      color:#FFF5EE;
+/* Navbar */
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #FFF5EE;
+    color: #FFF5EE;
 }
-
 
 .skin-blue .main-header .navbar .sidebar-toggle:hover {
-  background-color: #93b7db;
+    background-color: #93b7db;
 }
 
 .skin-blue .main-header .navbar {
@@ -73,32 +56,22 @@ h2.home {
     border-bottom: 0 solid transparent;
 }
 
-
 .skin-blue .sidebar-menu>li.active>a, .skin-blue .sidebar-menu>li:hover>a {
-    color: #FFF5EE	;
+    color: #FFF5EE;
     background: #6699CC;
     border-left-color: #FFA812;
 }
-
 
 .skin-blue .sidebar a {
     color: #FFF5EE;
 }
 
-
-
-/*Couleur subitems background 
-*/.skin-blue .sidebar-menu>li>.treeview-menu
-{
-  background:transparent;
+/* Sidebar Subitems Background */
+.skin-blue .sidebar-menu>li>.treeview-menu {
+    background: transparent;
 }
-
 
 .skin-blue .main-header .logo:hover {
-    background-color: #6699CC;
-}
-
-x.skin-blue .main-header .navbar .sidebar-toggle:hover {
     background-color: #6699CC;
 }
 
@@ -106,16 +79,15 @@ x.skin-blue .main-header .navbar .sidebar-toggle:hover {
     color: #FFA812;
 }
 
-
-.skin-blue .treeview-menu>li.active>a{
-  color: #FFA812	;
+.skin-blue .treeview-menu>li.active>a {
+    color: #FFA812;
 }
 
 .skin-blue .treeview-menu>li>a {
     color: #FFF5EE;
 }
 
-
+/* Column Classes */
 [class*="col-"] {
     position: relative;
     min-height: 1px;
@@ -123,52 +95,52 @@ x.skin-blue .main-header .navbar .sidebar-toggle:hover {
     padding-left: 5px;
 }
 
-
-
+/* Footer */
 .footer {
-  height: 35px;
-  padding: 10px;
-  color:#FFF5EE;
-  background-color: #6699CC;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000; /* Ensures it stays on top of other elements */
+    height: 35px;
+    padding: 10px;
+    color: #FFF5EE;
+    background-color: #6699CC;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensures it stays on top of other elements */
 }
 
-
+/* Row Margin */
 .row {
     margin-right: 0;
     margin-left: 0;
 }
 
-
-.btn-primary{
-  background-color:#6699CC ;
-  color:#FFF5EE;
+/* Buttons */
+.btn-primary {
+    background-color: #6699CC;
+    color: #FFF5EE;
 }
 
+/* Download Button on DESeq2 Table */
+.dt-buttons {
+    float: right;
+}
 
-
-/*for the title, infor and dl button of tabBox*/
-
-.nav>li{
-  display: inline-flex;
+/* Title, Info, and Download Button of tabBox */
+.nav>li {
+    display: inline-flex;
 }
 
 .nav>li>a {
     padding: 7px 10px;
 }
 
-/*change the orange color boxes*/
+/* Change Orange Color Boxes */
 .bg-orange {
     background-color: #FFA812!important;
 }
 
-/*change the orange color boxes warning*/
-
+/* Change Orange Color Boxes Warning */
 .box.box-solid.box-warning>.box-header {
     color: #fff;
     background: #FFA812;
@@ -178,9 +150,7 @@ x.skin-blue .main-header .navbar .sidebar-toggle:hover {
     border: 1px solid #FFA812;
 }
 
-
-/*change the orange color boxes info*/
-
+/* Change Orange Color Boxes Info */
 .box.box-solid.box-info>.box-header {
     color: #fff;
     background: #9CB5C9;
@@ -193,14 +163,20 @@ x.skin-blue .main-header .navbar .sidebar-toggle:hover {
     border-top-color: #9CB5C9;
 }
 
-
-/*change the orange color boxes primary*/
-
+/* Change Orange Color Boxes Primary */
 .box.box-solid.box-primary>.box-header {
     color: #fff;
-    background: #6699CC;
-    background-color: #6699CC;
+    background: #75a3d1;
+    background-color: #75a3d1;
 }
 .box.box-solid.box-primary {
-    border: 1px solid #6699CC;
+    border: 1px solid #75a3d1;
+}
+
+/* Error Message for Mortality Plot */
+.error-message {
+    color: #75a3d1;
+    font-size: 20px;
+    text-align: center;
+    padding: 20px;
 }

@@ -20,7 +20,8 @@ badal_ui <- function(id) {
       column(6,deseq2_table_ui("badal")),
       column(6,violin_ui("badal"))),
     fluidRow(
-      heatmap_ui("badal"))
+      column(8,heatmap_ui("badal")),
+      column(4, correlation_ui("badal")))
   )
 }
 
@@ -75,10 +76,12 @@ badal_server <- function() {
     
     ## Load other server modules
     selection_server(dds, clinical_data, "badal")
-    input_server(dds = dds, clinical_data = clinical_data, "badal")
-    pca_metadata_server(dds = dds, clinical_data = clinical_data, "badal")
-    differential_gene_server(dds = dds, clinical_data = clinical_data, "badal")
-    heatmap_server(dds = dds, clinical_data = clinical_data, "badal")
+    input_server("badal")
+    pca_metadata_server("badal")
+    differential_gene_server("badal")
+    heatmap_server("badal")
+    correlation_server("badal")  
+    
     
     ## Close the modal after the loading is complete
     removeModal()

@@ -21,7 +21,8 @@ gide_ui <- function(id) {
       column(6,deseq2_table_ui("gide")),
       column(6,violin_ui("gide"))),
     fluidRow(
-      heatmap_ui("gide"))
+      column(8,heatmap_ui("gide")),
+      column(4, correlation_ui("gide")))
   )
 }
 
@@ -57,11 +58,10 @@ gide_server <- function() {
   
   selection_server(dds,clinical_data,"gide")
   selection_list_server(dds,clinical_data,"gide")
-  input_server(dds ,clinical_data = clinical_data, "gide")
-  pca_metadata_server(dds,clinical_data = clinical_data, "gide")
-  differential_gene_server(dds = dds,clinical_data = clinical_data, "gide")
-  heatmap_server(dds = dds,clinical_data = clinical_data, "gide")
+  input_server("gide")
+  pca_metadata_server("gide")
+  differential_gene_server("gide")
+  heatmap_server("gide")
+  correlation_server("gide")  
   
 }
-
-

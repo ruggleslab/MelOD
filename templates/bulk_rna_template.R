@@ -90,21 +90,22 @@ pca_ui <- function(id) {
   )
 }
 
-
-#' Metadata UI
-#' 
-#' @description Creates the UI component for displaying metadata plots
-#' @param id Module ID
-#' @return A Shiny UI element (tab box)
-metadata_ui <- function(id){
+metadata_ui <- function(id) {
+  #' Metadata UI
+  #' 
+  #' @description Creates the UI component for displaying metadata plots
+  #' @param id Module ID
+  #' @return A Shiny UI element (tab box)
+  
   ns <- NS(id)
   tabBox(
     title = "Metadata",
     id = "tabset1",
     width = 12,
-    tabPanel("Mortality", plotlyOutput(ns("mortality"))),
-    tabPanel("Gender", plotlyOutput(ns("gender_data")))
-    )
+    tabPanel("Mortality by condition", uiOutput(ns("mortality_by_condition"))),
+    tabPanel("Mortality by gene", uiOutput(ns("mortality_by_gene")),
+                      selectizeInput(ns("gene_mortality"), "Gene", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+  )
 }
 
 
@@ -120,13 +121,23 @@ input_ui <- function(id) {
     collapsible = TRUE,
     solidHeader = TRUE, width = 12,
     tags$h3("Parameters", style = "margin-top: 0;"),
-    numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
-    numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
-    numericInput(ns("number"), "Number of genes for the heatmap (min. 2 if no genes selected)", 10, min = 0, step = 1),
-    selectizeInput(ns("selected_gene"), "Gene(s) selection (up to 10)", choices = NULL, selected = NULL, multiple = TRUE, options = list(maxItems = 10)),
-    actionButton(ns("update_plot"), "Generate plots", class = "btn-primary")
+    fluidRow(
+      column(6,
+             numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
+             numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
+             numericInput(ns("number"), "Number of genes for the heatmap (min. 2 if no genes selected)", 10, min = 0, step = 1),
+             selectizeInput(ns("selected_gene"), "Gene(s) selection (up to 10)", choices = NULL, selected = NULL, multiple = TRUE, options = list(maxItems = 10)),
+             actionButton(ns("update_plot"), "Generate plots", class = "btn-primary"),
+             
+      ),
+      column(6,
+             selectizeInput(ns("gene_of_interest"), "Gene of Interest for Correlation", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
+             numericInput(ns("correlation_threshold"), "Correlation Threshold", value = 0.4, min = 0, max = 1, step = 0.1)
+      )
+    )
   )
 }
+
 
 #' Volcano UI
 #' 
@@ -186,7 +197,6 @@ heatmap_ui <- function(id) {
     
   )
 }
-
 #' Correlation UI
 #'
 #' @description Creates the UI layout for the correlation plot
@@ -194,34 +204,14 @@ heatmap_ui <- function(id) {
 #' @return A Shiny UI element for the correlation plot
 correlation_ui <- function(id) {
   ns <- NS(id)
-  tabBox(
+  box(
     title = HTML(paste("Correlation", actionLink(ns("info_correlation_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('correlation_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
     width = 12,
-    tabPanel("Correlation",
-             plotlyOutput(ns('correlation_plot')),
-             fluidRow(
-               column(6,
-                      selectizeInput(
-                        inputId = ns("gene_of_interest"),
-                        label = "Gene of Interest",
-                        choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 11)
-                      )
-               ),
-               column(6,
-                      numericInput(
-                        inputId = ns("correlation_threshold"),
-                        label = "Correlation Threshold",
-                        value = 0.4,
-                        min = 0,
-                        max = 1,
-                        step = 0.1
-                      )
-               )
-             )
+    solidHeader = TRUE,
+    status = "primary",
+    plotlyOutput(ns('correlation_plot'))
     )
-  )
 }
-
 
 #' DESeq2 Table UI
 #' 
@@ -233,6 +223,7 @@ deseq2_table_ui <- function(id) {
   fluidRow(
     box(
       width = 12,
+      solidHeader = TRUE,
       title = "DESeq2 Results", status = "info", collapsible = TRUE,
       DT::dataTableOutput(ns("filtered_results"))
     )

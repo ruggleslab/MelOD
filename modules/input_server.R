@@ -1,10 +1,8 @@
 #' Input Server
 #' 
 #' @description Handles input for the application
-#' @param dds DESeq2 dataset
-#' @param clinical_data Clinical data
 #' @param id Module ID
-input_server <- function(dds, clinical_data, id) {
+input_server <- function(id) {
   moduleServer(id, function(input, output, session) {
     # Check the number of items in `dds` and adjust accordingly
     
