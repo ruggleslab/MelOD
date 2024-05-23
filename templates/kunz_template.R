@@ -38,8 +38,8 @@ kunz_server <- function() {
   # Initialize servers
   selection_server(dds, clinical_data, "kunz")
   input_server("kunz")
-  differential_gene_server("kunz")
-
+  volcano_server("kunz")
+  violin_server("kunz")
   pca_metadata_server("kunz")
   heatmap_server("kunz")
   correlation_server("kunz")  

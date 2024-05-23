@@ -17,9 +17,9 @@ blurb_study_ui <- function(id) {
     tags$h2(Id_info$title),
     tags$h3("Lead Author: ", Id_info$lead_author),
     tags$p(Id_info$abstract),
-    tags$p("Read the full paper: ", tags$a(href = Id_info$paper_link, "PubMed", target = "_blank")),
-    tags$p("DOI: ", tags$a(href = paste("https://doi.org/", Id_info$doi, sep = ""), Id_info$doi, target = "_blank")),
-    tags$p("Data Access: ", tags$a(href = Id_info$data_link, "ENA Dataset", target = "_blank"))
+    tags$p("Read the full paper: ", tags$a(href = Id_info$paper_link, "PubMed")),
+    tags$p("DOI: ", tags$a(href = paste("https://doi.org/", Id_info$doi, sep = ""), Id_info$doi)),
+    tags$p("Data Access: ", tags$a(href = Id_info$data_link, "ENA Dataset"))
   )
 }
 
@@ -82,7 +82,6 @@ pca_ui <- function(id) {
                       )
                )
              )
-             
     ),
     tabPanel("Variance",
              plotlyOutput(ns('variance_plot'))
@@ -99,7 +98,7 @@ metadata_ui <- function(id) {
   
   ns <- NS(id)
   tabBox(
-    title = "Metadata",
+    title = HTML(paste("Metadata", actionLink(ns("info_metadata_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('metadata_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),    
     id = "tabset1",
     width = 12,
     tabPanel("Mortality by condition", uiOutput(ns("mortality_by_condition"))),
@@ -132,7 +131,7 @@ input_ui <- function(id) {
       ),
       column(6,
              selectizeInput(ns("gene_of_interest"), "Gene of Interest for Correlation", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
-             numericInput(ns("correlation_threshold"), "Correlation Threshold", value = 0.4, min = 0, max = 1, step = 0.1)
+             numericInput(ns("correlation_threshold"), "Correlation Threshold", value = 0.2, min = 0, max = 1, step = 0.1)
       )
     )
   )

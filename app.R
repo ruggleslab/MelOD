@@ -1,5 +1,6 @@
 # Source module functions
-source("modules/differential_gene_server.R", local = TRUE)
+source("modules/violin_server.R", local = TRUE)
+source("modules/volcano_server.R", local = TRUE)
 source("modules/heatmap_server.R", local = TRUE)
 source("modules/pca_metadata_server.R", local = TRUE)
 source("modules/input_server.R", local = TRUE)

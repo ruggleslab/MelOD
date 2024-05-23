@@ -78,7 +78,8 @@ badal_server <- function() {
     selection_server(dds, clinical_data, "badal")
     input_server("badal")
     pca_metadata_server("badal")
-    differential_gene_server("badal")
+    volcano_server("badal")
+    violin_server("badal")
     heatmap_server("badal")
     correlation_server("badal")  
     

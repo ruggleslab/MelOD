@@ -180,3 +180,26 @@ h2.home {
     text-align: center;
     padding: 20px;
 }
+
+
+.btn.btn-default.shiny-download-link.shiny-bound-output {
+  margin-top: 6px;
+}
+
+/* Center the spinner */
+.shinybusy {
+  position: fixed !important;
+  top: 50% !important;
+  left: 55% !important;
+  transform: translate(-50%, -50%) !important;
+  height: 100px !important;  /* Adjust the height as needed */
+  width: 100px !important;   /* Adjust the width as needed */
+  z-index: 9999 !important;  /* Ensure it is on top */
+
+}
+
+/* Adjust the size and color of the spinner circles */
+.sk-fading-circle .sk-circle-qcuwigdctlkb:before {
+  width: 25px !important;   /* Adjust the size of each circle */
+  height: 25px !important;  /* Adjust the size of each circle */
+}

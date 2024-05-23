@@ -60,7 +60,8 @@ gide_server <- function() {
   selection_list_server(dds,clinical_data,"gide")
   input_server("gide")
   pca_metadata_server("gide")
-  differential_gene_server("gide")
+  volcano_server("gide")
+  violin_server("gide")
   heatmap_server("gide")
   correlation_server("gide")  
   

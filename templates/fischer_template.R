@@ -39,8 +39,8 @@ fischer_server <- function() {
   input_server("fischer")
   pca_metadata_server("fischer")
 
-  differential_gene_server("fischer")
-
+  volcano_server("fischer")
+  violin_server("fischer")
   heatmap_server("fischer")
   correlation_server("fischer")  
   

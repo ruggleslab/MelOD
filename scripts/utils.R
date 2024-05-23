@@ -161,19 +161,37 @@ shared_server_utilities <- function(dds) {
 #' Download Handlers
 #' 
 #' @description Sets up the download handlers for exporting data
-#' @param output Shiny output object
-#' @param display_genes Reactive expression containing the genes to display
-download_handlers <- function(output,name, display_genes) {
-  output$violin_data <- downloadHandler(
+setup_download_handler <- function(output, id, data_reactive, filename_prefix) {
+  output[[id]] <- downloadHandler(
     filename = function() {
-      paste(name, "_", Sys.Date(), '.csv', sep = '')
+      paste(filename_prefix, "_", Sys.Date(), '.csv', sep = '')
     },
     content = function(file) {
-      req(display_genes())
-      write.csv(display_genes(), file)
+      req(data_reactive())
+      data <- data_reactive()
+      write.csv(data, file)
     }
   )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #' Event Observers
 #' 
@@ -248,12 +266,5 @@ render_filtered_results_table <- function(dds_processed, input) {
 
 
 
-#' Update Gene Choices
-#' 
-#' @description Update the selectInput for genes based on dds
-update_correlation_genes_choices <- function(session,filtered_res) {
-observe({
-  updateSelectizeInput(session, "gene_of_interest", choices = isolate(rownames(filtered_res())))
-})
-}
+
 

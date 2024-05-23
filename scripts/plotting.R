@@ -240,101 +240,12 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_rds, gene) {
   })
 }
 
-
-
-create_boxplot <- function(dds, display_genes, padj_cut, log2_cut) {
-  #' Create Boxplot
-  #' 
-  #' @description Creates a boxplot for the given data
-  #' @param dds Processed DESeq2 dataset
-  #' @param display_genes Genes to display
-  #' @param padj_cut Adjusted p-value cutoff
-  #' @param log2_cut Log2 fold change cutoff
-  #' 
-  #' @return A plotly object representing the boxplot
-
-  if (length(display_genes) > 0) {
-    # Ensure display_genes is a data frame
-    if (!is.data.frame(display_genes)) {
-      display_genes <- data.frame(gene_id = display_genes, stringsAsFactors = FALSE)
-    }
-
-    gene <- rownames(display_genes)
-    counts <- counts(dds, normalized = TRUE)
-    counts_filtered <- counts[rownames(counts) %in% gene, , drop = FALSE]
-    df <- as.data.frame(log(counts_filtered + 0.01))
-    
-    col_data_df <- as.data.frame(colData(dds))
-    col_data_df <- col_data_df %>%
-      rownames_to_column(var = "patient_id") %>%
-      select(patient_id, condition)
-    
-    df_long <- df %>%
-      tibble::rownames_to_column("gene_id") %>%
-      tidyr::pivot_longer(cols = -gene_id, names_to = "Sample", values_to = "expression")
-    
-    merged_data <- left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
-    
-    conditions_found <- unique(merged_data$condition)
-    colors_chosen <- c("#D81B60", "#1E88E5")
-    colors_chosen_darker <- c("#82103a", "#10528b")
-    custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
-    
-    condition_title <- paste(" in ", paste(conditions_found, collapse=" vs "))
-    plot_title <- if (length(gene) == 1) {
-      paste("Expressions for", gene, condition_title)
-    } else {
-      paste("Expressions for multiple genes:", paste(gene, collapse = ", "), condition_title)
-    }
-    
-    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
-                    type = "violin", colors = custom_colors, points = 'outliers',
-                    marker = list(color = colors_chosen_darker, size = 5, line = list(width = 0)),
-                    line = list(width = 1),
-                    box = list(visible = TRUE, fillcolor = colors_chosen_darker, line = list(width = 1, color = colors_chosen_darker)),
-                    meanline = list(visible = TRUE),
-                    bandwidth = 0.9,
-                    text = ~paste("Gene ID:", gene_id)) %>%
-      layout(title = plot_title,
-             yaxis = list(title = "Log-normalized Expression"),
-             xaxis = list(title = "Gene - Condition",
-                          titlefont = list(size = 14),
-                          tickfont = list(family = "Arial", size = 10, color = "black")),
-             margin = list(t = 100),
-             zeroline = FALSE,
-             violingap = 0.2,
-             violingroupgap = 0.1,
-             violinmode = "group")
-    
-    plot <- add_significance_annotations(merged_data, plot, padj_cut)
-    
-    return(plot)
-  } else {
-    message("No genes found for display.")
-  }
-}
-
-
-
-create_volcanoplot <- function(dds, padj_cut, log2_cut, display_genes) {
+plot_volcano <- function(res, dds, gene = NULL) {
   #' Create Volcanoplot
-  #'
-  #' @description Creates a volcanoplot for the given data
+  #' @param res Processed data for volcano plot
   #' @param dds Processed DESeq2 dataset
-  #' @param display_genes Genes to display
-  #' @param padj_cut Adjusted p-value cutoff
-  #' @param log2_cut Log2 fold change cutoff
-  #' 
+  #' @param gene Specific genes to highlight
   #' @return A plotly object representing the volcanoplot
- 
-  res <- results(dds)
-  res$neg_log10_padj <- -log10(res$padj)
-
-  gene <- rownames(display_genes)
-
-  res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut,
-                    ifelse(res$log2FoldChange > 0, "Upregulated", "Downregulated"),
-                    "Not Significant")
   
   plot <- plot_ly()
   
@@ -346,7 +257,7 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, display_genes) {
                     marker = list(size = 7, line = list(color = "#82103a", width = 1)),
                     customdata = rownames(upregulated_data),
                     name = "Upregulated")
-
+  
   downregulated_data <- subset(res, sig == "Downregulated")
   plot <- add_trace(plot, data = downregulated_data, x = downregulated_data$log2FoldChange, y = downregulated_data$neg_log10_padj,
                     type = 'scattergl', mode = 'markers', color = I("#1E88E5"),
@@ -355,7 +266,7 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, display_genes) {
                     marker = list(size = 7, line = list(color = "#10528b", width = 1)),
                     customdata = rownames(downregulated_data),
                     name = "Downregulated")
-
+  
   non_sig_data <- subset(res, sig == "Not Significant")
   plot <- add_trace(plot, data = non_sig_data, x = non_sig_data$log2FoldChange, y = non_sig_data$neg_log10_padj,
                     type = 'scattergl', mode = 'markers', color = I("gray"),
@@ -369,7 +280,6 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, display_genes) {
   if (!is.null(gene) && length(gene) > 0) {
     highlighted_genes <- subset(res, rownames(res) %in% gene)
     if (nrow(highlighted_genes) > 0) {
-
       plot <- add_trace(plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
                         type = "scattergl", mode = "markers", color = I("orange"),
                         text = paste("Gene:", rownames(highlighted_genes), "<br>Log2 Fold Change:", highlighted_genes$log2FoldChange,
@@ -377,7 +287,7 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, display_genes) {
                         hoverinfo = 'text',
                         marker = list(size = 7, line = list(color = "darkorange", width = 1)),
                         name = "Highlighted Genes")
-
+      
       plot <- add_trace(plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
                         type = "scattergl", mode = "text", text = rownames(highlighted_genes),
                         textposition = "top center", textfont = list(size = 10, color = "black"),
@@ -387,54 +297,73 @@ create_volcanoplot <- function(dds, padj_cut, log2_cut, display_genes) {
       message("No genes found matching the specified list. Please check gene names.")
     }
   }
-
+  
   unique_conditions <- unique(dds$condition)
   condition_title <- paste("Volcano plot of DESeq2 results of", paste(unique_conditions, collapse=" vs "))
-
+  
   plot <- layout(plot, title = condition_title,
                  xaxis = list(title = "Log2 Fold Change"),
                  yaxis = list(title = "-log10 Adjusted p-value"),
                  margin = list(t = 100))
-
-
-
+  
   return(plot)
 }
 
 
-create_heatmap <- function(dds, padj_cut, log2_cut, number, gene) {
-  #' Create Heatmap
+plot_violin <- function(merged_data, gene_of_interest, padj_cut) {
+  #' Create Violin Plot
+  #' @param merged_data Processed data for violin plot
+  #' @param gene_of_interest Specific gene to analyze
+  #' @param padj_cut Adjusted p-value cutoff
+  #' @return A plotly object representing the violin plot
+  
+  conditions_found <- unique(merged_data$condition)
+  colors_chosen <- c("#D81B60", "#1E88E5")
+  colors_chosen_darker <- c("#82103a", "#10528b")
+  custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
+  
+  condition_title <- paste(" in ", paste(conditions_found, collapse=" vs "))
+  plot_title <- if (length(gene_of_interest) == 1) {
+    paste("Expressions for", gene_of_interest, condition_title)
+  } else {
+    paste("Expressions for multiple genes:", paste(gene_of_interest, collapse = ", "), condition_title)
+  }
+  
+  plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
+                  type = "violin", colors = custom_colors, points = 'outliers',
+                  marker = list(color = colors_chosen_darker, size = 5, line = list(width = 0)),
+                  line = list(width = 1),
+                  box = list(visible = TRUE, fillcolor = colors_chosen_darker, line = list(width = 1, color = colors_chosen_darker)),
+                  meanline = list(visible = TRUE),
+                  bandwidth = 0.9,
+                  text = ~paste("Gene ID:", gene_id)) %>%
+    layout(title = plot_title,
+           yaxis = list(title = "Log-normalized Expression"),
+           xaxis = list(title = "Gene - Condition",
+                        titlefont = list(size = 14),
+                        tickfont = list(family = "Arial", size = 10, color = "black")),
+           margin = list(t = 100),
+           zeroline = FALSE,
+           violingap = 0.2,
+           violingroupgap = 0.1,
+           violinmode = "group")
+  
+  plot <- add_significance_annotations(merged_data, plot, padj_cut)
+  
+  return(plot)
+}
+
+
+plot_heatmap <- function(mat.z, dds, gene) {
+  #' Plot Heatmap
   #'
   #' This function creates a heatmap for the given data.
   #'
+  #' @param mat.z Z-scored matrix.
   #' @param dds Processed DESeq2 dataset.
-  #' @param padj_cut Adjusted p-value cutoff.
-  #' @param log2_cut Log2 fold change cutoff.
-  #' @param number Number of top genes to display.
   #' @param gene Specific gene to display.
   #'
   #' @return A plotly object representing the heatmap.
-  
-  res <- results(dds)
-  res.df <- as.data.frame(res)
-  
-  res.df.filter <- res.df[(abs(res.df$log2FoldChange) > log2_cut) & (!is.na(res.df$padj) & res.df$padj < padj_cut),]
-  res.df.filter <- res.df.filter[order(res.df.filter$padj), ]
-  if (nrow(res.df.filter) > number) {
-    res.df.filter <- res.df.filter[0:number, ]
-  } else {
-    message("Not enough genes. Try a lower number.")
-  }
-  
-  if (!is.null(gene)) {
-    res.df.gene <- subset(res.df, rownames(res.df) %in% gene)
-    res.df.final <- unique(rbind(res.df.filter, res.df.gene))
-  } else {
-    res.df.final <- res.df.filter
-  }
-  
-  mat <- assay(vst(dds))[rownames(res.df.final),]
-  mat.z <- t(scale(t(mat)))
   
   conditions <- colData(dds)$condition
   condition_levels <- unique(conditions)
@@ -475,46 +404,15 @@ create_heatmap <- function(dds, padj_cut, log2_cut, number, gene) {
 }
 
 
-
-analyze_gene_correlations <- function(dds, display_genes, gene_of_interest, threshold = 0.4) {
-  #' Analyze gene correlations
+plot_gene_correlations <- function(filtered_results, gene_of_interest) {
+  #' Plot gene correlations
   #'
-  #' This function calculates the correlation and p-values of a specified gene of interest with other genes.
-  #' It generates a scatter plot and histogram to visualize the correlations.
+  #' This function generates a scatter plot and histogram to visualize the correlations.
   #'
-  #' @param dds DESeq2 dataset object.
-  #' @param display_genes A data table of genes to display.
+  #' @param filtered_results A data table containing the gene correlations and p-values.
   #' @param gene_of_interest A specific gene to analyze.
-  #' @param threshold A numeric value to filter correlations.
   #'
   #' @return A plotly plot with scatter plot and histogram of gene correlations.
-  
-  if (gene_of_interest == "") {
-    gene_of_interest <- rownames(display_genes)[1]
-  }
-  
-  counts_matrix <- counts(dds, normalized = TRUE)
-  counts_matrix <- t(counts_matrix)
-  data_dt <- as.data.table(counts_matrix)
-  
-  if (!(gene_of_interest %in% colnames(data_dt))) {
-    stop(paste("Gene", gene_of_interest, "not found in the data."))
-  }
-  
-  gene_expr <- data_dt[[gene_of_interest]]
-  correlations <- numeric(ncol(data_dt))
-  p_values <- numeric(ncol(data_dt))
-  
-  for (i in seq_along(data_dt)) {
-    test_result <- cor.test(gene_expr, data_dt[[i]], use = "complete.obs")
-    correlations[i] <- test_result$estimate
-    p_values[i] <- test_result$p.value
-  }
-  
-  results_dt <- data.table(gene = colnames(data_dt), correlation = correlations, p_value = p_values)
-  filtered_results <- results_dt[abs(correlation) >= threshold]
-  filtered_results[, log_p_value := -log10(p_value)]
-  filtered_results <- filtered_results[is.finite(correlation) & is.finite(log_p_value)]
   
   color_palette <- rev(colorRampPalette(brewer.pal(3, "RdBu"))(256))
   
@@ -530,6 +428,7 @@ analyze_gene_correlations <- function(dds, display_genes, gene_of_interest, thre
     layout(title = paste("Correlation and P-values of", gene_of_interest, "with other genes"),
            xaxis = list(title = "Correlation Coefficient"),
            yaxis = list(title = "-log10(p-value)"),
+           margin = list(t = 100),
            showlegend = FALSE)
   
   return(plot)
