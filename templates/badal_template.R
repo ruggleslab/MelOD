@@ -95,3 +95,63 @@ badal_server <- function() {
     ))
   })
 }
+
+
+
+
+
+# 
+# 
+# 
+# rds <-  readRDS(file.path("/Users/paul/Downloads", "Badal_Deseq2.rds"))
+# 
+# 
+# metadata_csv_from_rds <- as.data.frame(colData(rds))
+# badal <- read.csv(file = "./data/badal/clinical_data.csv")
+# 
+# 
+# 
+# 
+# name = badal
+# 
+# 
+# 
+# 
+# 
+# name <- name %>%
+#   mutate(numeric_patient_id = as.numeric(str_extract(Patient.ID, "\\d+")))
+# 
+# metadata_csv_from_rds <- metadata_csv_from_rds %>%
+#   mutate(numeric_id_1 = as.numeric(str_extract(Sample, "\\d+")))
+# 
+# metadata_csv_from_rds$ID <- rownames(metadata_csv_from_rds)
+# 
+# merged_df <- merge(name, metadata_csv_from_rds, by.x = "numeric_patient_id", by.y = "numeric_id_1", all.x = TRUE)
+# merged_df <- merged_df %>%
+#   distinct(numeric_patient_id, .keep_all = TRUE)
+# 
+# 
+# 
+# # List of columns to drop
+# columns_to_drop <- c("X", "Sample","RNA.seq.ID")  # Replace with the actual column names you want to drop
+# 
+# # Drop the specified columns
+# merged_df <- merged_df %>%
+#   select(-all_of(columns_to_drop))
+# 
+# # Remove rows with NA values
+# merged_df <- na.omit(merged_df)
+# # Ensure no row names exist
+# rownames(merged_df) <- NULL
+# merged_df <- column_to_rownames(merged_df, var = "ID")
+# 
+# # Rename the column (for example, renaming "old_name" to "new_name")
+# merged_df <- merged_df %>%
+#   rename("OS(days)" = "Overall.Survival..Days")
+# 
+# 
+# # Optionally, save the modified dataframe back to a CSV file
+# write.csv(merged_df, file.path("./data/fischer/Fischer_demographics_information_Final.csv"), row.names = TRUE)
+# 
+# 
+# 
