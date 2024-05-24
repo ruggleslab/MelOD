@@ -1,15 +1,14 @@
-violin_server <- function(id) {
+violin_server <- function(id,shared_reactives) {
   moduleServer(id, function(input, output, session) {
     blurbs <- fromJSON("./www/info_blurbs.json")
-    selected_dds <- reactive({ global_selected_dds() })
-    utilities <- reactive({ shared_server_utilities(selected_dds()) })
-    filtered_res <- reactive({ utilities()$filtered_genes })
-    dds_processed <- reactive({ utilities()$dds })
-    display_genes <- reactive({ get_display_genes(filtered_res(), input$selected_gene) })
-
+    
+    filtered_res <- shared_reactives$filtered_res
+    dds_processed <- shared_reactives$dds_processed
+    display_genes <- shared_reactives$display_genes
+    
     #' Process Data
     #' @description Processes the data for the violin plot
-    processed_data <- eventReactive(c(input$update_plot, input$reset_selection), {
+    processed_data <- eventReactive(c(input$update_plot, input$selection), {
       
       process_violin_data(dds_processed(), display_genes())
     })

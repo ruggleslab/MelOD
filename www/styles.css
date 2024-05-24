@@ -190,7 +190,7 @@ h2.home {
 .shinybusy {
   position: fixed !important;
   top: 50% !important;
-  left: 55% !important;
+  left: 50% !important;
   transform: translate(-50%, -50%) !important;
   height: 100px !important;  /* Adjust the height as needed */
   width: 100px !important;   /* Adjust the width as needed */
@@ -203,3 +203,11 @@ h2.home {
   width: 25px !important;   /* Adjust the size of each circle */
   height: 25px !important;  /* Adjust the size of each circle */
 }
+
+
+/* DL button deseq2 table */
+
+div.dt-buttons {
+    padding-left: 10px;
+}
+

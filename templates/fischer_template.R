@@ -35,13 +35,13 @@ fischer_server <- function() {
   dds <- list(readRDS(file.path("./data/fischer", "Fischer_Deseq2.rds")))
   clinical_data <- list(read.csv("./data/fischer/Fischer_demographics_information_Final.csv"))
   
-  selection_server(dds,clinical_data,"fischer")
-  input_server("fischer")
-  pca_metadata_server("fischer")
-
-  volcano_server("fischer")
-  violin_server("fischer")
-  heatmap_server("fischer")
-  correlation_server("fischer")  
+  # Initialize servers
+  selection_result <- selection_server(dds, clinical_data, "fischer")
+  input_server("fischer", selection_result)
+  volcano_server("fischer", selection_result)
+  violin_server("fischer", selection_result)
+  correlation_server("fischer", selection_result)
+  heatmap_server("fischer", selection_result)
+  pca_metadata_server("fischer", selection_result) 
   
 }

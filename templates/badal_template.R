@@ -74,14 +74,14 @@ badal_server <- function() {
     dds <- list(badal_dds)
     clinical_data <- list(read.csv(file = "./data/badal/clinical_data.csv"))
     
-    ## Load other server modules
-    selection_server(dds, clinical_data, "badal")
-    input_server("badal")
-    pca_metadata_server("badal")
-    volcano_server("badal")
-    violin_server("badal")
-    heatmap_server("badal")
-    correlation_server("badal")  
+    # Initialize servers
+    selection_result <- selection_server(dds, clinical_data, "badal")
+    input_server("badal", selection_result)
+    volcano_server("badal", selection_result)
+    violin_server("badal", selection_result)
+    correlation_server("badal", selection_result)
+    heatmap_server("badal", selection_result)
+    pca_metadata_server("badal", selection_result) 
     
     
     ## Close the modal after the loading is complete

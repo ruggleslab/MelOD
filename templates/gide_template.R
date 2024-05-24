@@ -56,13 +56,15 @@ gide_server <- function() {
   dds <- list(readRDS(file.path("./data/gide/mono", "ddsPreMono.rds")), readRDS(file.path("./data/gide/combo", "ddsPreCombo.rds")))
   clinical_data <- list(read.csv(file.path("./data/gide/mono", "Gide_demographics_monotherapy.csv"), sep=','), read.csv(file.path("./data/gide/combo", "Gide_demographics_combotherapy.csv"), sep=','))
   
-  selection_server(dds,clinical_data,"gide")
-  selection_list_server(dds,clinical_data,"gide")
-  input_server("gide")
-  pca_metadata_server("gide")
-  volcano_server("gide")
-  violin_server("gide")
-  heatmap_server("gide")
-  correlation_server("gide")  
+
+  # Initialize servers
+  selection_result <- selection_server(dds, clinical_data, "gide")
+  selection_list_server(dds,clinical_data,"gide",selection_result)
+  input_server("gide", selection_result)
+  volcano_server("gide", selection_result)
+  violin_server("gide", selection_result)
+  correlation_server("gide", selection_result)
+  heatmap_server("gide", selection_result)
+  pca_metadata_server("gide", selection_result) 
   
 }

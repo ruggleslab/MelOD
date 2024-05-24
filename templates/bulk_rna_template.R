@@ -208,7 +208,7 @@ correlation_ui <- function(id) {
     width = 12,
     solidHeader = TRUE,
     status = "primary",
-    plotlyOutput(ns('correlation_plot'))
+    uiOutput(ns('correlation_plot'))
     )
 }
 

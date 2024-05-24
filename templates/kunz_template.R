@@ -35,14 +35,15 @@ kunz_server <- function() {
   dds <- list(readRDS(file.path("./data/kunz", "Kunz_Deseq2.rds")))
   clinical_data <- list(read.csv(file = "./data/badal/clinical_data.csv", sep = ";"))
   
+
   # Initialize servers
-  selection_server(dds, clinical_data, "kunz")
-  input_server("kunz")
-  volcano_server("kunz")
-  violin_server("kunz")
-  pca_metadata_server("kunz")
-  heatmap_server("kunz")
-  correlation_server("kunz")  
+  selection_result <- selection_server(dds, clinical_data, "kunz")
+  input_server("kunz", selection_result)
+  volcano_server("kunz", selection_result)
+  violin_server("kunz", selection_result)
+  correlation_server("kunz", selection_result)
+  heatmap_server("kunz", selection_result)
+  pca_metadata_server("kunz", selection_result)
 }
 
 

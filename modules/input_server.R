@@ -2,16 +2,14 @@
 #' 
 #' @description Handles input for the application
 #' @param id Module ID
-input_server <- function(id) {
+input_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
-    # Check the number of items in `dds` and adjust accordingly
+ 
+    selected_dds <- shared_reactives$selected_dds
+    utilities <- shared_reactives$utilities
+    dds_processed <- shared_reactives$dds_processed
     
-    # Use the selected `dds` within a reactive context
-    utilities <- reactive({
-      dds <- global_selected_dds()
-      shared_server_utilities(dds)
-    })
-    
+   
     # Observe for changes in the filtered genes and update the select input
     observe({
       filtered_res <- utilities()$filtered_genes

@@ -2,14 +2,16 @@
 #'
 #' @description Sets up the server logic for the PCA analysis and related plots
 #' @param id Module ID
-pca_metadata_server <- function(id) {
+pca_metadata_server <- function(id,shared_reactives) {
   moduleServer(id, function(input, output, session) {
     blurbs <- fromJSON("./www/info_blurbs.json")
-    selected_dds <- reactive({ global_selected_dds() })
-    utilities <- reactive({ shared_server_utilities(selected_dds()) })
-    filtered_res <- reactive({ utilities()$filtered_genes })
-    dds_processed <- reactive({ utilities()$dds })
+
     
+    selected_dds <- shared_reactives$selected_dds
+    utilities <- shared_reactives$utilities
+    filtered_res <- shared_reactives$filtered_res
+    dds_processed <- shared_reactives$dds_processed
+    selected_clinical_data <- shared_reactives$selected_clinical_data
     #' Generate and Render PCA Data
     #' 
     #' @description Generates the PCA data and renders the PCA and variance explained plots
@@ -50,7 +52,7 @@ pca_metadata_server <- function(id) {
     
     
     output$mortality_by_condition <- renderUI({
-      result <- plot_mortality_curve_by_condition(global_selected_clinical_data())
+      result <- plot_mortality_curve_by_condition(selected_clinical_data())
       if (is.character(result)) {
         div(class = "error-message", result)
       } else {
@@ -59,7 +61,7 @@ pca_metadata_server <- function(id) {
     })
     
     output$mortality_by_gene <- renderUI({
-      result <- plot_mortality_curve_by_gene(global_selected_clinical_data(), dds_processed(), input$gene_mortality)
+      result <- plot_mortality_curve_by_gene(selected_clinical_data(), dds_processed(), input$gene_mortality)
       if (is.character(result)) {
         div(class = "error-message", result)
       } else {
@@ -72,7 +74,7 @@ pca_metadata_server <- function(id) {
       updateSelectizeInput(session, "gene_mortality", choices = rownames(filtered_res), server = TRUE, selected = NULL)
     })
     
-    setup_download_handler(output, "metadata_data", reactive({ global_selected_clinical_data()}), "metadata")
+    setup_download_handler(output, "metadata_data", reactive({ selected_clinical_data()}), "metadata")
     
     observeEvent(input$info_metadata_plot, {
       shinyalert(title = blurbs$info$pca$title, html = TRUE,

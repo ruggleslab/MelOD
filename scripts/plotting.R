@@ -414,6 +414,7 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
   #'
   #' @return A plotly plot with scatter plot and histogram of gene correlations.
   
+  tryCatch({
   color_palette <- rev(colorRampPalette(brewer.pal(3, "RdBu"))(256))
   
   scatter_plot <- plot_ly(filtered_results, x = ~correlation, y = ~log_p_value, type = 'scatter', mode = 'markers',
@@ -428,8 +429,13 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
     layout(title = paste("Correlation and P-values of", gene_of_interest, "with other genes"),
            xaxis = list(title = "Correlation Coefficient"),
            yaxis = list(title = "-log10(p-value)"),
+           yaxis2 = list(title = "Count"),
            margin = list(t = 100),
            showlegend = FALSE)
   
   return(plot)
+}, error = function(e) {
+  return("Click on 'Generate Plot' to re-run the correlation")
+})
 }
+
