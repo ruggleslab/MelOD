@@ -389,7 +389,7 @@ plot_heatmap <- function(mat.z, dds, gene) {
     subplot_widths = c(0.95, 0.005, 0.045),
     grid_gap = 0.5,
     fontsize_row = 8,
-    fontsize_col = 6,
+    fontsize_col = 8,
     key.title = "Z-score",
     label_names = c("Gene", "Sample", "Z-score"),
     colors = rev(colorRampPalette(brewer.pal(3, "RdBu"))(256)),

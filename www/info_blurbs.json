@@ -6,7 +6,7 @@
     },
     "pca": {
       "title": "PCA Plot Information",
-      "text": "Principal Component Analysis (PCA) is a dimensionality reduction technique used to visualize the variance in gene expression data. The PCA plot shows the distribution of samples based on the first two principal components, which capture the most variance. Each point represents a sample, and the distance between points indicates their similarity. What Size Factors Mean: Size factors are used in DESeq2 to normalize the count data, accounting for differences in sequencing depth and other technical biases between samples. They ensure that the comparison of gene expression levels across samples is fair and not influenced by these technical variations."
+      "text": "Principal Component Analysis (PCA) is a dimensionality reduction technique used to visualize the variance in gene expression data. The PCA plot shows the distribution of samples based on the first two principal components, which capture the most variance. Each point represents a sample, and the distance between points indicates their similarity.<br><br>What Size Factors Mean: Size factors are used in DESeq2 to normalize the count data, accounting for differences in sequencing depth and other technical biases between samples. They ensure that the comparison of gene expression levels across samples is fair and not influenced by these technical variations."
     },
     "volcano": {
       "title": "Volcano Plot Information",
@@ -14,11 +14,15 @@
     },
     "violin": {
       "title": "Violin Plot Information",
-      "text": "Violin plots are used to visualize the distribution of gene expression levels across different conditions. The plot combines elements of box plots and density plots, showing the distribution, median, and interquartile range of the expression data. The width of the plot at different values indicates the density of data points.<br><img src='./images/violin_example.png' alt='Violin Plot Example' style='width:80%;'>"
+      "text": "Violin plots are used to visualize the distribution of gene expression levels across different conditions. The plot combines elements of box plots and density plots, showing the distribution, median, and interquartile range of the expression data. The width of the plot at different values indicates the density of data points.<br><br><img src='./images/violin_example.png' alt='Violin Plot Example' style='width:80%;'>"
     },
     "correlation": {
       "title": "Correlation Plot Information",
       "text": "The correlation plot displays the correlation coefficients and their significance for each gene relative to the gene of interest. The scatter plot shows the correlation coefficients on the x-axis and the -log10 p-values on the y-axis, while the histogram shows the distribution of correlation coefficients."
+    },
+    "mortality_curve": {
+      "title": "Mortality Curve Information",
+      "text": "Mortality curves are used to visualize the survival rates of patients based on the status (dead or alive) and the overall survival in days. The curve can be split by the condition of the study or for a selected gene, into quartiles (Q1, Q2, or Q3) to further analyze survival rates within different expression ranges."
     }
   }
 }

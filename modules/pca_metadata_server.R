@@ -77,8 +77,8 @@ pca_metadata_server <- function(id,shared_reactives) {
     setup_download_handler(output, "metadata_data", reactive({ selected_clinical_data()}), "metadata")
     
     observeEvent(input$info_metadata_plot, {
-      shinyalert(title = blurbs$info$pca$title, html = TRUE,
-                 text = blurbs$info$pca$text)
+      shinyalert(title = blurbs$info$mortality_curve$title, html = TRUE,
+                 text = blurbs$info$mortality_curve$text)
     })
     
   })

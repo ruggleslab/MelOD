@@ -1,23 +1,36 @@
 #' Home UI
 #'
-#' @description Creates the UI layout for the Home  tab
+#' @description Creates the UI layout for the Home tab
 #' @param id Module ID
-#' @return A Shiny UI element for the Home  tab
+#' @return A Shiny UI element for the Home tab
 home_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    tags$h3("Explanation of the Project"),
-    fluidRow(column(
-      width = 9,
-      tags$p(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    tags$h3("Project Overview"),
+    fluidRow(
+      column(
+        width = 9,
+        tags$p(
+          "Welcome to our RShiny application dedicated to the analysis and visualization of melanoma cancer datasets. 
+           Our platform currently supports bulk RNA analysis, providing a suite of tools for differential gene expression, 
+           PCA, heatmaps, correlation analysis, and more. We aim to offer robust and interactive visualizations to aid researchers in 
+           exploring data effectively."
+        ),
+        tags$p(
+          "In the near future, we plan to expand our capabilities to include single-cell RNA analysis, proteomics, and array-based datasets. 
+           Each of these additions will bring new features and functionalities, enabling a more holistic view of melanoma cancer at various 
+           molecular levels."
+        ),
+        tags$p(
+          "Stay tuned for updates as we continue to enhance the platform and integrate more data types and advanced analytical tools. 
+           Your feedback is invaluable to us as we strive to build a comprehensive and user-friendly resource for the cancer research community."
+        )
       ),
-   
+      column(
+        width = 3,
+        tags$img(src = "./images/melanoma.png", width = "150px")  # Updated path to reference the www directory
+      )
     ),
-    column(
-      width = 3,
-      tags$img(src = "./images/melanoma.png", width = "150px")  # Updated path to reference the www directory
-    )),
     hr()
   )
 }
@@ -27,7 +40,6 @@ home_ui <- function(id) {
 #' @description Sets up the server logic for the Home analysis tab
 home_server <- function(id) {
   moduleServer(id, function(input, output, session) {
-
+    
   })
 }
-

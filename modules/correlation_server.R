@@ -26,11 +26,6 @@ correlation_server <- function(id,shared_reactives) {
       plot_gene_correlations(processed_data()$filtered_results, processed_data()$gene_of_interest)
     })
 
-    # render_plots <- function(output, plot_data) {
-    #   output$correlation_plot <- renderPlotly({
-    #     plot_data()
-    #   })
-    # }
 
     
     output$correlation_plot <- renderUI({
@@ -41,7 +36,6 @@ correlation_server <- function(id,shared_reactives) {
         result
       }
     })
-    # render_plots(output, plot_data)
     
 
 

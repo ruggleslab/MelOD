@@ -35,10 +35,10 @@ dashboardTemplate <- function() {
         tabItem(tabName = "badal", badal_ui("badal_template")),
         tabItem(tabName = "kunz", kunz_ui("kunz_template")),
         tabItem(tabName = "fischer", fischer_ui("fischer_template")),
-        tabItem(tabName = "single", shiny_cell_ui("shiny_cell_template")),
-        tabItem(tabName = "proteomic", home_ui("home_template")),
-        tabItem(tabName = "genes", home_ui("home_template")),
-        tabItem(tabName = "about", home_ui("home_template"))
+        tabItem(tabName = "single", in_developpement_ui("in_developpement_template")),
+        tabItem(tabName = "proteomic", in_developpement_ui("in_developpement_template")),
+        tabItem(tabName = "genes", in_developpement_ui("in_developpement_template")),
+        tabItem(tabName = "about", in_developpement_ui("in_developpement_template"))
       ),
       tags$div(class = "footer", tags$p("Rshiny-Seq Ruggles Lab"))
     )

@@ -8,8 +8,7 @@ badal_ui <- function(id) {
     add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
     fluidRow(blurb_study_ui("badal")),
     fluidRow(column(6, blurb_data_ui("badal")),
-             column(6, fluidRow(blurb_comparison_ui("badal"),
-                                gide_selector_ui("badal")))),
+             column(6, fluidRow(blurb_comparison_ui("badal")))),
     fluidRow(
       column(6,pca_ui("badal")),
       column(6,metadata_ui("badal"))),
@@ -26,25 +25,25 @@ badal_ui <- function(id) {
 }
 
 
-#' Badal Selector UI
-#' 
-#' @description Creates the UI component for selecting comparisons in the Badal study
-#' @param id Module ID
-#' @return A Shiny UI element
-badal_selector_ui <- function(id) {
-  ns <- NS(id)
-  box(
-    background = 'orange', width = 12,
-    radioButtons(
-      label = "Select comparison",
-      inputId = ns("selection_badal"),
-      choices = c("Gene", "Tumor Stage"),
-      selected = "Gene",
-      inline = TRUE
-    ),
-    uiOutput(ns("debug_selection"))
-  )
-}
+#' #' Badal Selector UI
+#' #' 
+#' #' @description Creates the UI component for selecting comparisons in the Badal study
+#' #' @param id Module ID
+#' #' @return A Shiny UI element
+#' badal_selector_ui <- function(id) {
+#'   ns <- NS(id)
+#'   box(
+#'     background = 'orange', width = 12,
+#'     radioButtons(
+#'       label = "Select comparison",
+#'       inputId = ns("selection_badal"),
+#'       choices = c("Gene", "Tumor Stage"),
+#'       selected = "Gene",
+#'       inline = TRUE
+#'     ),
+#'     uiOutput(ns("debug_selection"))
+#'   )
+#' }
 
 
 #' Badal Server
