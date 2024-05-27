@@ -3,9 +3,10 @@ volcano_server <- function(id, shared_reactives) {
     blurbs <- fromJSON("./www/info_blurbs.json")
   
  
+    filtered_res <- shared_reactives$filtered_res
     dds_processed <- shared_reactives$dds_processed
-  
 
+    
     #' Process Data
     #' @description Processes the data for the volcano plot
     processed_data <- eventReactive(c(input$update_plot, input$selection), {
@@ -17,6 +18,7 @@ volcano_server <- function(id, shared_reactives) {
     plot_data <- reactive({
       plot_volcano(processed_data()$res, processed_data()$dds, input$selected_gene)
     })
+    
 
     #' Render Plot
     output$volcano_plot <- renderPlotly({ plot_data() })
@@ -28,15 +30,46 @@ volcano_server <- function(id, shared_reactives) {
     })
     #' Download Handler
     setup_download_handler(output, "volcano_data", reactive({ processed_data()$res }), "volcano")
+    
+    # observe({
+    #   event_data <- c(event_data("plotly_selected"), event_data("plotly_click"))
+    #     selected_genes <- event_data$customdata
+    #     updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res()), server = TRUE, selected = selected_genes)
+    # })
+    
+    
+    current_selection <- reactiveVal(character())
+    
+    observe({
+      runjs("Shiny.setInputValue('plotly_selected-A', null);")
+      runjs("Shiny.setInputValue('plotly_click-A', null);")
+      new_selection <- event_data("plotly_selected")$customdata
+      new_click <- event_data("plotly_click")$customdata
+      current_genes <- current_selection()
+      if (!is.null(new_selection)) {
+        current_genes <- unique(c(current_genes, new_selection))
+      }
+      if (!is.null(new_click)) {
+        current_genes <- unique(c(current_genes, new_click))
+      }
+      
+      current_selection(current_genes)
+      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res()), server = TRUE, selected = current_genes)
+    })
+    
+    # Reset button to clear the selection
+    observeEvent(input$reset_selection, {
+      current_selection(character())  
+      runjs("Shiny.setInputValue('plotly_selected-A', null);")
+      runjs("Shiny.setInputValue('plotly_click-A', null);")
+      
+    })
+    
+    
   })
 }
 
-#' #' Event Observers
-#' #' 
-#' #' @description Sets up observers for plot interactions and gene selection
-#' #' 
-#' event_observers(input, session, display_genes, filtered_res, selected_genes_plotly, new_genes)
-#' 
+
 
 
 

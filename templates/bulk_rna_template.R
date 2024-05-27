@@ -127,9 +127,11 @@ input_ui <- function(id) {
              numericInput(ns("number"), "Number of genes for the heatmap (min. 2 if no genes selected)", 10, min = 0, step = 1),
              selectizeInput(ns("selected_gene"), "Gene(s) selection (up to 10)", choices = NULL, selected = NULL, multiple = TRUE, options = list(maxItems = 10)),
              actionButton(ns("update_plot"), "Generate plots", class = "btn-primary"),
+             actionButton(ns("reset_selection"), "Reset Selection", class = "btn-primary"),
              
       ),
       column(6,
+             useShinyjs(),
              selectizeInput(ns("gene_of_interest"), "Gene of Interest for Correlation", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
              numericInput(ns("correlation_threshold"), "Correlation Threshold", value = 0.2, min = 0, max = 1, step = 0.1)
       )

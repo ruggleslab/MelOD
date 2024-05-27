@@ -247,7 +247,7 @@ plot_volcano <- function(res, dds, gene = NULL) {
   #' @param gene Specific genes to highlight
   #' @return A plotly object representing the volcanoplot
   
-  plot <- plot_ly()
+  plot <- plot_ly(source = "A")
   
   upregulated_data <- subset(res, sig == "Upregulated")
   plot <- add_trace(plot, data = upregulated_data, x = upregulated_data$log2FoldChange, y = upregulated_data$neg_log10_padj,
@@ -292,7 +292,8 @@ plot_volcano <- function(res, dds, gene = NULL) {
                         type = "scattergl", mode = "text", text = rownames(highlighted_genes),
                         textposition = "top center", textfont = list(size = 10, color = "black"),
                         hoverinfo = 'none',
-                        showlegend = FALSE)
+                        showlegend = FALSE)%>%
+        plotly::event_register('plotly_click')    
     } else {
       message("No genes found matching the specified list. Please check gene names.")
     }
