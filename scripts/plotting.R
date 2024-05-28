@@ -435,6 +435,33 @@ plot_heatmap <- function(mat.z, dds, gene) {
 }
 
 
+#' 
+#' @description Renders the filtered results table based on the selected genes
+#' @param dds_processed Reactive expression containing the processed DESeq2 dataset
+#' @param input Shiny input object
+#' @param selected_genes_plotly Reactive value for selected genes
+#' @return A datatable containing the filtered results
+render_filtered_results_table <- function(dds_processed, input) {
+  DT::renderDataTable({
+    res <- results(dds_processed())
+    res <- as.data.frame(res)
+    
+    # Round numeric columns to 4 decimal places
+    numeric_columns <- sapply(res, is.numeric)
+    res[numeric_columns] <- lapply(res[numeric_columns], function(x) round(x, 4))
+    
+    if (!is.null(input$selected_gene) && length(input$selected_gene) > 0)
+      res <- res[rownames(res) %in% input$selected_gene, ]
+    
+    DT::datatable(res, extensions = 'Buttons', options = list(
+      dom = 'lrBtip',
+      buttons = c('copy', 'csv', 'excel'),
+      pageLength = 10,
+      scrollX = TRUE
+    ))
+  })
+}
+
 plot_gene_correlations <- function(filtered_results, gene_of_interest) {
   #' Plot gene correlations
   #'

@@ -15,16 +15,17 @@ gide_ui <- function(id) {
       column(6,pca_ui("gide")),
       column(6,metadata_ui("gide"))),
     fluidRow(
-      column(6,input_ui("gide")),
-      column(6,volcano_ui("gide"))),
+      column(4,input_ui("gide")),
+      column(8,deseq2_table_ui("gide"))),
     fluidRow(
-      column(6,deseq2_table_ui("gide")),
+      column(6,volcano_ui("gide")),
       column(6,violin_ui("gide"))),
     fluidRow(
       column(8,heatmap_ui("gide")),
       column(4, correlation_ui("gide")))
   )
 }
+
 
 
 #' Gide Selector UI

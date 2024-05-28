@@ -161,10 +161,10 @@ shared_server_utilities <- function(dds) {
 #' Download Handlers
 #' 
 #' @description Sets up the download handlers for exporting data
-setup_download_handler <- function(output, id, data_reactive, filename_prefix) {
-  output[[id]] <- downloadHandler(
+setup_download_handler <- function(id, output, name, data_reactive, filename_prefix) {
+  output[[name]] <- downloadHandler(
     filename = function() {
-      paste(filename_prefix, "_", Sys.Date(), '.csv', sep = '')
+      paste(id,"_", filename_prefix, "_", Sys.Date(), '.csv', sep = '')
     },
     content = function(file) {
       req(data_reactive())
@@ -209,20 +209,7 @@ event_observers <- function(input, session, display_genes, filtered_res, selecte
     shinyalert(title = "Violin Plot Information", html = TRUE,
                text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
   })
-  
-#  
-# # Function to update genes and reset the plotly event data
-#   update <- function(event_data_type) {
-#     observeEvent(event_data(event_data_type), {
-#       new_genes(event_data(event_data_type)$customdata)
-#       update_selected_genes(new_genes(), selected_genes_plotly, session, filtered_res)
-#       
-#     })
-#   }
-#   
-#   update("plotly_click")
-#   update("plotly_selected")
-#   
+
 
 }
 
@@ -239,30 +226,6 @@ update_selected_genes <- function(new_genes, selected_genes_plotly, session, fil
   updateSelectizeInput(session, "selected_gene", choices = isolate(rownames(filtered_res())), server = TRUE, selected = selected_genes_plotly())
   
 }
-
-
-#' Render Filtered Results Table
-#' 
-#' @description Renders the filtered results table based on the selected genes
-#' @param dds_processed Reactive expression containing the processed DESeq2 dataset
-#' @param input Shiny input object
-#' @param selected_genes_plotly Reactive value for selected genes
-#' @return A datatable containing the filtered results
-render_filtered_results_table <- function(dds_processed, input) {
-  DT::renderDataTable({
-    res <- results(dds_processed())
-    res <- as.data.frame(res)
-    if (!is.null(input$selected_gene) && length(input$selected_gene) > 0)
-      res <- res[rownames(res) %in% input$selected_gene, ]
-    DT::datatable(res, extensions = 'Buttons', options = list(
-      dom = 'lrBtip',
-      buttons = c('copy', 'csv', 'excel'),
-      pageLength = 10,
-      scrollX = TRUE
-    ))
-  })
-}
-
 
 
 

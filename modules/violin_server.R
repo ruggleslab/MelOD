@@ -24,7 +24,7 @@ violin_server <- function(id,shared_reactives) {
     output$violin_plot <- renderPlotly({ plot_data() })
 
     #' Download Handler
-    setup_download_handler(output, "violin_data", processed_data, "violin")
+    setup_download_handler(id, output, "violin_data", processed_data, "violin")
 
     observeEvent(input$info_violin_plot, {
       shinyalert(title = blurbs$info$violin$title, html = TRUE,

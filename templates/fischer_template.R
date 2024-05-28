@@ -15,16 +15,17 @@ fischer_ui <- function(id) {
         column(6,pca_ui("fischer")),
         column(6,metadata_ui("fischer"))),
       fluidRow(
-        column(6,input_ui("fischer")),
-        column(6,volcano_ui("fischer"))),
+        column(4,input_ui("fischer")),
+        column(8,deseq2_table_ui("fischer"))),
       fluidRow(
-        column(6,deseq2_table_ui("fischer")),
+        column(6,volcano_ui("fischer")),
         column(6,violin_ui("fischer"))),
       fluidRow(
         column(8,heatmap_ui("fischer")),
         column(4, correlation_ui("fischer")))
     )
-  }
+}
+
 
 
 #' Fischer Server

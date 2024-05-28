@@ -36,7 +36,7 @@ heatmap_server <- function(id,shared_reactives) {
       }
     })
     
-    setup_download_handler(output, "heatmap_data", reactive({ processed_data()$matrix }), "heatmap")
+    setup_download_handler(id, output, "heatmap_data", reactive({ processed_data()$matrix }), "heatmap")
     
  
 

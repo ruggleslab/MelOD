@@ -30,7 +30,7 @@ volcano_server <- function(id, shared_reactives) {
                  text = blurbs$info$volcano$text)
     })
     #' Download Handler
-    setup_download_handler(output, "volcano_data", reactive({ processed_data()$res }), "volcano")
+    setup_download_handler(id, output, "volcano_data", reactive({ processed_data()$res }), "volcano")
 
     observe({
       runjs("Shiny.setInputValue('plotly_selected-A', null);

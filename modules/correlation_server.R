@@ -43,7 +43,7 @@ correlation_server <- function(id,shared_reactives) {
     
 
 
-    setup_download_handler(output, "correlation_data", processed_data, "correlation")
+    setup_download_handler(id, output, "correlation_data", processed_data, "correlation")
 
     observeEvent(input$info_correlation_plot, {
       shinyalert(title = blurbs$info$correlation$title, html = TRUE,
