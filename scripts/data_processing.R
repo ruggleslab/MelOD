@@ -124,17 +124,23 @@ process_gene_correlations <- function(dds, display_genes, gene_of_interest, thre
   p_values <- numeric(ncol(data_dt))
   
   for (i in seq_along(data_dt)) {
-    test_result <- cor.test(gene_expr, data_dt[[i]], use = "complete.obs")
-    correlations[i] <- test_result$estimate
-    p_values[i] <- test_result$p.value
+    if (colnames(data_dt)[i] != gene_of_interest) {
+      test_result <- cor.test(gene_expr, data_dt[[i]], use = "complete.obs")
+      correlations[i] <- test_result$estimate
+      p_values[i] <- test_result$p.value
+    } else {
+      correlations[i] <- NA
+      p_values[i] <- NA
+    }
   }
   
   results_dt <- data.table(gene = colnames(data_dt), correlation = correlations, p_value = p_values)
+  results_dt <- results_dt[gene != gene_of_interest]
   filtered_results <- results_dt[abs(correlation) >= threshold]
   filtered_results[, log_p_value := -log10(p_value)]
   filtered_results <- filtered_results[is.finite(correlation) & is.finite(log_p_value)]
   
-  return(list(filtered_results = filtered_results, gene_of_interest = gene_of_interest))
+  return(filtered_results)
 }
 
 

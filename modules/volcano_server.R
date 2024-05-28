@@ -5,7 +5,8 @@ volcano_server <- function(id, shared_reactives) {
  
     filtered_res <- shared_reactives$filtered_res
     dds_processed <- shared_reactives$dds_processed
-
+    current_selection <- reactiveVal(character())
+    
     
     #' Process Data
     #' @description Processes the data for the volcano plot
@@ -30,19 +31,10 @@ volcano_server <- function(id, shared_reactives) {
     })
     #' Download Handler
     setup_download_handler(output, "volcano_data", reactive({ processed_data()$res }), "volcano")
-    
-    # observe({
-    #   event_data <- c(event_data("plotly_selected"), event_data("plotly_click"))
-    #     selected_genes <- event_data$customdata
-    #     updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res()), server = TRUE, selected = selected_genes)
-    # })
-    
-    
-    current_selection <- reactiveVal(character())
-    
+
     observe({
-      runjs("Shiny.setInputValue('plotly_selected-A', null);")
-      runjs("Shiny.setInputValue('plotly_click-A', null);")
+      runjs("Shiny.setInputValue('plotly_selected-A', null);
+            Shiny.setInputValue('plotly_click-A', null);")
       new_selection <- event_data("plotly_selected")$customdata
       new_click <- event_data("plotly_click")$customdata
       current_genes <- current_selection()
@@ -52,7 +44,6 @@ volcano_server <- function(id, shared_reactives) {
       if (!is.null(new_click)) {
         current_genes <- unique(c(current_genes, new_click))
       }
-      
       current_selection(current_genes)
       updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res()), server = TRUE, selected = current_genes)
     })
@@ -60,8 +51,9 @@ volcano_server <- function(id, shared_reactives) {
     # Reset button to clear the selection
     observeEvent(input$reset_selection, {
       current_selection(character())  
-      runjs("Shiny.setInputValue('plotly_selected-A', null);")
-      runjs("Shiny.setInputValue('plotly_click-A', null);")
+      runjs("Shiny.setInputValue('plotly_selected-A', null);
+            Shiny.setInputValue('plotly_click-A', null);")
+      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res()), server = TRUE, selected = NULL)
       
     })
     

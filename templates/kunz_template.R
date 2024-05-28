@@ -15,10 +15,10 @@ kunz_ui <- function(id) {
       column(6,pca_ui("kunz")),
       column(6,metadata_ui("kunz"))),
     fluidRow(
-      column(6,input_ui("kunz")),
-      column(6,volcano_ui("kunz"))),
+      column(4,input_ui("kunz")),
+      column(8,deseq2_table_ui("kunz"))),
     fluidRow(
-      column(6,deseq2_table_ui("kunz")),
+      column(6,volcano_ui("kunz")),
       column(6,violin_ui("kunz"))),
     fluidRow(
       column(8,heatmap_ui("kunz")),

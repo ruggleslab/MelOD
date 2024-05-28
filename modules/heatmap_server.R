@@ -28,13 +28,15 @@ heatmap_server <- function(id,shared_reactives) {
       plot_heatmap(processed_data()$matrix, dds_processed(), input$selected_gene)
     })
     
-    render_plots <- function(output, plot_data) {
-      output$heatmap_plot <- renderPlotly({
-        plot_data()
-      })
-    }
-    
-    render_plots(output, plot_data)
+
+    output$heatmap_plot <- renderUI({
+      result <- plot_data()
+      if (is.character(result)) {
+        div(class = "error-message", result)
+      } else {
+        result
+      }
+    })
     
     setup_download_handler(output, "heatmap_data", reactive({ processed_data()$matrix }), "heatmap")
     

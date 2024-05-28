@@ -7,23 +7,27 @@ correlation_server <- function(id,shared_reactives) {
     dds_processed <- shared_reactives$dds_processed
     display_genes <- shared_reactives$display_genes
     
+    # Debounce the inputs to avoid frequent reloading
+    gene_of_interest <- debounce(reactive(input$gene_of_interest), 500)
+    correlation_threshold <- debounce(reactive(input$correlation_threshold), 500)
     
-    observeEvent(c(input$update_plot, input$selection), {
+    
+    observe( {
       updateSelectizeInput(session, "gene_of_interest", choices = rownames(filtered_res()), server = TRUE)
     })
 
     #' Process Data
     #'
     #' @description Processes the correlation data
-    processed_data <- eventReactive(c(input$update_plot, input$selection), {
-      process_gene_correlations(dds_processed(), display_genes(), input$gene_of_interest, input$correlation_threshold)
+    processed_data <- reactive( {
+      process_gene_correlations(dds_processed(), display_genes(), gene_of_interest(), correlation_threshold())
     })
 
     #' Plot Data
     #'
     #' @description Generates the correlation plot
-    plot_data <- eventReactive(c(input$update_plot, input$selection), {
-      plot_gene_correlations(processed_data()$filtered_results, processed_data()$gene_of_interest)
+    plot_data <- reactive( {
+      plot_gene_correlations(processed_data(),gene_of_interest() )
     })
 
 

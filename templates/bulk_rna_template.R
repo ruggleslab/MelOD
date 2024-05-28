@@ -120,22 +120,15 @@ input_ui <- function(id) {
     collapsible = TRUE,
     solidHeader = TRUE, width = 12,
     tags$h3("Parameters", style = "margin-top: 0;"),
-    fluidRow(
-      column(6,
              numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
              numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
-             numericInput(ns("number"), "Number of genes for the heatmap (min. 2 if no genes selected)", 10, min = 0, step = 1),
              selectizeInput(ns("selected_gene"), "Gene(s) selection (up to 10)", choices = NULL, selected = NULL, multiple = TRUE, options = list(maxItems = 10)),
+             numericInput(ns("number"), "Number of genes for the heatmap (min. 2 if no genes selected)", 10, min = 0, step = 1),
              actionButton(ns("update_plot"), "Generate plots", class = "btn-primary"),
-             actionButton(ns("reset_selection"), "Reset Selection", class = "btn-primary"),
+             actionButton(ns("reset_selection"), "Reset Selection", class = "btn-primary")
+    
              
-      ),
-      column(6,
-             useShinyjs(),
-             selectizeInput(ns("gene_of_interest"), "Gene of Interest for Correlation", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
-             numericInput(ns("correlation_threshold"), "Correlation Threshold", value = 0.2, min = 0, max = 1, step = 0.1)
-      )
-    )
+    
   )
 }
 
@@ -155,6 +148,7 @@ volcano_ui <- function(id) {
       solidHeader = TRUE,
       collapsible = TRUE,
        plotlyOutput(ns("volcano_plot")),
+     
     )
   )
 }
@@ -194,8 +188,12 @@ heatmap_ui <- function(id) {
       width = 12,
       solidHeader = TRUE,
       collapsible = TRUE,
-      plotlyOutput(ns("heatmap_plot"))
-    
+      uiOutput(ns("heatmap_plot")),
+      br(),
+      br(),
+      br(),
+      br(),
+      
   )
 }
 #' Correlation UI
@@ -210,7 +208,11 @@ correlation_ui <- function(id) {
     width = 12,
     solidHeader = TRUE,
     status = "primary",
-    uiOutput(ns('correlation_plot'))
+    uiOutput(ns('correlation_plot')),
+    fluidRow(useShinyjs(),
+             column(6,selectizeInput(ns("gene_of_interest"), "Gene of interest for correlation", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+             column(6,numericInput(ns("correlation_threshold"), "Correlation threshold", value = 0.2, min = 0, max = 1, step = 0.1))
+    )
     )
 }
 

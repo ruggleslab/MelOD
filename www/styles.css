@@ -97,7 +97,7 @@ h2.home {
 
 /* Footer */
 .footer {
-    height: 35px;
+    height: 50px;
     padding: 10px;
     color: #FFF5EE;
     background-color: #6699CC;
@@ -211,3 +211,10 @@ div.dt-buttons {
     padding-left: 10px;
 }
 
+
+
+/* Padding of the content page */
+
+.content {
+    padding-bottom: 75px;
+}

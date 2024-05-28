@@ -306,6 +306,13 @@ plot_volcano <- function(res, dds, gene = NULL) {
                  xaxis = list(title = "Log2 Fold Change"),
                  yaxis = list(title = "-log10 Adjusted p-value"),
                  margin = list(t = 100))
+  plot <- plot %>%  
+    config(modeBarButtonsToAdd = c('drawline', 
+                                   'drawopenpath', 
+                                   'drawclosedpath', 
+                                   'drawcircle', 
+                                   'drawrect', 
+                                   'eraseshape'))
   
   return(plot)
 }
@@ -350,6 +357,13 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cut) {
            violinmode = "group")
   
   plot <- add_significance_annotations(merged_data, plot, padj_cut)
+  plot <- plot %>%  
+    config(modeBarButtonsToAdd = c('drawline', 
+                                   'drawopenpath', 
+                                   'drawclosedpath', 
+                                   'drawcircle', 
+                                   'drawrect', 
+                                   'eraseshape'))
   
   return(plot)
 }
@@ -366,6 +380,9 @@ plot_heatmap <- function(mat.z, dds, gene) {
   #'
   #' @return A plotly object representing the heatmap.
   
+  
+  
+  tryCatch({
   conditions <- colData(dds)$condition
   condition_levels <- unique(conditions)
   preferred_colors <- c("#D81B60", "#1E88E5")
@@ -401,7 +418,20 @@ plot_heatmap <- function(mat.z, dds, gene) {
     colorbar_thickness = 20
   )
   
+  plot <- plot %>%
+    layout(title = "Heatmap of Gene Expression", margin = list(t = 100),height = 470  # Set the height to 800 pixels
+)
+  plot <- plot %>%  
+    config(modeBarButtonsToAdd = c('drawline', 
+                                   'drawopenpath', 
+                                   'drawclosedpath', 
+                                   'drawcircle', 
+                                   'drawrect', 
+                                   'eraseshape'))
   return(plot)
+  }, error = function(e) {
+    return("Please set or select at least 2 genes")
+  })
 }
 
 
@@ -433,10 +463,16 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
            yaxis2 = list(title = "Count"),
            margin = list(t = 100),
            showlegend = FALSE)
-  
+  plot <- plot %>%  
+    config(modeBarButtonsToAdd = c('drawline', 
+                                   'drawopenpath', 
+                                   'drawclosedpath', 
+                                   'drawcircle', 
+                                   'drawrect', 
+                                   'eraseshape'))
   return(plot)
 }, error = function(e) {
-  return("Click on 'Generate Plot' to re-run the correlation")
+  return("Wait...")
 })
 }
 
