@@ -6,7 +6,7 @@ check_and_install_packages <- function(packages) {
   installed_packages <- rownames(installed.packages())
   for (pkg in packages) {
     if (!pkg %in% installed_packages) {
-      install.packages(pkg, dependencies = TRUE)
+      # install.packages(pkg, dependencies = TRUE)
     }
     library(pkg, character.only = TRUE)
   }

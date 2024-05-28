@@ -1,0 +1,39 @@
+Package: ShinySeq
+Type: Application
+Title: ShinySeq
+Version: 0.1
+Author: Adam Walker and Paul Sastourne
+Description: A Shiny application for sequence analysis.
+Depends: R (>= 4.4.0)
+Imports:
+    shiny,
+    bslib,
+    bsicons,
+    ggplot2,
+    jsonlite,
+    httr,
+    magrittr,
+    shinyWidgets,
+    shinydashboard,
+    shinyjs,
+    plotly,
+    DESeq2,
+    dplyr,
+    tidyverse,
+    heatmaply,
+    reshape2,
+    S4Vectors,
+    jsonlite,
+    pheatmap,
+    RColorBrewer,
+    shinydlplot,
+    survival,
+    readxl,
+    ggpubr,
+    shinyalert,
+    DT,
+    googledrive,
+    shinybusy,
+    Seurat,
+    data.tablE,
+    Matrix
