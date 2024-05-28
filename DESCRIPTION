@@ -36,4 +36,5 @@ Imports:
     shinybusy,
     Seurat,
     data.tablE,
-    Matrix
+    Matrix,
+    shinyjqui
