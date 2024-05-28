@@ -15,7 +15,7 @@ source("templates/kunz_template.R", local = TRUE)
 source("templates/fischer_template.R", local = TRUE)
 source("templates/bulk_rna_template.R", local = TRUE)
 
-source("templates/in_developpement_template.R", local = TRUE)
+source("templates/in_development_template.R", local = TRUE)
 
 # Source scripts files 
 source("scripts/selection.R", local = TRUE)

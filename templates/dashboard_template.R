@@ -35,12 +35,17 @@ dashboardTemplate <- function() {
         tabItem(tabName = "badal", badal_ui("badal_template")),
         tabItem(tabName = "kunz", kunz_ui("kunz_template")),
         tabItem(tabName = "fischer", fischer_ui("fischer_template")),
-        tabItem(tabName = "single", in_developpement_ui("in_developpement_template")),
-        tabItem(tabName = "proteomic", in_developpement_ui("in_developpement_template")),
-        tabItem(tabName = "genes", in_developpement_ui("in_developpement_template")),
-        tabItem(tabName = "about", in_developpement_ui("in_developpement_template"))
+        tabItem(tabName = "single", in_development_ui("in_development_template")),
+        tabItem(tabName = "proteomic", in_development_ui("in_development_template")),
+        tabItem(tabName = "genes", in_development_ui("in_development_template")),
+        tabItem(tabName = "about", in_development_ui("in_development_template"))
       ),
-      tags$div(class = "footer", tags$p("Rshiny-Seq Ruggles Lab"))
+      tags$div(class = "footer",
+               tags$p("Shiny-Seq Application"),
+               tags$p("Developed by Ruggles Lab"),
+               tags$p("Contact: support@ruggleslab.org"),
+               tags$p(tags$a(href = "https://ruggleslab.org/shiny-seq/help", "Help & Documentation"))
+      )
     )
   )
 }

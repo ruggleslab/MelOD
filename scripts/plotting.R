@@ -334,7 +334,7 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cut) {
   plot_title <- if (length(gene_of_interest) == 1) {
     paste("Expressions for", gene_of_interest, condition_title)
   } else {
-    paste("Expressions for multiple genes:", paste(gene_of_interest, collapse = ", "), condition_title)
+    paste("Expressions for :", paste(gene_of_interest, collapse = ", "), condition_title)
   }
   
   plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
@@ -457,7 +457,7 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
   
   plot <- subplot(scatter_plot, histogram, nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, heights = c(0.75, 0.25))
   plot <- plot %>%
-    layout(title = paste("Correlation and P-values of", gene_of_interest, "with other genes"),
+    layout(title = paste("Correlation of ", gene_of_interest),
            xaxis = list(title = "Correlation Coefficient"),
            yaxis = list(title = "-log10(p-value)"),
            yaxis2 = list(title = "Count"),

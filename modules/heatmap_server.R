@@ -1,5 +1,3 @@
-
-
 #' Heatmap Server
 #'
 #' @description Sets up the server logic for the heatmap analysis and related plots
