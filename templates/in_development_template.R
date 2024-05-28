@@ -6,20 +6,10 @@
 in_development_ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    tags$h3("In development.... :)"),
-    fluidRow(
-      column(
-        width = 9,
-        tags$p(
-          ""
-        ),
-      ),
-      column(
-        width = 3,
-        tags$img(src = "./images/melanoma.png", width = "150px")  # Updated path to reference the www directory
-      )
-    ),
-    hr()
+    tags$div(
+      style = "text-align: center;",
+      tags$img(src = "./images/under_construction.gif", width = "400px")
+    )
   )
 }
 
