@@ -48,13 +48,39 @@ gide_selector_ui <- function(id) {
   )
 }
 
+
+
 #' Gide Server
 #'
 #' @description Sets up the server logic for the Gide analysis tab
 gide_server <- function() {
+    ## Show a modal dialog indicating that loading is in progress
+  showModal(modalDialog(
+    title = "Please Wait",
+    "Downloading and loading data...",
+    easyClose = FALSE,
+    footer = NULL
+  ))
   
+  ## Wrap in tryCatch to handle errors
+  tryCatch({
+    gide_mono <- drive_download("Gide_PreMono_Deseq2.rds", overwrite = TRUE)
+    gide_mono_dds <- readRDS(gide_mono$local_path)
+    
+    gide_combo <- drive_download("Gide_PreCombo_Deseq2.rds", overwrite = TRUE)
+    gide_combo_dds <- readRDS(gide_combo$local_path)
+    
+    ## Delete the file once it's loaded to save on storage space
+    if (file.exists(gide_combo$local_path)) {
+      file.remove(gide_combo$local_path)
+    }
 
-  dds <- list(readRDS(file.path("./data/gide/mono", "ddsPreMono.rds")), readRDS(file.path("./data/gide/combo", "ddsPreCombo.rds")))
+    if (file.exists(gide_mono$local_path)) {
+      file.remove(gide_mono$local_path)
+    }
+    
+
+  dds <- list(gide_combo_dds,gide_mono_dds)
   clinical_data <- list(read.csv(file.path("./data/gide/mono", "Gide_demographics_monotherapy.csv"), sep=','), read.csv(file.path("./data/gide/combo", "Gide_demographics_combotherapy.csv"), sep=','))
   
 
@@ -68,4 +94,17 @@ gide_server <- function() {
   heatmap_server("gide", selection_result)
   pca_metadata_server("gide", selection_result) 
   
-}
+  
+  ## Close the modal after the loading is complete
+  removeModal()
+}, error = function(e) {
+  ## Error handling
+  removeModal()
+  showModal(modalDialog(
+    title = "Error",
+    paste("An error occurred:", e$message),
+    easyClose = TRUE
+  ))
+})
+  }
+

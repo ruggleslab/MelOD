@@ -33,7 +33,26 @@ fischer_ui <- function(id) {
 #' @description Sets up the server logic for the Fischer analysis tab
 fischer_server <- function() {
   
-  dds <- list(readRDS(file.path("./data/fischer", "Fischer_Deseq2.rds")))
+  ## Show a modal dialog indicating that loading is in progress
+  showModal(modalDialog(
+    title = "Please Wait",
+    "Downloading and loading data...",
+    easyClose = FALSE,
+    footer = NULL
+  ))
+  
+  ## Download the file in current wd and save the object
+  ## Wrap in tryCatch to handle errors
+  tryCatch({
+    fischer <- drive_download("Fischer_Deseq2.rds", overwrite = TRUE)
+    fischer_dds <- readRDS(fischer$local_path)
+    
+    ## Delete the file once it's loaded to save on storage space
+    if (file.exists(fischer$local_path)) {
+      file.remove(fischer$local_path)
+    }
+    
+  dds <- list(fischer_dds)
   clinical_data <- list(read.csv("./data/fischer/Fischer_demographics_information_Final.csv"))
   
   # Initialize servers
@@ -45,4 +64,16 @@ fischer_server <- function() {
   heatmap_server("fischer", selection_result)
   pca_metadata_server("fischer", selection_result) 
   
+  ## Close the modal after the loading is complete
+  removeModal()
+}, error = function(e) {
+  ## Error handling
+  removeModal()
+  showModal(modalDialog(
+    title = "Error",
+    paste("An error occurred:", e$message),
+    easyClose = TRUE
+  ))
+})
 }
+

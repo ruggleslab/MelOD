@@ -21,9 +21,13 @@ home_ui <- function(id) {
            Each of these additions will bring new features and functionalities, enabling a more holistic view of melanoma cancer at various 
            molecular levels."
         ),
-        tags$p(
-          "Stay tuned for updates as we continue to enhance the platform and integrate more data types and advanced analytical tools. 
-           Your feedback is invaluable to us as we strive to build a comprehensive and user-friendly resource for the cancer research community."
+        br(),
+        br(),
+        br(),
+        br(),
+        tags$h3(
+          "We value your feedback! Please take a moment to complete our survey: ",
+          tags$a(href = "https://forms.gle/m3o8FMRt3NLPFMrC8", "Take the Survey")
         )
       ),
       column(

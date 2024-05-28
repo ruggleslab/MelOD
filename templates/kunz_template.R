@@ -30,10 +30,28 @@ kunz_ui <- function(id) {
 #'
 #' @description Sets up the server logic for the Kunz analysis tab
 kunz_server <- function() {
+  ## Show a modal dialog indicating that loading is in progress
+  showModal(modalDialog(
+    title = "Please Wait",
+    "Downloading and loading data...",
+    easyClose = FALSE,
+    footer = NULL
+  ))
   
-  # Load data
-  dds <- list(readRDS(file.path("./data/kunz", "Kunz_Deseq2.rds")))
-  clinical_data <- list(read.csv(file = "./data/badal/clinical_data.csv", sep = ";"))
+  ## Download the file in current wd and save the object
+  ## Wrap in tryCatch to handle errors
+  tryCatch({
+    kunz <- drive_download("Kunz_Deseq2.rds", overwrite = TRUE)
+    kunz_dds <- readRDS(kunz$local_path)
+    
+    ## Delete the file once it's loaded to save on storage space
+    if (file.exists(kunz$local_path)) {
+      file.remove(kunz$local_path)
+    }
+    
+    dds <- list(kunz_dds)
+    # Load data
+    clinical_data <- list(read.csv(file = "./data/badal/clinical_data.csv", sep = ";"))
   
 
   # Initialize servers
@@ -44,6 +62,17 @@ kunz_server <- function() {
   correlation_server("kunz", selection_result)
   heatmap_server("kunz", selection_result)
   pca_metadata_server("kunz", selection_result)
+  
+  
+  ## Close the modal after the loading is complete
+  removeModal()
+  }, error = function(e) {
+    ## Error handling
+    removeModal()
+    showModal(modalDialog(
+      title = "Error",
+      paste("An error occurred:", e$message),
+      easyClose = TRUE
+    ))
+  })
 }
-
-
