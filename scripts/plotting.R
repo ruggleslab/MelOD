@@ -161,8 +161,6 @@ plot_mortality_curve_by_condition <- function(clinical_data) {
   })
 }
 
-
-
 plot_mortality_curve_by_gene <- function(clinical_data, deseq2_rds, gene) {
   #' Plot Mortality Curve
   #' 
@@ -177,12 +175,16 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_rds, gene) {
     # Load the DESeq2 RDS object
     dds <- deseq2_rds
     gene_expression <- as.numeric(assay(dds)[gene, ])    
-     # Ensure patient IDs match
+    # Ensure patient IDs match
+    
     if (!all(clinical_data$X %in% colnames(dds))) {
       stop("Some patient IDs in the clinical data do not match the DESeq2 data")
     }
     
     gene_expression <- gene_expression[match(clinical_data$X, colnames(dds))]
+    
+    # Jitter the gene expression values slightly to avoid ties
+    gene_expression <- jitter(gene_expression, factor = 0.1)
     
     # Classify patients into tertiles based on gene expression
     tertiles <- cut(gene_expression, breaks = quantile(gene_expression, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE), include.lowest = TRUE, labels = c("Q1", "Q2", "Q3"))
@@ -236,9 +238,11 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_rds, gene) {
     
     return(plot)
   }, error = function(e) {
+    print(e)
     return("No metadata available")
   })
 }
+
 
 plot_volcano <- function(res, dds, gene = NULL) {
   #' Create Volcanoplot

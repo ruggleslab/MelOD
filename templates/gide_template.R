@@ -81,7 +81,7 @@ gide_server <- function() {
     
 
   dds <- list(gide_combo_dds,gide_mono_dds)
-  clinical_data <- list(read.csv(file.path("./data/gide/mono", "Gide_demographics_monotherapy.csv"), sep=','), read.csv(file.path("./data/gide/combo", "Gide_demographics_combotherapy.csv"), sep=','))
+  clinical_data <- list(read.csv(file.path("./data/gide/combo", "Gide_demographics_combotherapy.csv"), sep=','),read.csv(file.path("./data/gide/mono", "Gide_demographics_monotherapy.csv"), sep=','))
   
 
   # Initialize servers
