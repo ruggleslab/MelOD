@@ -1,0 +1,33 @@
+"","Age..Years.","Sex","Treatment","Best.RECIST.response","Progression.Free.Survival..Days.","OS(days)","Site.of.PRE.Biopsy","Days.to.EDT.Biopsy","Site.of.EDT.Biopsy","Progressed","Last.Followup.Status","RNA.Sequencing","condition","tissue","Therapy","BiopsyTime","sizeFactor","replaceable"
+"Patient_1_ipiPD1_PRE",42,"F","Ipilimumab + Pembrolizumab","PD",15,689,"SQ","7","SQ","Yes","Alive","EDT","NR","skin","Combination","PRE",2.54853439169063,TRUE
+"Patient_2_ipiPD1_PRE",41,"M","Ipilimumab + Pembrolizumab","PD",34,530,"LN","-","-","Yes","Alive","PRE","NR","skin","Combination","PRE",0.675004790198713,TRUE
+"Patient_6_ipiPD1_PRE",75,"M","Ipilimumab + Nivolumab","PD",41,108,"LN","-","-","Yes","Dead, melanoma","PRE","NR","skin","Combination","PRE",0.477241240575349,TRUE
+"Patient_7_ipiPD1_PRE",59,"M","Ipilimumab + Nivolumab","PR",81,169,"SQ","8","SQ","Yes","Alive","PRE","NR","skin","Combination","PRE",0.698990897068483,TRUE
+"Patient_8_ipiPD1_PRE",55,"M","Ipilimumab + Pembrolizumab","PD",81,637,"LN","-","-","Yes","Alive","PRE","NR","skin","Combination","PRE",0.680455198881507,TRUE
+"Patient_10_ipiPD1_PRE",51,"M","Ipilimumab + Pembrolizumab","PD",81,176,"LN","-","-","Yes","Dead, melanoma","PRE","NR","skin","Combination","PRE",1.34298014240647,TRUE
+"Patient_12_ipiPD1_PRE",55,"F","Ipilimumab + Nivolumab","PD",82,293,"Lung","-","-","Yes","Alive","PRE","R","skin","Combination","PRE",0.697212117916362,TRUE
+"Patient_13_ipiPD1_PRE",68,"F","Ipilimumab + Nivolumab","PR",108,357,"SQ","8","SQ","Yes","Dead, melanoma","PRE","NR","skin","Combination","PRE",0.728904029296784,TRUE
+"Patient_14_ipiPD1_PRE",47,"F","Ipilimumab + Pembrolizumab","SD",123,691,"SQ","-","-","Yes","Alive","PRE","NR","skin","Combination","PRE",2.12750440771331,TRUE
+"Patient_15_ipiPD1_PRE",57,"M","Ipilimumab + Pembrolizumab","SD",152,660,"SQ","-","-","Yes","Dead, melanoma","PRE","NR","skin","Combination","PRE",3.20112659639682,TRUE
+"Patient_17_ipiPD1_PRE",48,"F","Ipilimumab + Nivolumab","PR",196,196,"LN","-","-","No","Alive","PRE","NR","skin","Combination","PRE",1.44116970247596,TRUE
+"Patient_19_ipiPD1_PRE",56,"M","Ipilimumab + Pembrolizumab","SD",301,635,"SQ","15","SQ","Yes","Alive","PRE","NR","skin","Combination","PRE",2.2238740502133,TRUE
+"Patient_20_ipiPD1_PRE",57,"M","Ipilimumab + Pembrolizumab","SD",386,538,"LN","-","-","Yes","Alive","PRE","R","skin","Combination","PRE",1.64441251797455,TRUE
+"Patient_21_ipiPD1_PRE",63,"M","Ipilimumab + Nivolumab","PR",410,410,"SQ","-","-","No","Alive","PRE","NR","skin","Combination","PRE",0.795141393514866,TRUE
+"Patient_23_ipiPD1_PRE",51,"F","Ipilimumab + Pembrolizumab","PR",506,506,"Brain","-","-","No","Alive","PRE","NR","skin","Combination","PRE",0.704471733177897,TRUE
+"Patient_24_ipiPD1_PRE",34,"M","Ipilimumab + Nivolumab","PR",509,1203,"LN","-","-","Yes","Alive","PRE","NR","skin","Combination","PRE",1.61963185385074,TRUE
+"Patient_25_ipiPD1_PRE",67,"F","Ipilimumab + Pembrolizumab","SD",518,518,"LN","-","-","No","Dead, melanoma","PRE","R","skin","Combination","PRE",0.532358702955199,TRUE
+"Patient_26_ipiPD1_PRE",75,"M","Ipilimumab + Pembrolizumab","CR",544,544,"LN","-","-","No","Alive","PRE","R","skin","Combination","PRE",0.559308340932667,TRUE
+"Patient_27_ipiPD1_PRE",49,"M","Ipilimumab + Pembrolizumab","CR",546,546,"Abdomen","5","SQ","No","Alive","PRE","R","skin","Combination","PRE",0.704262524905632,TRUE
+"Patient_32_ipiPD1_PRE",71,"M","Ipilimumab + Pembrolizumab","CR",597,597,"LN","-","-","No","Alive","PRE","R","skin","Combination","PRE",0.59545148884774,TRUE
+"Patient_33_ipiPD1_PRE",73,"M","Ipilimumab + Pembrolizumab","PR",609,609,"SQ","9","SQ","No","Alive","PRE","R","skin","Combination","PRE",0.740397895815926,TRUE
+"Patient_34_ipiPD1_PRE",51,"M","Ipilimumab + Pembrolizumab","CR",623,623,"Lung","-","-","No","Alive","PRE","R","skin","Combination","PRE",0.656386795375817,TRUE
+"Patient_35_ipiPD1_PRE",72,"M","Ipilimumab + Pembrolizumab","CR",627,627,"SQ","9","SQ","No","Alive","PRE","R","skin","Combination","PRE",2.96294147885407,TRUE
+"Patient_36_ipiPD1_PRE",74,"F","Ipilimumab + Pembrolizumab","CR",637,637,"SQ","6","SQ","No","Alive","PRE","R","skin","Combination","PRE",2.14509414891432,TRUE
+"Patient_37_ipiPD1_PRE",76,"M","Ipilimumab + Pembrolizumab","PR",637,637,"LN","-","-","No","Alive","PRE","R","skin","Combination","PRE",2.27135465775584,TRUE
+"Patient_38_ipiPD1_PRE",59,"F","Ipilimumab + Pembrolizumab","CR",650,650,"SQ","-","-","No","Alive","PRE","R","skin","Combination","PRE",0.637373399772436,TRUE
+"Patient_44_ipiPD1_PRE",68,"M","Ipilimumab + Pembrolizumab","PR",695,695,"SQ","-","-","No","Alive","PRE","R","skin","Combination","PRE",0.66343838364908,TRUE
+"Patient_45_ipiPD1_PRE",70,"M","Ipilimumab + Pembrolizumab","CR",721,721,"Mucosa","8","SQ","No","Alive","PRE","R","skin","Combination","PRE",0.683034887631417,TRUE
+"Patient_46_ipiPD1_PRE",54,"F","Ipilimumab + Pembrolizumab","CR",721,721,"Lung","-","-","No","Alive","PRE ","R","skin","Combination","PRE",1.60063508716502,TRUE
+"Patient_47_ipiPD1_PRE",24,"F","Ipilimumab + Pembrolizumab","PR",732,732,"SQ","-","-","No","Alive","PRE","R","skin","Combination","PRE",1.00662814489188,TRUE
+"Patient_49_ipiPD1_PRE",36,"M","Ipilimumab + Pembrolizumab","CR",775,775,"LN","-","-","No","Alive","PRE","R","skin","Combination","PRE",0.550611684767105,TRUE
+"Patient_50_ipiPD1_PRE",68,"M","Ipilimumab + Pembrolizumab","PR",904,904,"LN","-","-","No","Alive","PRE","R","skin","Combination","PRE",0.644614673870998,TRUE

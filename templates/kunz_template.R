@@ -26,22 +26,24 @@ kunz_ui <- function(id) {
    )
 }
 
+
+
 #' Kunz Server
 #'
 #' @description Sets up the server logic for the Kunz analysis tab
 kunz_server <- function() {
-  ## Show a modal dialog indicating that loading is in progress
-  showModal(modalDialog(
-    title = "Please Wait",
-    "Downloading and loading data...",
-    easyClose = FALSE,
-    footer = NULL
-  ))
+  # Initialize the progress bar
+  progress <- shiny::Progress$new()
+  on.exit(progress$close())
+  progress$set(message = "Initializing", value = 0)
   
   ## Download the file in current wd and save the object
   ## Wrap in tryCatch to handle errors
   tryCatch({
+    progress$set(message = "Downloading data...", value = 0.3)
     kunz <- drive_download("Kunz_Deseq2.rds", overwrite = TRUE)
+    
+    progress$set(message = "Loading data...", value = 0.6)
     kunz_dds <- readRDS(kunz$local_path)
     
     ## Delete the file once it's loaded to save on storage space
@@ -50,25 +52,27 @@ kunz_server <- function() {
     }
     
     dds <- list(kunz_dds)
-    # Load data
-    clinical_data <- list(read.csv(file = "./data/badal/clinical_data.csv", sep = ";"))
-  
-
-  # Initialize servers
-  selection_result <- selection_server(dds, clinical_data, "kunz")
-  input_server("kunz", selection_result)
-  volcano_server("kunz", selection_result)
-  violin_server("kunz", selection_result)
-  correlation_server("kunz", selection_result)
-  heatmap_server("kunz", selection_result)
-  pca_metadata_server("kunz", selection_result)
-  
-  
-  ## Close the modal after the loading is complete
-  removeModal()
+    
+    # Load additional data
+    progress$set(message = "Loading clinical data...", value = 0.8)
+    clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv", sep = ";"))
+    
+    progress$set(message = "Initializing servers...", value = 0.9)
+    
+    # Initialize servers
+    selection_result <- selection_server(dds, clinical_data, "kunz")
+    input_server("kunz", selection_result)
+    volcano_server("kunz", selection_result)
+    violin_server("kunz", selection_result)
+    correlation_server("kunz", selection_result)
+    heatmap_server("kunz", selection_result)
+    pca_metadata_server("kunz", selection_result)
+    
+    # Finalize progress
+    progress$set(message = "Finalizing", value = 1)
   }, error = function(e) {
     ## Error handling
-    removeModal()
+    progress$close()
     showModal(modalDialog(
       title = "Error",
       paste("An error occurred:", e$message),

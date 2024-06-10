@@ -47,22 +47,20 @@ badal_ui <- function(id) {
 #' }
 
 
+
 #' Badal Server
 #'
 #' @description Sets up the server logic for the Badal analysis tab
 badal_server <- function() {
-
-  ## Show a modal dialog indicating that loading is in progress
-  showModal(modalDialog(
-    title = "Please Wait",
-    "Downloading and loading data...",
-    easyClose = FALSE,
-    footer = NULL
-  ))
+  # Initialize the progress bar
+  progress <- shiny::Progress$new()
+  on.exit(progress$close())
+  progress$set(message = "Initializing", value = 0)
   
   ## Download the file in current wd and save the object
   ## Wrap in tryCatch to handle errors
   tryCatch({
+    progress$set(message = "Downloading data...", value = 0.3)
     badal <- drive_download("Badal_Deseq2.rds", overwrite = TRUE)
     badal_dds <- readRDS(badal$local_path)
     
@@ -72,7 +70,11 @@ badal_server <- function() {
     }
     
     dds <- list(badal_dds)
-    clinical_data <- list(read.csv(file = "./data/badal/clinical_data.csv"))
+    
+    progress$set(message = "Loading clinical data...", value = 0.6)
+    clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv"))
+    
+    progress$set(message = "Initializing servers...", value = 0.8)
     
     # Initialize servers
     selection_result <- selection_server(dds, clinical_data, "badal")
@@ -81,14 +83,13 @@ badal_server <- function() {
     violin_server("badal", selection_result)
     correlation_server("badal", selection_result)
     heatmap_server("badal", selection_result)
-    pca_metadata_server("badal", selection_result) 
+    pca_metadata_server("badal", selection_result)
     
-    
-    ## Close the modal after the loading is complete
-    removeModal()
+    # Finalize progress
+    progress$set(message = "Finalizing", value = 1)
   }, error = function(e) {
     ## Error handling
-    removeModal()
+    progress$close()
     showModal(modalDialog(
       title = "Error",
       paste("An error occurred:", e$message),
@@ -98,61 +99,3 @@ badal_server <- function() {
 }
 
 
-
-
-
-# 
-# 
-# 
-# rds <-  readRDS(file.path("/Users/paul/Downloads", "Badal_Deseq2.rds"))
-# 
-# 
-# metadata_csv_from_rds <- as.data.frame(colData(rds))
-# badal <- read.csv(file = "./data/badal/clinical_data.csv")
-# 
-# 
-# 
-# 
-# name = badal
-# 
-# 
-# 
-# 
-# 
-# name <- name %>%
-#   mutate(numeric_patient_id = as.numeric(str_extract(Patient.ID, "\\d+")))
-# 
-# metadata_csv_from_rds <- metadata_csv_from_rds %>%
-#   mutate(numeric_id_1 = as.numeric(str_extract(Sample, "\\d+")))
-# 
-# metadata_csv_from_rds$ID <- rownames(metadata_csv_from_rds)
-# 
-# merged_df <- merge(name, metadata_csv_from_rds, by.x = "numeric_patient_id", by.y = "numeric_id_1", all.x = TRUE)
-# merged_df <- merged_df %>%
-#   distinct(numeric_patient_id, .keep_all = TRUE)
-# 
-# 
-# 
-# # List of columns to drop
-# columns_to_drop <- c("X", "Sample","RNA.seq.ID")  # Replace with the actual column names you want to drop
-# 
-# # Drop the specified columns
-# merged_df <- merged_df %>%
-#   select(-all_of(columns_to_drop))
-# 
-# # Remove rows with NA values
-# merged_df <- na.omit(merged_df)
-# # Ensure no row names exist
-# rownames(merged_df) <- NULL
-# merged_df <- column_to_rownames(merged_df, var = "ID")
-# 
-# # Rename the column (for example, renaming "old_name" to "new_name")
-# merged_df <- merged_df %>%
-#   rename("OS(days)" = "Overall.Survival..Days")
-# 
-# 
-# # Optionally, save the modified dataframe back to a CSV file
-# write.csv(merged_df, file.path("./data/fischer/Fischer_demographics_information_Final.csv"), row.names = TRUE)
-# 
-# 
-# 

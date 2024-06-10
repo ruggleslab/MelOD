@@ -1,9 +1,9 @@
 #' Selection Badal Server
 #' 
-#' @description Handles selection for badal input
-#' @param dds DESeq2 dataset
-#' @param clinical_data Clinical data
-#' @param id Module ID
+#' @description Handles selection for the Badal input module, ensuring that the required input selection is available before proceeding.
+#' @param dds A DESeq2 dataset containing the data to be processed.
+#' @param clinical_data A data frame containing clinical data associated with the DESeq2 dataset.
+#' @param id A unique module ID used to identify the module in the Shiny application.
 selection_badal_server <- function(dds, clinical_data, id) {
   moduleServer(id, function(input, output, session) {
     observe({
@@ -14,11 +14,11 @@ selection_badal_server <- function(dds, clinical_data, id) {
 
 #' Selection List Server
 #' 
-#' @description Handles selection for list input
-#' @param dds DESeq2 dataset
-#' @param clinical_data Clinical data
-#' @param id Module ID
-#' @param shared_reactives Shared reactive variables
+#' @description Handles selection for list input, updating the shared reactive variables based on the user's selection.
+#' @param dds A list of DESeq2 datasets for different treatment types.
+#' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
+#' @param id A unique module ID used to identify the module in the Shiny application.
+#' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
 selection_list_server <- function(dds, clinical_data, id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     observe({
@@ -42,14 +42,13 @@ selection_list_server <- function(dds, clinical_data, id, shared_reactives) {
   })
 }
 
-
-
 #' Selection Server
 #' 
-#' @description Handles overall selection logic
-#' @param dds DESeq2 dataset
-#' @param clinical_data Clinical data
-#' @param id Module ID
+#' @description Handles the overall selection logic for the application, including processing and filtering of the DESeq2 dataset based on the user's selection.
+#' @param dds A list of DESeq2 datasets for different treatment types.
+#' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
+#' @param id A unique module ID used to identify the module in the Shiny application.
+#' @return A list of reactive values and utilities including selected datasets, filtered results, processed datasets, and display genes.
 selection_server <- function(dds, clinical_data, id) {
   moduleServer(id, function(input, output, session) {
     selected_dds <- reactiveVal()
@@ -89,3 +88,22 @@ selection_server <- function(dds, clinical_data, id) {
     ))
   })
 }
+
+#' Shared Server Utilities
+#' 
+#' @description Provides shared utilities for server modules, including processing of the DESeq2 dataset and filtering of genes.
+#' @param dds A DESeq2 dataset to be processed and analyzed.
+#' @return A list of utilities including the processed DESeq2 dataset and filtered genes.
+shared_server_utilities <- function(dds) {
+  dds_processed <- gene_names_dds(dds)
+  res <- results(dds_processed)
+  filtered_genes <- filter_and_order_by_padj(res)
+  
+  list(
+    dds = dds_processed,
+    filtered_genes = filtered_genes,
+    display_genes = function(selected_genes) get_display_genes(filtered_genes, selected_genes)
+  )
+}
+
+

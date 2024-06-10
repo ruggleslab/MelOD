@@ -35,6 +35,7 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
       }
     })
     return(midpoints)
+
   }
   
   midpoints <- calculate_midpoints(merged_data)
@@ -51,8 +52,9 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
       } else {
         "N.S."
       }
+
       annotation_list[[length(annotation_list) + 1]] <- list(
-        x = midpoints[gene_id],
+        x = length(annotation_list),
         y = 1.1,
         text = text_value,
         xref = "x", yref = "paper",
@@ -89,15 +91,15 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
       )
     }
   }
-  
+
   plot <- plot %>%
     layout(
       annotations = annotation_list,
       shapes = shape_list
     )
-  
   return(plot)
 }
+
 
 
 #' Filter and Order by padj
@@ -130,34 +132,6 @@ get_display_genes <- function(all_genes, selected_genes) {
 
 
 
-#' Global Selected DDS
-#' 
-#' @description Creates a reactive value to store the globally selected DDS
-global_selected_dds <- reactiveVal()
-
-#' Global Selected Clinical Data
-#' 
-#' @description Creates a reactive value to store the globally selected clinical data
-global_selected_clinical_data <- reactiveVal()
-
-#' Shared Server Utilities
-#' 
-#' @description Provides shared utilities for server modules
-#' @param dds DESeq2 dataset
-#' @return A list of utilities including processed DDS and filtered genes
-shared_server_utilities <- function(dds) {
-  dds_processed <- gene_names_dds(dds)
-  res <- results(dds_processed)
-  filtered_genes <- filter_and_order_by_padj(res)
-  
-  list(
-    dds = dds_processed,
-    filtered_genes = filtered_genes,
-    display_genes = function(selected_genes) get_display_genes(filtered_genes, selected_genes)
-  )
-}
-
-
 #' Download Handlers
 #' 
 #' @description Sets up the download handlers for exporting data
@@ -173,24 +147,6 @@ setup_download_handler <- function(id, output, name, data_reactive, filename_pre
     }
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #' Event Observers

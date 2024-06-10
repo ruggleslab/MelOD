@@ -6,6 +6,8 @@ source("modules/pca_metadata_server.R", local = TRUE)
 source("modules/input_server.R", local = TRUE)
 source("modules/correlation_server.R", local = TRUE)
 
+source("modules/seurat_test.R", local = TRUE)
+
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
 source("templates/home_template.R", local = TRUE)
@@ -16,6 +18,9 @@ source("templates/fischer_template.R", local = TRUE)
 source("templates/bulk_rna_template.R", local = TRUE)
 
 source("templates/in_development_template.R", local = TRUE)
+source("templates/seurat_test_template.R", local = TRUE)
+
+
 
 # Source scripts files 
 source("scripts/selection.R", local = TRUE)
@@ -42,7 +47,10 @@ server <- function(input, output, session) {
       gide_server()
     } else if (input$tabs == "fischer") {
       fischer_server()
+    }else if (input$tabs == "seurat_test") {
+      seurat_test_server(input, output, session)
     }
+    
   })
 }
 
