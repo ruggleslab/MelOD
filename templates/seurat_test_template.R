@@ -23,6 +23,7 @@ fluidPage(
             box(
               title = "Inputs", status = "warning", solidHeader = TRUE,
               collapsible = TRUE, collapsed = FALSE,
+              width = 12,
               selectInput("sc1a1sub1", "Cell information to subset:",
                           choices = sc1conf[grp == TRUE]$UI,
                           selected = sc1def$grp1),
@@ -50,7 +51,8 @@ fluidPage(
             box(
               title = HTML(paste("Cell Information", downloadButton(("sc1a1oup1.pdf"),icon = icon("save-file", lib = "glyphicon")), downloadButton(("sc1a1oup1.png"), icon = icon("save-file", lib = "glyphicon")))),
               status = "primary", solidHeader = TRUE,
-              fluidRow(column(12, uiOutput("sc1a1oup1.ui"))),
+              uiOutput("sc1a1oup1.ui"),
+              width = 12,
               fluidRow(
                 column(
                   4, selectInput("sc1a1drX", "X-axis:", choices = sc1conf[dimred == TRUE]$UI,
@@ -98,7 +100,8 @@ fluidPage(
           box(
             title = HTML(paste("Gene Expression", downloadButton(("sc1a1oup2.pdf"),icon = icon("save-file", lib = "glyphicon")), downloadButton(("sc1a1oup2.png"), icon = icon("save-file", lib = "glyphicon")))),
             status = "primary", solidHeader = TRUE,
-            fluidRow(column(12, uiOutput("sc1a1oup2.ui"))),
+            width = 12,
+            uiOutput("sc1a1oup2.ui"),
             fluidRow(
               column(
                 6, selectInput("sc1a1inp2", "Gene name:", choices=NULL) %>%
@@ -111,7 +114,6 @@ fluidPage(
               ),
               column(
                 6, 
-                  condition = "input.sc1a1tog2 % 2 == 1",
                   radioButtons("sc1a1col2", "Colour:", choices = c("White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),
                                selected = "White-Red"),
                   radioButtons("sc1a1ord2", "Plot order:", choices = c("Max-1st", "Min-1st", "Original", "Random"),
@@ -253,6 +255,10 @@ seurat_test_server <- function(input, output, session) {
                h5_file_path, sc1gene,
                input$sc1a1siz, input$sc1a1col2, input$sc1a1ord2,
                input$sc1a1fsz, input$sc1a1asp, input$sc1a1txt)
+      
+      
+      
+
       # scDRgene(sc1conf, sc1meta, input$sc1a1drX, input$sc1a1drY, input$sc1a1inp2,
       #          input$sc1a1sub1, input$sc1a1sub2,
       #          h5_file_path, sc1gene,
@@ -425,70 +431,82 @@ sctheme <- function(base_size = 24, XYval = TRUE, Xang = 0, XjusH = 0.5){
 
 
 
-# Function to plot cell information using Plotly
+
 scDRcell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1, inpsub2,
-                            inpsiz, inpcol, inpord, inpfsz, inpasp, inptxt, inplab){
-  if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]}
-  # Prepare data
-  ggData = inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID,
-                       inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID),
-                   with = FALSE]
-  colnames(ggData) = c("X", "Y", "val", "sub")
-  rat = (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
-  bgCells = FALSE
-  if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){
-    bgCells = TRUE
-    ggData2 = ggData[!sub %in% inpsub2]
-    ggData = ggData[sub %in% inpsub2]
-  }
-  if(inpord == "Max-1st"){
-    ggData = ggData[order(val)]
-  } else if(inpord == "Min-1st"){
-    ggData = ggData[order(-val)]
-  } else if(inpord == "Random"){
-    ggData = ggData[sample(nrow(ggData))]
+                            inpsiz, inpcol, inpord, inpfsz, inpasp, inptxt, inplab) {
+  if (is.null(inpsub1)) {
+    inpsub1 <- inpConf$UI[1]
   }
   
+  # Prepare data
+  ggData <- inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID,
+                        inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID), with = FALSE]
+  colnames(ggData) <- c("X", "Y", "val", "sub")
+  rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
+  bgCells <- FALSE
+  
+  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
+    bgCells <- TRUE
+    ggData2 <- ggData[!sub %in% inpsub2]
+    ggData <- ggData[sub %in% inpsub2]
+  }
+  
+  if (inpord == "Max-1st") {
+    ggData <- ggData[order(val)]
+  } else if (inpord == "Min-1st") {
+    ggData <- ggData[order(-val)]
+  } else if (inpord == "Random") {
+    ggData <- ggData[sample(nrow(ggData))]
+  }
+  
+  
   # Do factoring if required
-  if(!is.na(inpConf[UI == inp1]$fCL)){
-    ggCol = strsplit(inpConf[UI == inp1]$fCL, "\\|")[[1]]
-    names(ggCol) = levels(ggData$val)
-    ggLvl = levels(ggData$val)[levels(ggData$val) %in% unique(ggData$val)]
-    ggData$val = factor(ggData$val, levels = ggLvl)
-    ggCol = ggCol[ggLvl]
+  if (!is.na(inpConf[UI == inp1]$fCL)) {
+    ggCol <- strsplit(inpConf[UI == inp1]$fCL, "\\|")[[1]]
+    names(ggCol) <- levels(ggData$val)
+    ggLvl <- levels(ggData$val)[levels(ggData$val) %in% unique(ggData$val)]
+    ggData$val <- factor(ggData$val, levels = ggLvl)
+    ggCol <- ggCol[ggLvl]
   }
   
   # Plotly plot
   p <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
-               type = 'scatter', mode = 'markers', marker = list(size = inpsiz, opacity = 0.8))
+               type = 'scatter', mode = 'markers', marker = list(size = inpsiz*3, opacity = 0.8),
+               text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
+               hoverinfo = 'text')
   
-  if(bgCells){
+  if (bgCells) {
     p <- p %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
-                         marker = list(color = 'snow2', size = inpsiz*4, opacity = 0.5))
+                         marker = list(color = 'snow2', size = inpsiz * 12, opacity = 0.5))
   }
   
-  if(!is.na(inpConf[UI == inp1]$fCL)){
+  if (!is.na(inpConf[UI == inp1]$fCL)) {
     p <- p %>% layout(colorway = ggCol)
   } else {
     p <- p %>% colorbar(title = "")
   }
   
-  if(inplab){
-    ggData3 = ggData[, .(X = mean(X), Y = mean(Y)), by = "val"]
+  if (inplab) {
+    ggData3 <- ggData[, .(X = mean(X), Y = mean(Y)), by = "val"]
     p <- p %>% add_annotations(data = ggData3, x = ~X, y = ~Y, text = ~val,
                                showarrow = TRUE, arrowcolor = "grey10",
                                font = list(color = "grey10", size = inpfsz))
   }
   
-  if(inpasp == "Square") {
+  p <- p %>% layout(
+    xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+    yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+    showlegend = FALSE
+  )
+  
+  if (inpasp == "Square") {
     p <- p %>% layout(yaxis = list(scaleanchor = "x", scaleratio = rat))
-  } else if(inpasp == "Fixed") {
+  } else if (inpasp == "Fixed") {
     p <- p %>% layout(yaxis = list(scaleanchor = "x"))
   }
   
   return(p)
 }
-
 
 
 
@@ -622,16 +640,20 @@ scDRgene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1, inp
   
   # Plotly plot
   p <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
-               type = 'scatter', mode = 'markers', marker = list(size = inpsiz))
+               type = 'scatter', mode = 'markers', marker = list(size = inpsiz*3),
+               text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
+               hoverinfo = 'text')
   
   if (bgCells) {
     p <- p %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
-                         marker = list(color = 'snow2', size = inpsiz))
+                         marker = list(color = 'snow2', size = inpsiz*12))
   }
   
-  p <- p %>% colorbar(title = inp1) %>% layout(
-    xaxis = list(title = inpdrX),
-    yaxis = list(title = inpdrY)
+  p <- p %>% colorbar(title = inp1, len = 0.5, thickness = 15, x = 0.7, xanchor = 'center',
+                      y = -0.3, yanchor = 'bottom', orientation = 'h') %>%layout(
+    xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+    yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+    showlegend = FALSE
   )
   
   if (inpasp == "Square") {
@@ -642,7 +664,6 @@ scDRgene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1, inp
   
   return(p)
 }
-
 
 
 }
