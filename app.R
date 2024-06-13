@@ -1,24 +1,25 @@
 # Source module functions
-source("modules/violin_server.R", local = TRUE)
-source("modules/volcano_server.R", local = TRUE)
-source("modules/heatmap_server.R", local = TRUE)
-source("modules/pca_metadata_server.R", local = TRUE)
-source("modules/input_server.R", local = TRUE)
-source("modules/correlation_server.R", local = TRUE)
+source("modules/bulk_rna_modules/violin_server.R", local = TRUE)
+source("modules/bulk_rna_modules/volcano_server.R", local = TRUE)
+source("modules/bulk_rna_modules/heatmap_server.R", local = TRUE)
+source("modules/bulk_rna_modules/pca_metadata_server.R", local = TRUE)
+source("modules/bulk_rna_modules/input_server.R", local = TRUE)
+source("modules/bulk_rna_modules/correlation_server.R", local = TRUE)
 
-source("modules/seurat_test.R", local = TRUE)
+source("modules/single_cell_modules/seurat_test.R", local = TRUE)
 
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
 source("templates/home_template.R", local = TRUE)
-source("templates/gide_template.R", local = TRUE)
-source("templates/badal_template.R", local = TRUE)
-source("templates/kunz_template.R", local = TRUE)
-source("templates/fischer_template.R", local = TRUE)
-source("templates/bulk_rna_template.R", local = TRUE)
+
+source("templates/bulk_rna_templates/gide_template.R", local = TRUE)
+source("templates/bulk_rna_templates/badal_template.R", local = TRUE)
+source("templates/bulk_rna_templates/kunz_template.R", local = TRUE)
+source("templates/bulk_rna_templates/fischer_template.R", local = TRUE)
+source("templates/bulk_rna_templates/bulk_rna_template.R", local = TRUE)
 
 source("templates/in_development_template.R", local = TRUE)
-source("templates/seurat_test_template.R", local = TRUE)
+source("templates/single_cell_templates/seurat_test_template.R", local = TRUE)
 
 
 
