@@ -42,26 +42,26 @@ seurat_test_server <- function(id) {
   output$cell_subset_choices <- renderUI({
     ns <- NS(id)
     sub = strsplit(sc1conf[UI == input$cell_subset]$fID, "\\|")[[1]]
-    checkboxGroupInput(ns("sc1a1sub2"), "Select which cells to show", inline = TRUE,
+    checkboxGroupInput(ns("cell_subset_choices_box"), "Select which cells to show", inline = TRUE,
                        choices = sub, selected = sub)
   })
   
   observeEvent(input$cell_subset_none, {
     sub = strsplit(sc1conf[UI == input$cell_subset]$fID, "\\|")[[1]]
-    updateCheckboxGroupInput(session, inputId = "sc1a1sub2", label = "Select which cells to show",
+    updateCheckboxGroupInput(session, inputId = "cell_subset_choices_box", label = "Select which cells to show",
                              choices = sub, selected = NULL, inline = TRUE)
   })
   
   observeEvent(input$cell_subset_all, {
     sub = strsplit(sc1conf[UI == input$cell_subset]$fID, "\\|")[[1]]
-    updateCheckboxGroupInput(session, inputId = "sc1a1sub2", label = "Select which cells to show",
+    updateCheckboxGroupInput(session, inputId = "cell_subset_choices_box", label = "Select which cells to show",
                              choices = sub, selected = sub, inline = TRUE)
   })
   
   
   output$cell_plot_culstered <- renderPlotly({
     scDRcell_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$cell_plot_culstered_info,
-                    input$cell_subset, input$sc1a1sub2,
+                    input$cell_subset, input$cell_subset_choices_box,
                     input$marker_size, input$cell_plot_culstered_color, input$cell_plot_culstered_order,input$cell_plot_culstered_label)
 
   })
@@ -75,7 +75,7 @@ seurat_test_server <- function(id) {
     content = function(file) { ggsave(
       file, device = "pdf", height = input$sc1a1oup1.h, width = input$sc1a1oup1.w, useDingbats = FALSE,
       plot = scDRcell(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$cell_plot_culstered_info,
-                      input$cell_subset, input$sc1a1sub2,
+                      input$cell_subset, input$cell_subset_choices_box,
                       input$marker_size, input$cell_plot_culstered_color, input$cell_plot_culstered_order,
                       input$sc1a1fsz, input$sc1a1asp, input$sc1a1txt, input$cell_plot_culstered_label) )
     })
@@ -88,7 +88,7 @@ seurat_test_server <- function(id) {
     content = function(file) { ggsave(
       file, device = "png", height = input$sc1a1oup1.h, width = input$sc1a1oup1.w,
       plot = scDRcell(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$cell_plot_culstered_info,
-                      input$cell_subset, input$sc1a1sub2,
+                      input$cell_subset, input$cell_subset_choices_box,
                       input$marker_size, input$cell_plot_culstered_color, input$cell_plot_culstered_order,
                       input$sc1a1fsz, input$sc1a1asp, input$sc1a1txt, input$cell_plot_culstered_label) )
     })
@@ -99,7 +99,7 @@ seurat_test_server <- function(id) {
   
   output$gene_plot_culstered <- renderPlotly({
     scDRgene_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$gene_plot_culstered_selection,
-                    input$cell_subset, input$sc1a1sub2,
+                    input$cell_subset, input$cell_subset_choices_box,
                     h5_file_path, sc1gene,
                     input$marker_size, input$gene_plot_culstered_color, input$gene_plot_culstered_order)
     
@@ -114,7 +114,7 @@ seurat_test_server <- function(id) {
     content = function(file) { ggsave(
       file, device = "pdf", height = input$sc1a1oup2.h, width = input$sc1a1oup2.w, useDingbats = FALSE,
       plot = scDRgene(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$gene_plot_culstered_selection,
-                      input$cell_subset, input$sc1a1sub2,
+                      input$cell_subset, input$cell_subset_choices_box,
                       h5_file_path, sc1gene,
                       input$marker_size, input$gene_plot_culstered_color, input$gene_plot_culstered_order,
                       input$sc1a1fsz, input$sc1a1asp, input$sc1a1txt) )
@@ -127,7 +127,7 @@ seurat_test_server <- function(id) {
     content = function(file) { ggsave(
       file, device = "png", height = input$sc1a1oup2.h, width = input$sc1a1oup2.w,
       plot = scDRgene(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$gene_plot_culstered_selection,
-                      input$cell_subset, input$sc1a1sub2,
+                      input$cell_subset, input$cell_subset_choices_box,
                       h5_file_path, sc1gene,
                       input$marker_size, input$gene_plot_culstered_color, input$gene_plot_culstered_order,
                       input$sc1a1fsz, input$sc1a1asp, input$sc1a1txt) )
