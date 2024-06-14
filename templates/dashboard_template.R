@@ -36,7 +36,7 @@ dashboardTemplate <- function() {
         tabItem(tabName = "badal", badal_ui("badal_template")),
         tabItem(tabName = "kunz", kunz_ui("kunz_template")),
         tabItem(tabName = "fischer", fischer_ui("fischer_template")),
-        tabItem(tabName = "seurat_test", seurat_test_ui("seurat_test_template")),
+        tabItem(tabName = "seurat_test", seurat_ui("seurat_test_template")),
         tabItem(tabName = "proteomic", in_development_ui("in_development_template")),
         tabItem(tabName = "about", in_development_ui("in_development_template"))
       ),

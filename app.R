@@ -27,6 +27,7 @@ source("templates/single_cell_templates/seurat_test_template.R", local = TRUE)
 source("scripts/selection.R", local = TRUE)
 source("scripts/utils.R", local = TRUE)
 source("scripts/plotting.R", local = TRUE)
+source("scripts/plotting_single_cell.R", local = TRUE)
 source("scripts/data_processing.R", local = TRUE)
 
 
@@ -49,7 +50,7 @@ server <- function(input, output, session) {
     } else if (input$tabs == "fischer") {
       fischer_server()
     }else if (input$tabs == "seurat_test") {
-      seurat_test_server(input, output, session)
+      seurat_server()
     }
     
   })
