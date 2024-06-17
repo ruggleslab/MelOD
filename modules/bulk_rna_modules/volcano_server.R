@@ -10,7 +10,7 @@ volcano_server <- function(id, shared_reactives) {
     
     #' Process Data
     #' @description Processes the data for the volcano plot
-    processed_data <- eventReactive(c(input$update_plot, input$selection), {
+    processed_data <- reactive({
       process_volcano_data(dds_processed(), input$slider_padj, input$slider_log2)
     })
 

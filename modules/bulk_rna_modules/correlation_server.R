@@ -1,8 +1,9 @@
 correlation_server <- function(id,shared_reactives) {
   moduleServer(id, function(input, output, session) {
+    
     blurbs <- fromJSON("./www/info_blurbs.json")
 
-
+    
     filtered_res <- shared_reactives$filtered_res
     dds_processed <- shared_reactives$dds_processed
     display_genes <- shared_reactives$display_genes

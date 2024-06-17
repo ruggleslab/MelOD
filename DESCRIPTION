@@ -37,4 +37,5 @@ Imports:
     Seurat,
     data.tablE,
     Matrix,
-    shinyjqui
+    shinyjqui,
+    shinycssloaders

@@ -6,7 +6,6 @@
 gide_ui <- function(id) {
   
   fluidPage(
-    add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
     fluidRow(blurb_study_ui("gide")),
     fluidRow(column(6, blurb_data_ui("gide")),
              column(6, fluidRow(blurb_comparison_ui("gide"),
@@ -54,18 +53,18 @@ gide_selector_ui <- function(id) {
 #'
 #' @description Sets up the server logic for the Gide analysis tab
 gide_server <- function() {
-  # Initialize the progress bar
-  progress <- shiny::Progress$new()
-  on.exit(progress$close())
-  progress$set(message = "Initializing", value = 0)
+  
+  show_modal_progress_line(color = "#FFA812",text = "Initialization") # show the modal window
+  Sys.sleep(0.5)
   
   ## Wrap in tryCatch to handle errors
   tryCatch({
-    progress$set(message = "Downloading combotherapy data...", value = 0.3)
+    update_modal_progress(0.3, text="Downloading combotherapy data...") # update progress bar value
+    Sys.sleep(0.5)
     gide_combo <- drive_download("Gide_PreCombo_Deseq2.rds", overwrite = TRUE)
     gide_combo_dds <- readRDS(gide_combo$local_path)
-    
-    progress$set(message = "Downloading monotherapy data...", value = 0.6)
+    update_modal_progress(0.5, text="Downloading monotherapy data...") # update progress bar value
+    Sys.sleep(0.5)
     gide_mono <- drive_download("Gide_PreMono_Deseq2.rds", overwrite = TRUE)
     gide_mono_dds <- readRDS(gide_mono$local_path)
     
@@ -77,17 +76,20 @@ gide_server <- function() {
     if (file.exists(gide_mono$local_path)) {
       file.remove(gide_mono$local_path)
     }
+    update_modal_progress(0.6, text="Loading data...") # update progress bar value
+    Sys.sleep(0.5)
     
     dds <- list(gide_combo_dds, gide_mono_dds)
-    
-    progress$set(message = "Loading clinical data...", value = 0.8)
-    clinical_data <- list(
+    update_modal_progress(0.8, text="Loading clinical data...") # update progress bar value
+    Sys.sleep(0.5)
+
+        clinical_data <- list(
       read.csv(file.path("./data/bulk_rna/gide/combo", "Gide_demographics_combotherapy.csv"), sep = ','),
       read.csv(file.path("./data/bulk_rna/gide/mono", "Gide_demographics_monotherapy.csv"), sep = ',')
     )
     
-    progress$set(message = "Initializing servers...", value = 0.9)
-    
+        update_modal_progress(0.9, text="Initializing servers...") # update progress bar value
+        Sys.sleep(0.5)    
     # Initialize servers
     selection_result <- selection_server(dds, clinical_data, "gide")
     selection_list_server(dds, clinical_data, "gide", selection_result)
@@ -99,14 +101,13 @@ gide_server <- function() {
     pca_metadata_server("gide", selection_result)
     
     # Finalize progress
-    progress$set(message = "Finalizing", value = 1)
+    update_modal_progress(1, text="Finalizing") # update progress bar value
+    Sys.sleep(0.5)
   }, error = function(e) {
-    ## Error handling
-    progress$close()
-    showModal(modalDialog(
-      title = "Error",
-      paste("An error occurred:", e$message),
-      easyClose = TRUE
-    ))
+    print("Error")
+    
+    
   })
+  remove_modal_progress() # remove it when done
+  
 }

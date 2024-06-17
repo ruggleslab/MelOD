@@ -5,7 +5,6 @@
 #' @return A Shiny UI element for the Badal analysis tab
 badal_ui <- function(id) {
   fluidPage(
-    add_busy_spinner(spin = "fading-circle", color = "#FFA812"),
     fluidRow(blurb_study_ui("badal")),
     fluidRow(column(6, blurb_data_ui("badal")),
              column(6, fluidRow(blurb_comparison_ui("badal")))),
@@ -52,17 +51,20 @@ badal_ui <- function(id) {
 #'
 #' @description Sets up the server logic for the Badal analysis tab
 badal_server <- function() {
-  # Initialize the progress bar
-  progress <- shiny::Progress$new()
-  on.exit(progress$close())
-  progress$set(message = "Initializing", value = 0)
+  
+  show_modal_progress_line(color = "#FFA812",text = "Initialization") # show the modal window
+  Sys.sleep(0.5)
   
   ## Download the file in current wd and save the object
   ## Wrap in tryCatch to handle errors
   tryCatch({
-    progress$set(message = "Downloading data...", value = 0.3)
+    update_modal_progress(0.3, text="Downloading data...") # update progress bar value
+    Sys.sleep(0.5)
     badal <- drive_download("Badal_Deseq2.rds", overwrite = TRUE)
     badal_dds <- readRDS(badal$local_path)
+    
+    update_modal_progress(0.6, text="Loading data...") # update progress bar value
+    Sys.sleep(0.5)
     
     ## Delete the file once it's loaded to save on storage space
     if (file.exists(badal$local_path)) {
@@ -71,11 +73,12 @@ badal_server <- function() {
     
     dds <- list(badal_dds)
     
-    progress$set(message = "Loading clinical data...", value = 0.6)
+    update_modal_progress(0.8, text="Loading clinical data...") # update progress bar value
+    Sys.sleep(0.5)
     clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv"))
     
-    progress$set(message = "Initializing servers...", value = 0.8)
-    
+    update_modal_progress(0.9, text="Initializing servers...") # update progress bar value
+    Sys.sleep(0.5)
     # Initialize servers
     selection_result <- selection_server(dds, clinical_data, "badal")
     input_server("badal", selection_result)
@@ -86,16 +89,13 @@ badal_server <- function() {
     pca_metadata_server("badal", selection_result)
     
     # Finalize progress
-    progress$set(message = "Finalizing", value = 1)
+    update_modal_progress(1, text="Finalizing") # update progress bar value
+    Sys.sleep(0.5)
   }, error = function(e) {
-    ## Error handling
-    progress$close()
-    showModal(modalDialog(
-      title = "Error",
-      paste("An error occurred:", e$message),
-      easyClose = TRUE
-    ))
+    print("Error")
+    
+    
   })
+  remove_modal_progress() # remove it when done
+  
 }
-
-

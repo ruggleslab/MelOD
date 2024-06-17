@@ -59,11 +59,12 @@ blurb_comparison_ui <- function(id) {
 #' @return A Shiny UI element (box)
 pca_ui <- function(id) {
   ns <- NS(id)
+  
   tabBox(
     title = HTML(paste("PCA", actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('pca_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
     width = 12,
     tabPanel("PCA",
-             plotlyOutput(ns('pca_plot')),
+             withSpinner(plotlyOutput(ns('pca_plot')),type = 6, color = "#FFA812", size = 0.5),
              fluidRow(
                column(6,
                       selectInput(
@@ -84,7 +85,7 @@ pca_ui <- function(id) {
              )
     ),
     tabPanel("Variance",
-             plotlyOutput(ns('variance_plot'))
+             withSpinner(plotlyOutput(ns('variance_plot')),type = 6, color = "#FFA812", size = 0.5),
     )
   )
 }
@@ -101,8 +102,8 @@ metadata_ui <- function(id) {
     title = HTML(paste("Metadata", actionLink(ns("info_metadata_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('metadata_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),    
     id = "tabset1",
     width = 12,
-    tabPanel("Mortality by condition", uiOutput(ns("mortality_by_condition"))),
-    tabPanel("Mortality by gene", uiOutput(ns("mortality_by_gene")),
+    tabPanel("Mortality by condition", withSpinner(uiOutput(ns("mortality_by_condition")),type = 6, color = "#FFA812", size = 0.5)),
+    tabPanel("Mortality by gene", withSpinner(uiOutput(ns("mortality_by_gene") ,type = 6, color = "#FFA812", size = 0.5)),
                       selectizeInput(ns("gene_mortality"), "Gene", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
   )
 }
@@ -147,7 +148,7 @@ volcano_ui <- function(id) {
       width = 12,
       solidHeader = TRUE,
       collapsible = TRUE,
-       plotlyOutput(ns("volcano_plot")),
+      plotlyOutput(ns("volcano_plot"))
      
     )
   )
@@ -168,7 +169,7 @@ violin_ui <- function(id) {
       width = 12,
       solidHeader = TRUE,
       collapsible = TRUE,
-      plotlyOutput(ns(id = 'violin_plot'))
+      withSpinner(plotlyOutput(ns(id = 'violin_plot')),type = 6, color = "#FFA812", size = 0.5),
     )
   )
 }
@@ -188,7 +189,8 @@ heatmap_ui <- function(id) {
       width = 12,
       solidHeader = TRUE,
       collapsible = TRUE,
-      uiOutput(ns("heatmap_plot")),
+
+      withSpinner(uiOutput(ns("heatmap_plot")),type = 6, color = "#FFA812", size = 0.5),
       br(),
       br(),
       br(),
@@ -208,7 +210,8 @@ correlation_ui <- function(id) {
     width = 12,
     solidHeader = TRUE,
     status = "primary",
-    uiOutput(ns('correlation_plot')),
+    
+    withSpinner(uiOutput(ns('correlation_plot')),type = 6, color = "#FFA812", size = 0.5),
     fluidRow(useShinyjs(),
              column(6,selectizeInput(ns("gene_of_interest"), "Gene of interest for correlation", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
              column(6,numericInput(ns("correlation_threshold"), "Correlation threshold", value = 0.2, min = 0, max = 1, step = 0.1))
