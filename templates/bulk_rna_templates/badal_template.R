@@ -52,34 +52,34 @@ badal_ui <- function(id) {
 #' @description Sets up the server logic for the Badal analysis tab
 badal_server <- function() {
   
-  show_modal_progress_line(color = "#FFA812",text = "Initialization") # show the modal window
+  show_modal_progress_line(color = "#FFA812",text = "Initialization")
   Sys.sleep(0.5)
   
-  ## Download the file in current wd and save the object
-  ## Wrap in tryCatch to handle errors
   tryCatch({
-    update_modal_progress(0.3, text="Downloading data...") # update progress bar value
+    
+    update_modal_progress(0.3, text="Downloading data...")
     Sys.sleep(0.5)
+    
     badal <- drive_download("Badal_Deseq2.rds", overwrite = TRUE)
     badal_dds <- readRDS(badal$local_path)
     
-    update_modal_progress(0.6, text="Loading data...") # update progress bar value
+    update_modal_progress(0.6, text="Loading data...")
     Sys.sleep(0.5)
     
-    ## Delete the file once it's loaded to save on storage space
     if (file.exists(badal$local_path)) {
       file.remove(badal$local_path)
     }
     
     dds <- list(badal_dds)
     
-    update_modal_progress(0.8, text="Loading clinical data...") # update progress bar value
+    update_modal_progress(0.8, text="Loading clinical data...")
     Sys.sleep(0.5)
+    
     clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv"))
     
-    update_modal_progress(0.9, text="Initializing servers...") # update progress bar value
+    update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
-    # Initialize servers
+    
     selection_result <- selection_server(dds, clinical_data, "badal")
     input_server("badal", selection_result)
     volcano_server("badal", selection_result)
@@ -88,14 +88,14 @@ badal_server <- function() {
     heatmap_server("badal", selection_result)
     pca_metadata_server("badal", selection_result)
     
-    # Finalize progress
-    update_modal_progress(1, text="Finalizing") # update progress bar value
+    update_modal_progress(1, text="Finalizing")
     Sys.sleep(0.5)
-  }, error = function(e) {
-    print("Error")
     
+  }, error = function(e) {
+    showNotification("An error occurred during the process.", type = "error")
+    print(e)    
     
   })
-  remove_modal_progress() # remove it when done
+  remove_modal_progress()
   
 }
