@@ -20,25 +20,21 @@ creation_pca <- function(pca_data, size_by = "constant", color_by = "condition")
                        "<br>Size Factor:", round(pca_data$size_factor, 3))
   
   custom_colors <- c("#D81B60", "#1E88E5")
-  
-  # Set dot size based on size factor or constant
+
   dot_size <- if (size_by == "constant") {
-    7  # Default size
+    7 
   } else {
-    pca_data$size_factor * 5  # Adjust multiplier as needed for appropriate sizing
-  
+    pca_data$size_factor * 5  
   }
   
   # Set color by condition or sample
   if (color_by == "condition") {
     color_column <- pca_data$condition
-    custom_colors <- c("#D81B60", "#1E88E5")
   } else {
     color_column <- pca_data$name
     num_name <- length(unique(pca_data$name))
     custom_colors <- colorRampPalette(brewer.pal(9, "Set1"))(num_name)
   }
-  
   
   pca_plot <- plot_ly(
     data = pca_data,
@@ -255,7 +251,6 @@ plot_volcano <- function(res, dds, gene = NULL) {
   #' @return A plotly object representing the volcanoplot
   
   plot <- plot_ly(source = "A")
-  
   upregulated_data <- subset(res, sig == "Upregulated")
   plot <- add_trace(plot, data = upregulated_data, x = upregulated_data$log2FoldChange, y = upregulated_data$neg_log10_padj,
                     type = 'scattergl', mode = 'markers', color = I("#D81B60"),
@@ -334,7 +329,7 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cut) {
   #' 
   #' @return A plotly object representing the violin plot
   
-  conditions_found <- unique(merged_data$condition)
+  conditions_found <- sort(unique(merged_data$condition), method = "radix", na.last = NA)
   colors_chosen <- c("#D81B60", "#1E88E5")
   colors_chosen_darker <- c("#82103a", "#10528b")
   custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
@@ -389,7 +384,7 @@ plot_heatmap <- function(mat.z, dds, gene) {
   
   tryCatch({
   conditions <- colData(dds)$condition
-  condition_levels <- unique(conditions)
+  condition_levels <- sort(unique(colData(dds)$condition), method = "radix")
   preferred_colors <- c("#D81B60", "#1E88E5")
   
   if (length(condition_levels) <= length(preferred_colors)) {
@@ -515,7 +510,7 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
       showscale = TRUE, 
       cmin = -1, 
       cmax = 1, 
-      line = list(width = 0.5, color = 'darkgrey'),
+      line = list(width = 0.5, color = 'black'),
       colorbar = list(len = 0.3, thickness= 10) 
     ),
     text = ~paste("Gene: ", gene, "<br>Correlation: ", round(correlation, 2), "<br>-log10(p-value): ", round(log_p_value, 2))
