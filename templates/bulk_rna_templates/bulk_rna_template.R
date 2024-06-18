@@ -213,7 +213,7 @@ correlation_ui <- function(id) {
     
     withSpinner(uiOutput(ns('correlation_plot')),type = 6, color = "#FFA812", size = 0.5),
     fluidRow(useShinyjs(),
-             column(6,selectizeInput(ns("gene_of_interest"), "Gene of interest for correlation", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+             column(6,selectizeInput(ns("gene_of_interest"), "Gene of interest", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
              column(6,numericInput(ns("correlation_threshold"), "Correlation threshold", value = 0.2, min = 0, max = 1, step = 0.1))
     )
     )

@@ -11,7 +11,7 @@ dashboardTemplate <- function() {
         id = "tabs",
         menuItem("Home", tabName = "home", icon = icon("home")),
         menuItem("Studies", tabName = "dataset", icon = icon("database"),
-                 menuItem("BulkRNA", tabName = "bulkrna_tab",
+                 menuItem("Bulk RNA", tabName = "bulkrna_tab",
                           menuSubItem("Gide et al. 2019", tabName = "gide"),
                           menuSubItem("Badal et al. 2018", tabName = "badal"),
                           menuSubItem("Kunz, Schartl 2018", tabName = "kunz"),

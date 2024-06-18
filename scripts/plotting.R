@@ -69,6 +69,7 @@ variance_explained_plot <- function(vsdata) {
   #' @param vsdata Variance stabilized transformed data from DESeq2
   #' 
   #' @return A plotly object representing the variance explained by each principal component
+  #' 
   pca_result <- prcomp(t(assay(vsdata)))
   explained_variance <- pca_result$sdev^2 / sum(pca_result$sdev^2)
   
@@ -178,7 +179,7 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_rds, gene) {
     # Ensure patient IDs match
     
     if (!all(clinical_data$X %in% colnames(dds))) {
-      stop("Some patient IDs in the clinical data do not match the DESeq2 data")
+      return("Some patient IDs in the clinical data do not match the DESeq2 data")
     }
     
     gene_expression <- gene_expression[match(clinical_data$X, colnames(dds))]
@@ -246,9 +247,11 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_rds, gene) {
 
 plot_volcano <- function(res, dds, gene = NULL) {
   #' Create Volcanoplot
+  #' 
   #' @param res Processed data for volcano plot
   #' @param dds Processed DESeq2 dataset
   #' @param gene Specific genes to highlight
+  #' 
   #' @return A plotly object representing the volcanoplot
   
   plot <- plot_ly(source = "A")
@@ -324,9 +327,11 @@ plot_volcano <- function(res, dds, gene = NULL) {
 
 plot_violin <- function(merged_data, gene_of_interest, padj_cut) {
   #' Create Violin Plot
+  #' 
   #' @param merged_data Processed data for violin plot
   #' @param gene_of_interest Specific gene to analyze
   #' @param padj_cut Adjusted p-value cutoff
+  #' 
   #' @return A plotly object representing the violin plot
   
   conditions_found <- unique(merged_data$condition)
@@ -376,15 +381,11 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cut) {
 plot_heatmap <- function(mat.z, dds, gene) {
   #' Plot Heatmap
   #'
-  #' This function creates a heatmap for the given data.
-  #'
   #' @param mat.z Z-scored matrix.
   #' @param dds Processed DESeq2 dataset.
   #' @param gene Specific gene to display.
   #'
   #' @return A plotly object representing the heatmap.
-  
-  
   
   tryCatch({
   conditions <- colData(dds)$condition
@@ -422,8 +423,27 @@ plot_heatmap <- function(mat.z, dds, gene) {
     colorbar_thickness = 20
   )
   
+  # Access and modify the second colorbar (Z-score)
+  plot$x$data[[7]]$colorbar$x <- 1.05
+  plot$x$data[[7]]$colorbar$y <- 0.2
+  plot$x$data[[7]]$colorbar$len <- 0.3
+  plot$x$data[[7]]$colorbar$thickness <- 15
+  
+  # Access and modify the first colorbar (Conditions)
+  plot$x$data[[4]]$colorbar$x <- 1.05
+  plot$x$data[[4]]$colorbar$y <- 0.2
+  plot$x$data[[4]]$colorbar$len <- 0.3
+  plot$x$data[[4]]$colorbar$thickness <- 15
+  
+  # Access and modify the third colorbar (row_side_colors)
+  plot$x$data[[8]]$colorbar$title <- "Selection"
+  plot$x$data[[8]]$colorbar$x <- 1.05
+  plot$x$data[[8]]$colorbar$y <- 0.8
+  plot$x$data[[8]]$colorbar$len <- 0.3
+  plot$x$data[[8]]$colorbar$thickness <- 15
+  
   plot <- plot %>%
-    layout(title = "Heatmap of Gene Expression", margin = list(t = 100),height = 470  # Set the height to 800 pixels
+    layout(title = "Heatmap of Gene Expression", margin = list(t = 100), height = 470 
 )
   plot <- plot %>%  
     config(modeBarButtonsToAdd = c('drawline', 
@@ -439,13 +459,16 @@ plot_heatmap <- function(mat.z, dds, gene) {
 }
 
 
-#' 
-#' @description Renders the filtered results table based on the selected genes
-#' @param dds_processed Reactive expression containing the processed DESeq2 dataset
-#' @param input Shiny input object
-#' @param selected_genes_plotly Reactive value for selected genes
-#' @return A datatable containing the filtered results
 render_filtered_results_table <- function(dds_processed, input) {
+  #'Result Table
+  #'
+  #' @description Renders the filtered results table based on the selected genes
+  #' @param dds_processed Reactive expression containing the processed DESeq2 dataset
+  #' @param input Shiny input object
+  #' @param selected_genes_plotly Reactive value for selected genes
+  #' 
+  #' @return A datatable containing the filtered results
+
   DT::renderDataTable({
     res <- results(dds_processed())
     res <- as.data.frame(res)
@@ -479,9 +502,25 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
   tryCatch({
   color_palette <- rev(colorRampPalette(brewer.pal(3, "RdBu"))(256))
   
-  scatter_plot <- plot_ly(filtered_results, x = ~correlation, y = ~log_p_value, type = 'scatter', mode = 'markers',
-                          marker = list(size = 10, color = ~correlation, colorscale = color_palette, showscale = TRUE, cmin = -1, cmax = 1, line = list(width = 1, color = 'black')),
-                          text = ~paste("Gene: ", gene, "<br>Correlation: ", round(correlation, 2), "<br>-log10(p-value): ", round(log_p_value, 2)))
+  scatter_plot <- plot_ly(
+    filtered_results, 
+    x = ~correlation, 
+    y = ~log_p_value, 
+    type = 'scatter', 
+    mode = 'markers',
+    marker = list(
+      size = 10, 
+      color = ~correlation, 
+      colorscale = color_palette, 
+      showscale = TRUE, 
+      cmin = -1, 
+      cmax = 1, 
+      line = list(width = 0.5, color = 'darkgrey'),
+      colorbar = list(len = 0.3, thickness= 10) 
+    ),
+    text = ~paste("Gene: ", gene, "<br>Correlation: ", round(correlation, 2), "<br>-log10(p-value): ", round(log_p_value, 2))
+  )
+  
   
   histogram <- plot_ly(filtered_results, x = ~correlation, type = 'histogram', 
                        marker = list(color = '#75a3d1', line = list(color = 'rgba(100, 100, 100, 1)', width = 1)))
@@ -492,6 +531,7 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
            xaxis = list(title = "Correlation Coefficient"),
            yaxis = list(title = "-log10(p-value)"),
            yaxis2 = list(title = "Count"),
+           colorbar= list(size = 0.2),
            margin = list(t = 100),
            showlegend = FALSE)
   plot <- plot %>%  
