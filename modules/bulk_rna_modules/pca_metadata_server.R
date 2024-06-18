@@ -29,13 +29,13 @@ pca_metadata_server <- function(id,shared_reactives) {
       output$pca_plot <- renderPlotly({
         req(pca_data_reactive())
         pca_data <- pca_data_reactive()$pca_data
-        creation_pca(pca_data, size_by = input$size_by, color_by = input$color_by)
+        plot_pca(pca_data, size_by = input$size_by, color_by = input$color_by)
       })
       
       output$variance_plot <- renderPlotly({
         req(pca_data_reactive())
         vsdata <- pca_data_reactive()$vsdata
-        variance_explained_plot(vsdata)
+        plot_variance(vsdata)
       })
     }
     
