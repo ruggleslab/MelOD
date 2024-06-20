@@ -1,3 +1,8 @@
+#' Correlation Server
+#'
+#' @description Sets up the server logic for the correlation analysis and related plots
+#' @param id Module ID
+#' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
 correlation_server <- function(id,shared_reactives) {
   moduleServer(id, function(input, output, session) {
     
@@ -8,7 +13,6 @@ correlation_server <- function(id,shared_reactives) {
     dds_processed <- shared_reactives$dds_processed
     display_genes <- shared_reactives$display_genes
     
-    # Debounce the inputs to avoid frequent reloading
     gene_of_interest <- debounce(reactive(input$gene_of_interest), 500)
     correlation_threshold <- debounce(reactive(input$correlation_threshold), 500)
     
@@ -17,22 +21,14 @@ correlation_server <- function(id,shared_reactives) {
       updateSelectizeInput(session, "gene_of_interest", choices = rownames(filtered_res()), server = TRUE)
     })
 
-    #' Process Data
-    #'
-    #' @description Processes the correlation data
     processed_data <- reactive( {
       process_gene_correlations(dds_processed(), display_genes(), gene_of_interest(), correlation_threshold())
     })
 
-    #' Plot Data
-    #'
-    #' @description Generates the correlation plot
     plot_data <- reactive( {
       plot_gene_correlations(processed_data(),gene_of_interest() )
     })
 
-
-    
     output$correlation_plot <- renderUI({
       result <- plot_data()
       if (is.character(result)) {
@@ -42,14 +38,11 @@ correlation_server <- function(id,shared_reactives) {
       }
     })
     
-
-
     setup_download_handler(id, output, "correlation_data", processed_data, "correlation")
 
     observeEvent(input$info_correlation_plot, {
       shinyalert(title = blurbs$info$correlation$title, html = TRUE,
                  text = blurbs$info$correlation$text)
     })
-
   })
 }

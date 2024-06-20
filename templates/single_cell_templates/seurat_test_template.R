@@ -44,7 +44,7 @@ seurat_ui <- function(id) {
         title = HTML(paste("Cell Information", downloadButton(ns("cell_plot_culstered_pdf"),icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("cell_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
         status = "primary", solidHeader = TRUE,
         
-        plotlyOutput(ns("cell_plot_culstered"),height = '700px'),
+        plotlyOutput(ns("cell_plot_culstered"), height = '700px'),
         width = 12,
         fluidRow(
           column(

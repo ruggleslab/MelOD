@@ -459,7 +459,6 @@ render_filtered_results_table <- function(dds_processed, input) {
   #' @description Renders the filtered results table based on the selected genes
   #' @param dds_processed Reactive expression containing the processed DESeq2 dataset
   #' @param input Shiny input object
-  #' @param selected_genes_plotly Reactive value for selected genes
   #' 
   #' @return A datatable containing the filtered results
 

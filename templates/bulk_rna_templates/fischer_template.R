@@ -26,7 +26,6 @@ fischer_ui <- function(id) {
 }
 
 
-
 #' Fischer Server
 #'
 #' @description Sets up the server logic for the Fischer analysis tab
