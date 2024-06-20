@@ -125,7 +125,6 @@ input_ui <- function(id) {
              numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
              selectizeInput(ns("selected_gene"), "Gene(s) selection (up to 10)", choices = NULL, selected = NULL, multiple = TRUE, options = list(maxItems = 10)),
              numericInput(ns("number"), "Number of genes for the heatmap (min. 2 if no genes selected)", 10, min = 0, step = 1),
-             actionButton(ns("update_plot"), "Generate plots", class = "btn-primary"),
              actionButton(ns("reset_selection"), "Reset Selection", class = "btn-primary")
     
              
@@ -148,7 +147,7 @@ volcano_ui <- function(id) {
       width = 12,
       solidHeader = TRUE,
       collapsible = TRUE,
-      plotlyOutput(ns("volcano_plot"))
+      withSpinner(plotlyOutput(ns("volcano_plot")),type = 6, color = "#FFA812", size = 0.5),
      
     )
   )
