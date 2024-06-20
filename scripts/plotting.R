@@ -336,7 +336,7 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff) {
   plot_title <- if (length(gene_of_interest) == 1) {
     paste("Expressions for", gene_of_interest, condition_title)
   } else {
-    paste("Expressions for :", paste(gene_of_interest, collapse = ", "), condition_title)
+    paste("Expressions for multiple genes", condition_title)
   }
   
   violin_plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
