@@ -11,17 +11,22 @@ heatmap_server <- function(id, shared_reactives) {
     dds_processed <- shared_reactives$dds_processed
     
     # Debounce inputs
-    debounced_slider_padj <- debounce(reactive({ input$slider_padj }), millis = 1000)
-    debounced_slider_log2 <- debounce(reactive({ input$slider_log2 }), millis = 1000)
-    debounced_number <- debounce(reactive({ input$number }), millis = 1000)
-    debounced_selected_gene <- debounce(reactive({ input$selected_gene }), millis = 1000)
+    debounced_slider_padj <- debounce(reactive({ input$slider_padj }), millis = 500)
+    debounced_slider_log2 <- debounce(reactive({ input$slider_log2 }), millis = 500)
+    debounced_number <- debounce(reactive({ input$number }), millis = 500)
+    debounced_selected_gene <- debounce(reactive({ input$selected_gene }), millis = 500)
+    debounced_z_score_range <- debounce(reactive({ input$z_score_range }), millis = 500)
+    debounced_font_size <- debounce(reactive({ input$font_size }), millis = 500)
+    
     
     processed_data <- reactive({
       process_heatmap_data(dds_processed(), debounced_slider_padj(), debounced_slider_log2(), debounced_number(), debounced_selected_gene())
     })
     
     plot_data <- reactive({
-      plot_heatmap(processed_data()$matrix, dds_processed(), debounced_selected_gene())
+      plot_heatmap(processed_data()$matrix, dds_processed(), debounced_selected_gene(), heatmap_palette = input$heatmap_palette,
+                   z_score_range = debounced_z_score_range(),
+                   font_size = debounced_font_size())
     })
     
     output$heatmap_plot <- renderUI({

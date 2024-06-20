@@ -12,14 +12,14 @@ violin_server <- function(id, shared_reactives) {
     display_genes <- shared_reactives$display_genes
     
     # Debounce the display_genes reactive to wait for user input
-    debounced_display_genes <- debounce(reactive({ display_genes() }), millis = 800)
+    debounced_display_genes <- debounce(reactive({ display_genes() }), millis = 500)
     
     processed_data <- reactive({
       process_violin_data(dds_processed(), debounced_display_genes())
     })
     
     plot_data <- reactive({
-      plot_violin(processed_data()$merged_data, processed_data()$gene_of_interest, input$slider_padj)
+      plot_violin(processed_data()$merged_data, processed_data()$gene_of_interest, input$slider_padj, input$box_or_violin, input$violon_color, input$violon_dot)
     })
     
     output$violin_plot <- renderPlotly({ plot_data() })

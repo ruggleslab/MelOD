@@ -1,5 +1,7 @@
 source("global.R", local = TRUE)
 
+
+
 plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "condition") {
   #' Create PCA Plot
   #' 
@@ -316,20 +318,29 @@ plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
   return(volcano_plot)
 }
 
-
-
-plot_violin <- function(merged_data, gene_of_interest, padj_cutoff) {
-  #' Create Violin Plot
-  #' 
-  #' @param merged_data Processed data for violin plot
+plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape, choice_color, choice_dot) {
+  #' Create Violin or Box Plot
+  #'
+  #' @param merged_data Processed data for plot
   #' @param gene_of_interest Specific gene to analyze
   #' @param padj_cutoff Adjusted p-value cutoff
-  #' 
-  #' @return A plotly object representing the violin plot
+  #' @param choice_shape Shape of the plot ("violin" or "boxplot")
+  #' @param choice_color Color palette for the plot
+  #' @param choice_dot Dot mode for the plot ("outliers", "all", etc.)
+  #'
+  #' @return A plotly object representing the plot
+  
+  color_palettes <- list("Red & Blue" = c("#D81B60", "#1E88E5"),
+                         "Green & Purple" = c("#66BB6A", "#8E24AA")
+  )
+  
+  color_palettes_darker <- list("Red & Blue" = c("#82103a", "#10528b"),
+                                "Green & Purple" = c("#58b55d", "#803c92")
+  )
+  colors_chosen <- unlist(color_palettes[choice_color])
+  colors_chosen_darker <- unlist(color_palettes_darker[choice_color])
   
   conditions_found <- sort(unique(merged_data$condition), method = "radix", na.last = NA)
-  colors_chosen <- c("#D81B60", "#1E88E5")
-  colors_chosen_darker <- c("#82103a", "#10528b")
   custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
   
   condition_title <- paste(" in ", paste(conditions_found, collapse=" vs "))
@@ -339,27 +350,49 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff) {
     paste("Expressions for multiple genes", condition_title)
   }
   
-  violin_plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
-                         type = "violin", colors = custom_colors, points = 'outliers',
-                         marker = list(color = colors_chosen_darker, size = 5, line = list(width = 0)),
-                         line = list(width = 1),
-                         box = list(visible = TRUE, fillcolor = colors_chosen_darker, line = list(width = 1, color = colors_chosen_darker)),
-                         meanline = list(visible = TRUE),
-                         bandwidth = 0.9,
-                         text = ~paste("Gene ID:", gene_id)) %>%
-    layout(title = plot_title,
-           yaxis = list(title = "Log-normalized Expression"),
-           xaxis = list(title = "Gene - Condition",
-                        titlefont = list(size = 14),
-                        tickfont = list(family = "Arial", size = 10, color = "black")),
-           margin = list(t = 100),
-           zeroline = FALSE,
-           violingap = 0.2,
-           violingroupgap = 0.1,
-           violinmode = "group")
+  if (choice_shape == "violin") {
+    plot_type <- "violin"
+    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
+                    type = plot_type, colors = custom_colors, points = choice_dot,
+                    jitter = 0.1, pointpos = 0,
+                    marker = list(size = 5, line = list(width = 0)),
+                    line = list(width = 1),
+                    box = list(visible = TRUE, fillcolor = colors_chosen_darker, line = list(width = 1, color = colors_chosen_darker)),
+                    meanline = list(visible = TRUE),
+                    bandwidth = 0.9,
+                    text = ~paste("Gene ID:", gene_id)) %>%
+      layout(title = plot_title,
+             yaxis = list(title = "Log-normalized Expression"),
+             xaxis = list(title = "Gene - Condition",
+                          titlefont = list(size = 14),
+                          tickfont = list(family = "Arial", size = 10, color = "black")),
+             margin = list(t = 100),
+             zeroline = FALSE,
+             violingap = 0.2,
+             violingroupgap = 0.1,
+             violinmode = "group")
+  } else {
+    plot_type <- "box"
+    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
+                    type = plot_type, colors = custom_colors, points = choice_dot,
+                    jitter = 0.3, pointpos = 0,
+                    marker = list(size = 5, line = list(width = 0)),
+                    boxpoints = choice_dot,
+                    box = list(visible = TRUE, fillcolor = colors_chosen_darker, line = list(width = 1, color = colors_chosen_darker)),
+                    meanline = list(visible = TRUE),
+                    text = ~paste("Gene ID:", gene_id)) %>%
+      layout(title = plot_title,
+             yaxis = list(title = "Log-normalized Expression"),
+             xaxis = list(title = "Gene - Condition",
+                          titlefont = list(size = 14),
+                          tickfont = list(family = "Arial", size = 10, color = "black")),
+             margin = list(t = 100),
+             zeroline = FALSE,
+             boxmode = "group")
+  }
   
-  violin_plot <- add_significance_annotations(merged_data, violin_plot, padj_cutoff)
-  violin_plot <- violin_plot %>%  
+  plot <- add_significance_annotations(merged_data, plot, padj_cutoff)
+  plot <- plot %>%  
     config(modeBarButtonsToAdd = c('drawline', 
                                    'drawopenpath', 
                                    'drawclosedpath', 
@@ -367,17 +400,18 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff) {
                                    'drawrect', 
                                    'eraseshape'))
   
-  return(violin_plot)
+  return(plot)
 }
 
-
-
-plot_heatmap <- function(z_score_matrix, deseq2_data, gene) {
+plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_score_range , font_size ) {
   #' Plot Heatmap
   #'
   #' @param z_score_matrix Z-scored matrix.
   #' @param deseq2_data Processed DESeq2 dataset.
   #' @param gene Specific gene to display.
+  #' @param heatmap_palette Color palette for the heatmap.
+  #' @param z_score_range Range for the z-scores.
+  #' @param font_size Font size for row and column labels.
   #'
   #' @return A plotly object representing the heatmap.
   
@@ -398,18 +432,19 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene) {
     selection <- ifelse(rownames(z_score_matrix) %in% gene, "Selected genes", "None")
     selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
     
+
     heatmap_plot <- heatmaply(
       z_score_matrix,
       plot_method = "plotly",
-      limits = c(-2, 2),
+      limits = c(-z_score_range,z_score_range),
       branches_lwd = 0.01,
       subplot_widths = c(0.95, 0.005, 0.045),
       grid_gap = 0.5,
-      fontsize_row = 8,
-      fontsize_col = 8,
+      fontsize_row = font_size,
+      fontsize_col = font_size,
       key.title = "Z-score",
       label_names = c("Gene", "Sample", "Z-score"),
-      colors = rev(colorRampPalette(brewer.pal(3, "RdBu"))(256)),
+      colors = rev(colorRampPalette(brewer.pal(3, heatmap_palette))(256)),
       col_side_colors = conditions_df,
       col_side_palette = condition_colors,
       row_side_colors = selection,
@@ -453,6 +488,8 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene) {
 
 
 
+
+
 render_filtered_results_table <- function(dds_processed, input) {
   #'Result Table
   #'
@@ -461,14 +498,19 @@ render_filtered_results_table <- function(dds_processed, input) {
   #' @param input Shiny input object
   #' 
   #' @return A datatable containing the filtered results
-
+  
   DT::renderDataTable({
     res <- results(dds_processed())
     res <- as.data.frame(res)
     
-    # Round numeric columns to 4 decimal places
+    # Custom rounding function to avoid rounding small numbers to 0
+    custom_round <- function(x, digits) {
+      ifelse(abs(x) < 10^(-digits), format(x, scientific = TRUE, digits = digits), round(x, digits))
+    }
+    
+    # Apply custom rounding to numeric columns
     numeric_columns <- sapply(res, is.numeric)
-    res[numeric_columns] <- lapply(res[numeric_columns], function(x) round(x, 4))
+    res[numeric_columns] <- lapply(res[numeric_columns], function(x) custom_round(x, 4))
     
     if (!is.null(input$selected_gene) && length(input$selected_gene) > 0)
       res <- res[rownames(res) %in% input$selected_gene, ]
@@ -481,6 +523,7 @@ render_filtered_results_table <- function(dds_processed, input) {
     ))
   })
 }
+
 
 
 plot_gene_correlations <- function(filtered_results, gene_of_interest) {

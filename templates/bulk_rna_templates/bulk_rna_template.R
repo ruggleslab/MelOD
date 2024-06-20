@@ -124,7 +124,6 @@ input_ui <- function(id) {
              numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
              numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
              selectizeInput(ns("selected_gene"), "Gene(s) selection (up to 10)", choices = NULL, selected = NULL, multiple = TRUE, options = list(maxItems = 10)),
-             numericInput(ns("number"), "Number of genes for the heatmap (min. 2 if no genes selected)", 10, min = 0, step = 1),
              actionButton(ns("reset_selection"), "Reset Selection", class = "btn-primary")
     
              
@@ -169,6 +168,11 @@ violin_ui <- function(id) {
       solidHeader = TRUE,
       collapsible = TRUE,
       withSpinner(plotlyOutput(ns(id = 'violin_plot')),type = 6, color = "#FFA812", size = 0.5),
+      fluidRow(
+        column(4,selectizeInput(ns("box_or_violin"), "Type of plot:", choices = c("violin", "boxplot"), selected = "violin", multiple = FALSE, options = list(maxItems = 1))),
+        column(4,selectizeInput(ns("violon_color"), "Color:", choices = c("Red & Blue", "Green & Purple"), selected = "Red & Blue", multiple = FALSE, options = list(maxItems = 1))),
+        column(4,selectizeInput(ns("violon_dot"), "Dot:", choices = c("Outliers "= "outliers", "All" = "all"), selected = "outliers", multiple = FALSE, options = list(maxItems = 1)))
+      )
     )
   )
 }
@@ -193,8 +197,12 @@ heatmap_ui <- function(id) {
       br(),
       br(),
       br(),
-      br(),
-      
+      fluidRow(
+        column(3,numericInput(ns("number"), "Number of genes (min. 2 if no genes selected):", value =10, min = 0, step = 1)),
+        column(3, selectizeInput(ns("heatmap_palette"), "Heatmap Color Palette:", choices = c("Default" ="RdBu", "Green & Pink "="PiYG", "Red & Grey" = "RdGy", "Brown & Green "= "BrBG"), selected = "RdBu")),
+        column(3, numericInput(ns("font_size"), "Font Size:", value = 8, min = 6, max = 20)),
+        column(3, numericInput(ns("z_score_range"), "Z-score Range:",  value = 2, min = 2, max = 10, step = 1))
+      ),
   )
 }
 #' Correlation UI
