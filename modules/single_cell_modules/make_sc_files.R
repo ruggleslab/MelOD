@@ -1,14 +1,16 @@
+#' library(Seurat)
+#' 
+#' 
 #' seu  = readRDS("./data/single_cell/readySeu_rset.rds")
 #' seu = UpdateSeuratObject(seu)
-#' 
 #' 
 #' scConf = createConfig(seu)
 #' 
 #' 
-#' makeShinyFiles(
-#'   seu, scConf, gex.assay = "RNA", gex.slot = "data",
-#'   shiny.prefix = "sc1", shiny.dir = "./data/single_cell"
-#' )
+#' makeShinyFiles(seu, scConf, gex.assay = "RNA", gex.slot = "data",
+#'                shiny.prefix = "sc1", shiny.dir = "./data/single_cell", gene.mapping=TRUE)
+#' 
+#' 
 #' 
 #' 
 #' #' Generate data files required for shiny app
@@ -74,7 +76,7 @@
 #' #'
 #' #' @export
 #' makeShinyFiles <- function(
-    #'     obj, scConf, gex.assay = NA, gex.slot = c("data", "scale.data", "counts"),
+#'     obj, scConf, gex.assay = NA, gex.slot = c("data", "scale.data", "counts"),
 #'     gene.mapping = FALSE, shiny.prefix = "sc1", shiny.dir = "shinyApp/",
 #'     default.gene1 = NA, default.gene2 = NA, default.multigene = NA,
 #'     default.dimred = NA, chunkSize = 500){

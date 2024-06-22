@@ -6,7 +6,9 @@ source("modules/bulk_rna_modules/pca_metadata_server.R", local = TRUE)
 source("modules/bulk_rna_modules/input_server.R", local = TRUE)
 source("modules/bulk_rna_modules/correlation_server.R", local = TRUE)
 
-source("modules/single_cell_modules/seurat_test.R", local = TRUE)
+source("modules/single_cell_modules/input_server.R", local = TRUE)
+source("modules/single_cell_modules/cell_info_server.R", local = TRUE)
+source("modules/single_cell_modules/gene_expression_server.R", local = TRUE)
 
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
@@ -19,7 +21,8 @@ source("templates/bulk_rna_templates/fischer_template.R", local = TRUE)
 source("templates/bulk_rna_templates/bulk_rna_template.R", local = TRUE)
 
 source("templates/in_development_template.R", local = TRUE)
-source("templates/single_cell_templates/seurat_test_template.R", local = TRUE)
+source("templates/single_cell_templates/single_cell_template.R", local = TRUE)
+source("templates/single_cell_templates/shiny_cell_template.R", local = TRUE)
 
 
 

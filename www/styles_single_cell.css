@@ -1,0 +1,35 @@
+/* Style for the label */
+.checkbox-inline {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
+    padding-left: 0px;
+}
+
+/* Style for the checkbox input */
+.checkbox-inline input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 25px;
+    height: 20px;
+    background-color: #9CB5C9;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    border-radius: 4px; /* Rounded corners */
+    margin: 4px;
+    position: relative;
+}
+
+/* Change color when checkbox is checked */
+.checkbox-inline input[type="checkbox"]:checked {
+    background-color: #FFA812;
+}
+
+
+/* Change color and cursor on hover */
+.checkbox-inline input[type="checkbox"]:hover {
+    background-color: #FFD700; /* Hover background color */
+    cursor: pointer; /* Cursor on hover */
+}
+
+
+

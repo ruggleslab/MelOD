@@ -525,7 +525,6 @@ render_filtered_results_table <- function(dds_processed, input) {
 }
 
 
-
 plot_gene_correlations <- function(filtered_results, gene_of_interest) {
   #' Plot gene correlations
   #'
@@ -561,7 +560,7 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
     histogram <- plot_ly(filtered_results, x = ~correlation, type = 'histogram', 
                          marker = list(color = '#75a3d1', line = list(color = 'rgba(100, 100, 100, 1)', width = 1)))
     
-    correlation_plot <- subplot(scatter_plot, histogram, nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, heights = c(0.75, 0.25))
+    correlation_plot <- subplot(scatter_plot, histogram, nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, heights = c(0.65, 0.35))
     correlation_plot <- correlation_plot %>%
       layout(title = paste("Correlation of ", gene_of_interest),
              xaxis = list(title = "Correlation Coefficient"),
@@ -582,5 +581,6 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
     return("Wait...")
   })
 }
+
 
 
