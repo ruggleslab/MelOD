@@ -125,17 +125,14 @@ input_ui <- function(id) {
              numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
             multiInput(
                 inputId = ns("selected_gene"),
-                label = "Gene(s) selection (up to 10)",
+                label = "Gene(s) selection (up to 10):",
                 autocomplete = TRUE,
-                option= c(limit=10),
+                option= list(limit=10),
                 choices = "Loading..."),
              actionButton(ns("reset_selection"), "Reset Selection", class = "btn-primary")
-    
-             
-    
+
   )
 }
-
 
 #' Volcano UI
 #' 

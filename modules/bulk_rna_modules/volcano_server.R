@@ -46,8 +46,6 @@ volcano_server <- function(id, shared_reactives) {
       current_selection(character())  
       runjs("Shiny.setInputValue('plotly_selected-A', null);
             Shiny.setInputValue('plotly_click-A', null);")
-      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res()), server = TRUE, selected = NULL)
-  
     })
     
     setup_download_handler(id, output, "volcano_data", reactive({ processed_data()$res }), "volcano")
