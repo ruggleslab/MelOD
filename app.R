@@ -26,12 +26,13 @@ source("templates/single_cell_templates/shiny_cell_template.R", local = TRUE)
 
 
 
-# Source scripts files 
+# Source scripts files
 source("scripts/selection.R", local = TRUE)
 source("scripts/utils.R", local = TRUE)
 source("scripts/plotting.R", local = TRUE)
 source("scripts/plotting_single_cell.R", local = TRUE)
 source("scripts/data_processing.R", local = TRUE)
+
 
 
 library(shiny)
@@ -52,10 +53,9 @@ server <- function(input, output, session) {
       gide_server()
     } else if (input$tabs == "fischer") {
       fischer_server()
-    }else if (input$tabs == "seurat_test") {
+    } else if (input$tabs == "seurat_test") {
       seurat_server()
     }
-    
   })
 }
 

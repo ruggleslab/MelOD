@@ -19,16 +19,26 @@ inputs_ui <- function(id) {
       title = "Inputs", status = "warning", solidHeader = TRUE,
       collapsible = TRUE, collapsed = FALSE,
       width = 12,
-      selectInput(ns("cell_subset"), "Cell information to subset:",
-                  choices = NULL),
-
-      withSpinner(uiOutput(ns("cell_subset_choices")), type = 6, color = "#FFA812", size = 0.5),
-
-      actionButton(ns("cell_subset_all"), "Select all groups", class = "btn btn-primary"),
-      actionButton(ns("cell_subset_none"), "Deselect all groups", class = "btn btn-primary"),
-      fluidRow(
-        sliderInput(ns("marker_size"), "Point size:", min = 0, max = 10, value = 5, step = 2)
-      )
+      column(10,
+             selectInput(ns("cell_subset"), "Cell information to subset:",
+                             choices = NULL),
+             br(),
+             withSpinner(uiOutput(ns("cell_subset_choices")), type = 6, color = "#FFA812", size = 0.5),
+             br(),br(),
+             actionButton(ns("cell_subset_all"), "Select all groups", class = "btn btn-primary"),
+             actionButton(ns("cell_subset_none"), "Deselect all groups", class = "btn btn-primary")),
+      column(2,
+             noUiSliderInput(
+               inputId = ns("marker_size"), label = "Point size:",step = NULL, tooltips = TRUE,
+               min = 1, max = 10, margin = NULL, direction = "rtl",
+               value = 5,
+               format = wNumbFormat(decimals = 0,),
+              height = "200px",
+               orientation = "vertical",
+               color="#6699CC"
+             ),
+),
+      
     )
   )
 }

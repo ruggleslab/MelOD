@@ -187,6 +187,8 @@ violin_ui <- function(id) {
 heatmap_ui <- function(id) {
   ns <- NS(id)
   box(
+      useShinyFeedback(), 
+    
       title = HTML(paste("Heatmap", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('heatmap_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
       status = "primary",
       width = 12,
@@ -198,7 +200,7 @@ heatmap_ui <- function(id) {
       br(),
       br(),
       fluidRow(
-        column(3,numericInput(ns("number"), "Number of genes (min. 2 if no genes selected):", value =10, min = 0, step = 1)),
+        column(3,numericInput(ns("number"), "Number of default genes", value =10, min = 0,max=20, step = 1)),
         column(3, selectizeInput(ns("heatmap_palette"), "Heatmap Color Palette:", choices = c("Default" ="RdBu", "Green & Pink "="PiYG", "Red & Grey" = "RdGy", "Brown & Green "= "BrBG"), selected = "RdBu")),
         column(3, numericInput(ns("font_size"), "Font Size:", value = 8, min = 6, max = 20)),
         column(3, numericInput(ns("z_score_range"), "Z-score Range:",  value = 2, min = 2, max = 10, step = 1))
