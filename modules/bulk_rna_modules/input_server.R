@@ -12,7 +12,12 @@ input_server <- function(id, shared_reactives) {
     
     observe({
       filtered_res <- utilities()$filtered_genes
-      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res), server = TRUE, selected = NULL)
+      updateMultiInput(
+        session = session,
+        inputId = "selected_gene",
+        choices = rownames(filtered_res),
+        selected = input$selected
+      )
     })
     
     display_genes <- reactive({

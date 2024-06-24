@@ -11,12 +11,12 @@ heatmap_server <- function(id, shared_reactives) {
     dds_processed <- shared_reactives$dds_processed
     
     # Debounce inputs
-    debounced_slider_padj <- debounce(reactive({ input$slider_padj }), millis = 500)
-    debounced_slider_log2 <- debounce(reactive({ input$slider_log2 }), millis = 500)
+    debounced_slider_padj <- debounce(reactive({ input$slider_padj }), millis = 1000)
+    debounced_slider_log2 <- debounce(reactive({ input$slider_log2 }), millis = 1000)
     debounced_number <- debounce(reactive({ input$number }), millis = 1000)
-    debounced_selected_gene <- debounce(reactive({ input$selected_gene }), millis = 500)
-    debounced_z_score_range <- debounce(reactive({ input$z_score_range }), millis = 500)
-    debounced_font_size <- debounce(reactive({ input$font_size }), millis = 500)
+    debounced_selected_gene <- debounce(reactive({ input$selected_gene }), millis = 1000)
+    debounced_z_score_range <- debounce(reactive({ input$z_score_range }), millis = 1000)
+    debounced_font_size <- debounce(reactive({ input$font_size }), millis = 1000)
     
     
     processed_data <- reactive({

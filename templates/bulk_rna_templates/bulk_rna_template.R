@@ -123,7 +123,12 @@ input_ui <- function(id) {
     tags$h3("Parameters", style = "margin-top: 0;"),
              numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
              numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
-             selectizeInput(ns("selected_gene"), "Gene(s) selection (up to 10)", choices = NULL, selected = NULL, multiple = TRUE, options = list(maxItems = 10)),
+            multiInput(
+                inputId = ns("selected_gene"),
+                label = "Gene(s) selection (up to 10)",
+                autocomplete = TRUE,
+                option= c(limit=10),
+                choices = "Loading..."),
              actionButton(ns("reset_selection"), "Reset Selection", class = "btn-primary")
     
              

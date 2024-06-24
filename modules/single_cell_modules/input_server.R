@@ -24,5 +24,9 @@ inputs_server <- function(id, sc1conf, sc1def) {
                                choices = sub, selected = sub, inline = TRUE)
     })
     
+    
+    
+    
+    
   })
 }
