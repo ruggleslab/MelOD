@@ -487,9 +487,6 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_
 }
 
 
-
-
-
 render_filtered_results_table <- function(dds_processed, input) {
   #'Result Table
   #'
@@ -503,17 +500,24 @@ render_filtered_results_table <- function(dds_processed, input) {
     res <- results(dds_processed())
     res <- as.data.frame(res)
     
-    # Custom rounding function to avoid rounding small numbers to 0
     custom_round <- function(x, digits) {
       ifelse(abs(x) < 10^(-digits), format(x, scientific = TRUE, digits = digits), round(x, digits))
     }
     
-    # Apply custom rounding to numeric columns
     numeric_columns <- sapply(res, is.numeric)
     res[numeric_columns] <- lapply(res[numeric_columns], function(x) custom_round(x, 4))
     
     if (!is.null(input$selected_gene) && length(input$selected_gene) > 0)
       res <- res[rownames(res) %in% input$selected_gene, ]
+    
+    if ("log2FoldChange" %in% colnames(res)) {
+      res$log2FoldChange <- as.numeric(res$log2FoldChange)
+    }
+    
+    if ("log2FoldChange" %in% colnames(res) && is.numeric(res$log2FoldChange)) {
+      res$log2FoldChange[is.na(res$log2FoldChange)] <- 0
+      res <- res[order(-abs(res$log2FoldChange)), ]
+    }
     
     DT::datatable(res, extensions = 'Buttons', options = list(
       dom = 'lrBtip',
@@ -523,6 +527,8 @@ render_filtered_results_table <- function(dds_processed, input) {
     ))
   })
 }
+
+
 
 
 plot_gene_correlations <- function(filtered_results, gene_of_interest) {

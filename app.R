@@ -41,6 +41,7 @@ library(shinydashboard)
 # Define UI using the sourced template
 ui <- dashboardTemplate()
 
+
 # Define server logic
 server <- function(input, output, session) {
   # Observer to detect tab changes
