@@ -4,7 +4,7 @@
 #' @param merged_data Data containing gene expressions and conditions
 #' @param plot The plot object to which annotations will be added
 #' @param padj_cut Adjusted p-value cutoff
-#' @return The plot with added significance annotations
+#' @return The plot with added significance annotations (t.test)
 add_significance_annotations <- function(merged_data, plot, padj_cut) {
   results <- merged_data %>%
     split(.$gene_id) %>%

@@ -93,7 +93,6 @@ plot_variance <- function(vs_data) {
   return(variance_plot)
 }
 
-
 plot_mortality_curve_by_condition <- function(clinical_data) {
   #' Plot Mortality Curve
   #'
@@ -106,13 +105,11 @@ plot_mortality_curve_by_condition <- function(clinical_data) {
     clinical_data$status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
     
     survival_object <- Surv(time = clinical_data$OS.days., event = clinical_data$status)
-    
     survival_fit <- survfit(survival_object ~ condition, data = clinical_data)
-    
     mortality_plot <- plot_ly()
     
     conditions <- unique(clinical_data$condition)
-    colors <- c("#1E88E5", "#D81B60", "#33a02c")  # Add more colors if necessary
+    colors <- c("#1E88E5", "#D81B60", "#33a02c") 
     median_survivals <- list()
     
     for (i in seq_along(conditions)) {
@@ -125,8 +122,8 @@ plot_mortality_curve_by_condition <- function(clinical_data) {
         add_trace(
           type = 'scatter',
           mode = 'lines+markers',
-          x = condition_survival_fit$time,
-          y = condition_survival_fit$surv,
+          x = c(0, condition_survival_fit$time), 
+          y = c(1, condition_survival_fit$surv),
           name = condition_name,
           line = list(color = colors[i])
         )
@@ -147,7 +144,7 @@ plot_mortality_curve_by_condition <- function(clinical_data) {
           text = paste("Survival Curve<br><sup>Median Survival: ", median_text, "</sup>")
         ),
         xaxis = list(title = "Days"),
-        yaxis = list(title = "Survival Probability", range = c(0, 1))
+        yaxis = list(title = "Survival Probability", range = c(0, 1.2))
       )
     
     return(mortality_plot)
@@ -155,7 +152,6 @@ plot_mortality_curve_by_condition <- function(clinical_data) {
     return("No metadata available")
   })
 }
-
 
 plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
   #' Plot Mortality Curve
@@ -168,7 +164,6 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
   #' @return A plotly object representing the mortality curve with median survival times
   
   tryCatch({
-    # Load the DESeq2 data
     deseq2_object <- deseq2_data
     gene_expression <- as.numeric(assay(deseq2_object)[gene, ])    
     
@@ -179,7 +174,6 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
     
     gene_expression <- gene_expression[match(clinical_data$X, colnames(deseq2_object))]
     
-    # Jitter the gene expression values slightly to avoid ties
     gene_expression <- jitter(gene_expression, factor = 0.1)
     
     # Classify patients into tertiles based on gene expression
@@ -207,8 +201,8 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
         add_trace(
           type = 'scatter',
           mode = 'lines+markers',
-          x = condition_survival_fit$time, 
-          y = condition_survival_fit$surv,
+          x = c(0, condition_survival_fit$time),
+          y = c(1, condition_survival_fit$surv), 
           name = tertile_name,
           line = list(color = colors[i])
         )
@@ -229,7 +223,7 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
           text = paste("Survival Curve<br><sup>Median Survival: ", median_text, "</sup>")
         ),
         xaxis = list(title = "Days"),
-        yaxis = list(title = "Survival Probability", range = c(0, 1))
+        yaxis = list(title = "Survival Probability", range = c(0, 1.2))
       )
     
     return(mortality_plot)
@@ -238,6 +232,8 @@ plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
     return("No metadata available")
   })
 }
+
+
 
 
 plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
