@@ -1,4 +1,3 @@
-
 #' PCA Data
 #' 
 #' @description Processes DESeq2 dataset for PCA analysis
@@ -13,6 +12,24 @@ pca_data <- function(dds) {
   pca_data$size_factor <- size_factors[rownames(pca_data)]
   
   return(list(pca_data = pca_data, vsdata = vsdata))
+}
+
+
+process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_data = NULL, gene = NULL) {
+  if (!is.null(gene) && !is.null(deseq2_data)) {
+    gene_expression <- as.numeric(assay(deseq2_data)[gene, ])
+    if (!all(clinical_data$X %in% colnames(deseq2_data))) {
+      stop("Some patient IDs in the clinical data do not match the DESeq2 data")
+    }
+    gene_expression <- gene_expression[match(clinical_data$X, colnames(deseq2_data))]
+    gene_expression <- jitter(gene_expression, factor = 0.1)
+    clinical_data$group <- cut(gene_expression, breaks = quantile(gene_expression, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE), include.lowest = TRUE, labels = c("Q1", "Q2", "Q3"))
+  } else {
+    clinical_data$group <- clinical_data[[group_by]]
+  }
+  
+  clinical_data$status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
+  return(clinical_data)
 }
 
 
@@ -39,9 +56,8 @@ gene_names_dds <- function(dds) {
     }
     names
   }
-  
   unique_gene_symbols <- makeUniqueRowNames(gene_symbols)
-  
+
   if (length(unique_gene_symbols) == nrow(dds)) {
     rownames(dds) <- unique_gene_symbols
   } else {
@@ -50,7 +66,6 @@ gene_names_dds <- function(dds) {
   
   dds
 }
-
 
 
 process_heatmap_data <- function(dds, padj_cut, log2_cut, number, gene) {
@@ -91,6 +106,7 @@ process_heatmap_data <- function(dds, padj_cut, log2_cut, number, gene) {
   return(list(data = res.df.final, matrix = mat.z))
 }
 
+
 process_gene_correlations <- function(dds, display_genes, gene_of_interest, threshold = 0.4) {
   #' Process gene correlations
   #'
@@ -118,7 +134,6 @@ process_gene_correlations <- function(dds, display_genes, gene_of_interest, thre
   # Filter out genes with zero variance
   zero_variance_genes <- apply(data_dt, 2, function(x) sd(x) == 0)
   data_dt <- data_dt[, !zero_variance_genes, with = FALSE]
-  
   gene_expr <- data_dt[[gene_of_interest]]
   correlations <- numeric(ncol(data_dt))
   p_values <- numeric(ncol(data_dt))
@@ -153,7 +168,6 @@ process_volcano_data <- function(dds, padj_cut, log2_cut) {
   
   res <- results(dds)
   res$neg_log10_padj <- -log10(res$padj)
-  
   res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut,
                     ifelse(res$log2FoldChange > 0, "Upregulated", "Downregulated"),
                     "Not Significant")
@@ -162,24 +176,16 @@ process_volcano_data <- function(dds, padj_cut, log2_cut) {
 }
 
 
-
 process_violin_data <- function(dds, display_genes) {
   #' Process data for violin plot
   #' @param dds Processed DESeq2 dataset
   #' @param display_genes Genes to display
-  #' @param gene_of_interest Specific gene to analyze
   #' @return Processed data for violin plot
   
-  
-
-
   gene_of_interest <- rownames(display_genes)
-  
-  
-  gene <- rownames(display_genes)
   counts <- counts(dds, normalized = TRUE)
-  counts_filtered <- counts[rownames(counts) %in% gene, , drop = FALSE]
-  df <- as.data.frame(log(counts_filtered + 0.01))
+  counts_filtered <- counts[rownames(counts) %in% gene_of_interest, , drop = FALSE]
+  df <- as.data.frame(log(counts_filtered + 1))
   
   col_data_df <- as.data.frame(colData(dds))
   col_data_df <- col_data_df %>%
@@ -187,13 +193,19 @@ process_violin_data <- function(dds, display_genes) {
     select(patient_id, condition)
   
   df_long <- df %>%
-    tibble::rownames_to_column("gene_id") %>%
-    tidyr::pivot_longer(cols = -gene_id, names_to = "Sample", values_to = "expression")
+    rownames_to_column("gene_id") %>%
+    pivot_longer(cols = -gene_id, names_to = "Sample", values_to = "expression")
   
   merged_data <- left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
   
+  # Extract padjust values
+  padjust_values <- data.frame(
+    gene_id = rownames(display_genes),
+    padjust = display_genes$padj
+  )
+  
+  # Merge padjust values with the merged_data
+  merged_data <- left_join(merged_data, padjust_values, by = "gene_id")
+  
   return(list(merged_data = merged_data, gene_of_interest = gene_of_interest))
 }
-
-
-

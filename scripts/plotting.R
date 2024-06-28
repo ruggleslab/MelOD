@@ -93,129 +93,42 @@ plot_variance <- function(vs_data) {
   return(variance_plot)
 }
 
-plot_mortality_curve_by_condition <- function(clinical_data) {
-  #' Plot Mortality Curve
-  #'
-  #' @description Plots the mortality curve and calculates median survival times
-  #' @param clinical_data Clinical data for the plot
-  #'
-  #' @return A plotly object representing the mortality curve with median survival times
-  
-  tryCatch({
-    clinical_data$status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
-    
-    survival_object <- Surv(time = clinical_data$OS.days., event = clinical_data$status)
-    survival_fit <- survfit(survival_object ~ condition, data = clinical_data)
-    mortality_plot <- plot_ly()
-    
-    conditions <- unique(clinical_data$condition)
-    colors <- c("#1E88E5", "#D81B60", "#33a02c") 
-    median_survivals <- list()
-    
-    for (i in seq_along(conditions)) {
-      condition_name <- conditions[i]
-      condition_data <- clinical_data[clinical_data$condition == condition_name, ]
-      condition_survival_object <- Surv(time = condition_data$OS.days., event = condition_data$status)
-      condition_survival_fit <- survfit(condition_survival_object ~ 1)
-      
-      mortality_plot <- mortality_plot %>%
-        add_trace(
-          type = 'scatter',
-          mode = 'lines+markers',
-          x = c(0, condition_survival_fit$time), 
-          y = c(1, condition_survival_fit$surv),
-          name = condition_name,
-          line = list(color = colors[i])
-        )
-      
-      median_survival <- summary(condition_survival_fit)$table["median"]
-      if (is.na(median_survival)) {
-        median_survivals[[condition_name]] <- "Not Reached"
-      } else {
-        median_survivals[[condition_name]] <- paste(median_survival, "days")
-      }
-    }
-    
-    median_text <- paste0(conditions, ": ", unlist(median_survivals), collapse = "<br>")
-    
-    mortality_plot <- mortality_plot %>%
-      layout(
-        title = list(
-          text = paste("Survival Curve<br><sup>Median Survival: ", median_text, "</sup>")
-        ),
-        xaxis = list(title = "Days"),
-        yaxis = list(title = "Survival Probability", range = c(0, 1.2))
-      )
-    
-    return(mortality_plot)
-  }, error = function(e) {
-    return("No metadata available")
-  })
-}
 
-plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
-  #' Plot Mortality Curve
-  #' 
-  #' @description Plots the mortality curve and calculates median survival times
-  #' @param clinical_data Clinical data for the plot
-  #' @param deseq2_data DESeq2 RDS object
-  #' @param gene Selected gene for expression analysis
-  #' 
-  #' @return A plotly object representing the mortality curve with median survival times
-  
+plot_mortality_curve <- function(clinical_data, group_col = "group") {
   tryCatch({
-    deseq2_object <- deseq2_data
-    gene_expression <- as.numeric(assay(deseq2_object)[gene, ])    
-    
-    # Ensure patient IDs match
-    if (!all(clinical_data$X %in% colnames(deseq2_object))) {
-      return("Some patient IDs in the clinical data do not match the DESeq2 data")
-    }
-    
-    gene_expression <- gene_expression[match(clinical_data$X, colnames(deseq2_object))]
-    
-    gene_expression <- jitter(gene_expression, factor = 0.1)
-    
-    # Classify patients into tertiles based on gene expression
-    tertiles <- cut(gene_expression, breaks = quantile(gene_expression, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE), include.lowest = TRUE, labels = c("Q1", "Q2", "Q3"))
-    clinical_data$tertile <- tertiles
-    
-    clinical_data$status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
     survival_object <- Surv(time = clinical_data$OS.days., event = clinical_data$status)
-    
-    survival_fit <- survfit(survival_object ~ tertile, data = clinical_data)
-    
+    survival_fit <- survfit(as.formula(paste("survival_object ~", group_col)), data = clinical_data)
     mortality_plot <- plot_ly()
     
-    tertiles <- unique(clinical_data$tertile)
-    colors <- c("#1E88E5", "#D81B60", "#33a02c")  
+    groups <- unique(clinical_data[[group_col]])
+    colors <- c("#1E88E5", "#D81B60", "#33a02c")
     median_survivals <- list()
     
-    for (i in seq_along(tertiles)) {
-      tertile_name <- tertiles[i]
-      condition_data <- clinical_data[clinical_data$tertile == tertile_name, ]
-      condition_survival_object <- Surv(time = condition_data$OS.days., event = condition_data$status)
-      condition_survival_fit <- survfit(condition_survival_object ~ 1)
+    for (i in seq_along(groups)) {
+      group_name <- groups[i]
+      group_data <- clinical_data[clinical_data[[group_col]] == group_name, ]
+      group_survival_object <- Surv(time = group_data$OS.days., event = group_data$status)
+      group_survival_fit <- survfit(group_survival_object ~ 1)
       
       mortality_plot <- mortality_plot %>%
         add_trace(
           type = 'scatter',
           mode = 'lines+markers',
-          x = c(0, condition_survival_fit$time),
-          y = c(1, condition_survival_fit$surv), 
-          name = tertile_name,
-          line = list(color = colors[i])
+          x = c(0, group_survival_fit$time), 
+          y = c(1, group_survival_fit$surv),
+          name = group_name,
+          line = list(color = colors[i %% length(colors)])
         )
       
-      median_survival <- summary(condition_survival_fit)$table["median"]
+      median_survival <- summary(group_survival_fit)$table["median"]
       if (is.na(median_survival)) {
-        median_survivals[[tertile_name]] <- "Not Reached"
+        median_survivals[[group_name]] <- "Not Reached"
       } else {
-        median_survivals[[tertile_name]] <- paste(median_survival, "days")
+        median_survivals[[group_name]] <- paste(median_survival, "days")
       }
     }
     
-    median_text <- paste0(tertiles, ": ", unlist(median_survivals), collapse = "<br>")
+    median_text <- paste0(groups, ": ", unlist(median_survivals), collapse = "<br>")
     
     mortality_plot <- mortality_plot %>%
       layout(
@@ -314,6 +227,7 @@ plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
   return(volcano_plot)
 }
 
+
 plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape, choice_color, choice_dot) {
   #' Create Violin or Box Plot
   #'
@@ -398,6 +312,7 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
   
   return(plot)
 }
+
 
 plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_score_range , font_size ) {
   #' Plot Heatmap

@@ -42,6 +42,17 @@ pca_metadata_server <- function(id, shared_reactives) {
       shinyalert(title = blurbs$info$pca$title, html = TRUE, text = blurbs$info$pca$text)
     })
     
+    
+    plot_mortality_curve_by_condition <- function(clinical_data) {
+      clinical_data <- process_clinical_data(clinical_data, group_by = "condition")
+      return(plot_mortality_curve(clinical_data, group_col = "group"))
+    }
+    
+    plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
+      clinical_data <- process_clinical_data(clinical_data, group_by = "group", deseq2_data = deseq2_data, gene = gene)
+      return(plot_mortality_curve(clinical_data, group_col = "group"))
+    }
+    
     output$mortality_by_condition <- renderUI({
       result <- plot_mortality_curve_by_condition(selected_clinical_data())
       if (is.character(result)) {
@@ -65,7 +76,7 @@ pca_metadata_server <- function(id, shared_reactives) {
       updateSelectizeInput(session, "gene_mortality", choices = rownames(filtered_res), server = TRUE, selected = NULL)
     })
     
-    setup_download_handler(id, output, "metadata_data", reactive({ selected_clinical_data() }), "metadata")
+    setup_download_handler(id, output, "metadata_data", reactive({ selected_clinical_data()}), "metadata")
     
     observeEvent(input$info_metadata_plot, {
       shinyalert(title = blurbs$info$mortality_curve$title, html = TRUE, text = blurbs$info$mortality_curve$text)

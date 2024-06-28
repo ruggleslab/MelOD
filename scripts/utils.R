@@ -1,102 +1,186 @@
-#' Add Significance Annotations
+#' #' Add Significance Annotations
+#' #' 
+#' #' @description Adds significance annotations to a plot
+#' #' @param merged_data Data containing gene expressions and conditions
+#' #' @param plot The plot object to which annotations will be added
+#' #' @param padj_cut Adjusted p-value cutoff
+#' #' @return The plot with added significance annotations (t.test)
+#' add_significance_annotations <- function(merged_data, plot, padj_cut) {
+#'   
 #' 
-#' @description Adds significance annotations to a plot
-#' @param merged_data Data containing gene expressions and conditions
-#' @param plot The plot object to which annotations will be added
-#' @param padj_cut Adjusted p-value cutoff
-#' @return The plot with added significance annotations (t.test)
+#'   results <- merged_data %>%
+#'     split(.$gene_id) %>%
+#'     lapply(function(df) {
+#'       if (nlevels(factor(df$condition)) == 2) {
+#'         test <- t.test(expression ~ condition, data = df)
+#'         print(test)
+#'         p.value <- test$p.value
+#'       } else {
+#'         p.value <- NA
+#'       }
+#'       return(p.value)
+#'     })
+#'   
+#'   p_values <- data.frame(
+#'     gene_id = names(results),
+#'     p_value = unlist(results)
+#'   )
+#' 
+#'   # Calculate midpoints for annotations
+#'   calculate_midpoints <- function(data) {
+#'     unique_genes <- unique(data$gene_id)
+#'     midpoints <- sapply(unique_genes, function(gene) {
+#'       conditions <- unique(data$condition[data$gene_id == gene])
+#'       if (length(conditions) == 2) {
+#'         return(mean(c(which(unique_genes == gene) - 0.2, which(unique_genes == gene) + 0.2) - 1))
+#'       } else {
+#'         return(NA)
+#'       }
+#'     })
+#'     return(midpoints)
+#' 
+#'   }
+#'   
+#'   midpoints <- calculate_midpoints(merged_data)
+#'   shape_list <- list()
+#'   annotation_list <- list()
+#'   
+#'   # Add annotations and shapes for significant p-values
+#'   for (i in seq_along(p_values$gene_id)) {
+#'     gene_id <- p_values$gene_id[i]
+#'     p_value <- p_values$p_value[i]
+#'     if (!is.na(p_value) && !is.na(midpoints[gene_id])) {
+#'       text_value <- if (p_value < padj_cut) {
+#'         paste("p =", signif(p_value, 3))
+#'       } else {
+#'         "N.S."
+#'       }
+#' 
+#'       annotation_list[[length(annotation_list) + 1]] <- list(
+#'         x = length(annotation_list),
+#'         y = 1.1,
+#'         text = text_value,
+#'         xref = "x", yref = "paper",
+#'         showarrow = FALSE,
+#'         font = list(family = "Arial", size = 10)
+#'       )
+#'       
+#'       shape_list[[length(shape_list) + 1]] <- list(
+#'         type = "line",
+#'         line = list(color = "black", width = 1),
+#'         x0 = midpoints[gene_id] - 0.2,
+#'         y0 = 1,
+#'         x1 = midpoints[gene_id] + 0.2,
+#'         y1 = 1,
+#'         xref = "x", yref = "paper"
+#'       )
+#'       shape_list[[length(shape_list) + 1]] <- list(
+#'         type = "line",
+#'         line = list(color = "black", width = 1),
+#'         x0 = midpoints[gene_id] - 0.2,
+#'         y0 = 1,
+#'         x1 = midpoints[gene_id] - 0.2,
+#'         y1 = 0.99,
+#'         xref = "x", yref = "paper"
+#'       )
+#'       shape_list[[length(shape_list) + 1]] <- list(
+#'         type = "line",
+#'         line = list(color = "black", width = 1),
+#'         x0 = midpoints[gene_id] + 0.2,
+#'         y0 = 1,
+#'         x1 = midpoints[gene_id] + 0.2,
+#'         y1 = 0.99,
+#'         xref = "x", yref = "paper"
+#'       )
+#'     }
+#'   }
+#' 
+#'   plot <- plot %>%
+#'     layout(
+#'       annotations = annotation_list,
+#'       shapes = shape_list
+#'     )
+#'   return(plot)
+#' }
 add_significance_annotations <- function(merged_data, plot, padj_cut) {
-  results <- merged_data %>%
-    split(.$gene_id) %>%
-    lapply(function(df) {
-      if (nlevels(factor(df$condition)) == 2) {
-        test <- t.test(expression ~ condition, data = df)
-        p.value <- test$p.value
-      } else {
-        p.value <- NA
-      }
-      return(p.value)
-    })
-  
-  p_values <- data.frame(
-    gene_id = names(results),
-    p_value = unlist(results)
-  )
+  #' Add Significance Annotations
+  #' 
+  #' @description Adds significance annotations to a plot
+  #' @param merged_data Data containing gene expressions, conditions, and padj values
+  #' @param plot The plot object to which annotations will be added
+  #' @param padj_cut Adjusted p-value cutoff
+  #' @return The plot with added significance annotations
   
   # Calculate midpoints for annotations
-  calculate_midpoints <- function(data) {
-    unique_genes <- unique(data$gene_id)
-    midpoints <- sapply(unique_genes, function(gene) {
-      conditions <- unique(data$condition[data$gene_id == gene])
-      if (length(conditions) == 2) {
-        return(mean(c(which(unique_genes == gene) - 0.2, which(unique_genes == gene) + 0.2) - 1))
-      } else {
-        return(NA)
-      }
-    })
-    return(midpoints)
-
-  }
+  unique_genes <- unique(merged_data$gene_id)
+  gene_indices <- setNames(seq_along(unique_genes), unique_genes)
   
-  midpoints <- calculate_midpoints(merged_data)
   shape_list <- list()
   annotation_list <- list()
   
-  # Add annotations and shapes for significant p-values
-  for (i in seq_along(p_values$gene_id)) {
-    gene_id <- p_values$gene_id[i]
-    p_value <- p_values$p_value[i]
-    if (!is.na(p_value) && !is.na(midpoints[gene_id])) {
-      text_value <- if (p_value < padj_cut) {
-        paste("p =", signif(p_value, 3))
+  # Add annotations and shapes for significant padj values
+  for (gene_id in unique_genes) {
+    df <- merged_data %>% filter(gene_id == !!gene_id)
+    padj_value <- unique(df$padjust)
+    gene_index <- gene_indices[gene_id] -1
+  
+    
+    if (!is.na(padj_value)) {
+      text_value <- if (padj_value < padj_cut) {
+        paste("padj =", signif(padj_value, 3))
       } else {
         "N.S."
       }
-
-      annotation_list[[length(annotation_list) + 1]] <- list(
-        x = length(annotation_list),
-        y = 1.1,
-        text = text_value,
-        xref = "x", yref = "paper",
-        showarrow = FALSE,
-        font = list(family = "Arial", size = 10)
-      )
       
-      shape_list[[length(shape_list) + 1]] <- list(
-        type = "line",
-        line = list(color = "black", width = 1),
-        x0 = midpoints[gene_id] - 0.2,
-        y0 = 1,
-        x1 = midpoints[gene_id] + 0.2,
-        y1 = 1,
-        xref = "x", yref = "paper"
-      )
-      shape_list[[length(shape_list) + 1]] <- list(
-        type = "line",
-        line = list(color = "black", width = 1),
-        x0 = midpoints[gene_id] - 0.2,
-        y0 = 1,
-        x1 = midpoints[gene_id] - 0.2,
-        y1 = 0.99,
-        xref = "x", yref = "paper"
-      )
-      shape_list[[length(shape_list) + 1]] <- list(
-        type = "line",
-        line = list(color = "black", width = 1),
-        x0 = midpoints[gene_id] + 0.2,
-        y0 = 1,
-        x1 = midpoints[gene_id] + 0.2,
-        y1 = 0.99,
-        xref = "x", yref = "paper"
-      )
+      annotation_list <- append(annotation_list, list(
+        list(
+          x = gene_id,
+          y = 1.1,
+          text = text_value,
+          xref = "x", yref = "paper",
+          showarrow = FALSE,
+          font = list(family = "Arial", size = 10)
+        )
+      ))
+      
+      shape_list <- append(shape_list, list(
+        list(
+          type = "line",
+          line = list(color = "black", width = 1),
+          x0 = gene_index - 0.2,
+          y0 = 1,
+          x1 = gene_index + 0.2,
+          y1 = 1,
+          xref = "x", yref = "paper"
+        ),
+        list(
+          type = "line",
+          line = list(color = "black", width = 1),
+          x0 = gene_index - 0.2,
+          y0 = 1,
+          x1 = gene_index - 0.2,
+          y1 = 0.99,
+          xref = "x", yref = "paper"
+        ),
+        list(
+          type = "line",
+          line = list(color = "black", width = 1),
+          x0 = gene_index + 0.2,
+          y0 = 1,
+          x1 = gene_index + 0.2,
+          y1 = 0.99,
+          xref = "x", yref = "paper"
+        )
+      ))
     }
   }
-
+  
   plot <- plot %>%
     layout(
       annotations = annotation_list,
       shapes = shape_list
     )
+  
   return(plot)
 }
 
