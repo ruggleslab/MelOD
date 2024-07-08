@@ -23,10 +23,6 @@ inputs_server <- function(id, sc1conf, sc1def) {
       updateCheckboxGroupInput(session, "cell_subset_choices_box", label = "Select which cells to show",
                                choices = sub, selected = sub, inline = TRUE)
     })
-    
-    
-    
-    
-    
+
   })
 }

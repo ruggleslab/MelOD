@@ -44,12 +44,20 @@ pca_metadata_server <- function(id, shared_reactives) {
     
     
     plot_mortality_curve_by_condition <- function(clinical_data) {
+      tryCatch({
       clinical_data <- process_clinical_data(clinical_data, group_by = "condition")
+      }, error = function(e) {
+        return("No metadata available")
+      })
       return(plot_mortality_curve(clinical_data, group_col = "group"))
     }
     
     plot_mortality_curve_by_gene <- function(clinical_data, deseq2_data, gene) {
+      tryCatch({
       clinical_data <- process_clinical_data(clinical_data, group_by = "group", deseq2_data = deseq2_data, gene = gene)
+    }, error = function(e) {
+      return("No metadata available")
+    })
       return(plot_mortality_curve(clinical_data, group_col = "group"))
     }
     

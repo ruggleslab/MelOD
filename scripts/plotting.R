@@ -141,7 +141,6 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
     
     return(mortality_plot)
   }, error = function(e) {
-    print(e)
     return("No metadata available")
   })
 }

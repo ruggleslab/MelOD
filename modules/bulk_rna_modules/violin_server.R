@@ -11,7 +11,6 @@ violin_server <- function(id, shared_reactives) {
     dds_processed <- shared_reactives$dds_processed
     display_genes <- shared_reactives$display_genes
     
-    # Debounce the display_genes reactive to wait for user input
     debounced_display_genes <- debounce(reactive({ display_genes() }), millis = 800)
     
     processed_data <- reactive({
