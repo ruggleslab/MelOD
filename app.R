@@ -44,7 +44,6 @@ ui <- dashboardTemplate()
 
 # Define server logic
 server <- function(input, output, session) {
-  # Observer to detect tab changes
   observeEvent(input$tabs, {
     if (input$tabs == "kunz") {
       kunz_server()
