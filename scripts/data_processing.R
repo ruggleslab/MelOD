@@ -1,9 +1,11 @@
+process_pca_data <- function(dds) {
 #' PCA Data
 #' 
 #' @description Processes DESeq2 dataset for PCA analysis
 #' @param dds DESeq2 dataset
+#' 
 #' @return A list containing PCA data and the variance stabilized transformed data
-pca_data <- function(dds) {
+  
   vsdata <- vst(dds, blind = FALSE)
   pca_data <- plotPCA(vsdata, intgroup = "condition", returnData = TRUE)
   
@@ -16,6 +18,16 @@ pca_data <- function(dds) {
 
 
 process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_data = NULL, gene = NULL) {
+  #' Process Clinical Data
+  #'
+  #' @description Processes clinical data from a study and returns a dataframe for plotting survival curves.
+  #' @param clinical_data DataFrame containing normalized clinical data.
+  #' @param group_by Column name by which to group the data, defaults to "condition".
+  #' @param deseq2_data Gene expression matrix from DESeq2 results (only for the "by gene" view).
+  #' @param gene Gene name to filter the gene expression matrix (only for the "by gene" view).
+  #' 
+  #' @return A DataFrame of clinical data based on the selected view. If both `deseq2_data` and `gene` are provided, it returns the quartiles of patient expression for the specified gene; otherwise, it returns the default DataFrame grouped by the `group_by` parameter.
+  
   if (!is.null(gene) && !is.null(deseq2_data)) {
     gene_expression <- as.numeric(assay(deseq2_data)[gene, ])
     if (!all(clinical_data$X %in% colnames(deseq2_data))) {
@@ -33,38 +45,57 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
 }
 
 
-#' Gene Names DDS
-#' 
-#' @description Processes DESeq2 dataset to ensure unique gene names
-#' @param dds DESeq2 dataset
-#' @return Processed DESeq2 dataset with unique gene names
-gene_names_dds <- function(dds) {
-  if ("symbol" %in% names(mcols(dds))) {
-    na_filter <- !is.na(mcols(dds)$symbol)
-    dds <- dds[na_filter, ]
-    gene_symbols <- mcols(dds)$symbol
-  } else {
-    stop("Gene symbols not found in the dataset metadata.")
-  }
+process_volcano_data <- function(dds, padj_cut, log2_cut) {
+  #' Process data for volcano plot
+  #' @param dds Processed DESeq2 dataset
+  #' @param padj_cut Adjusted p-value cutoff
+  #' @param log2_cut Log2 fold change cutoff
+  #' 
+  #' @return A list containing processed data for volcano plot and dds
   
-  makeUniqueRowNames <- function(names) {
-    counts <- table(names)
-    duplicates <- names[counts[names] > 1]
-    for (d in unique(duplicates)) {
-      idx <- which(names == d)
-      names[idx] <- paste(d, seq_along(idx), sep = "_")
-    }
-    names
-  }
-  unique_gene_symbols <- makeUniqueRowNames(gene_symbols)
+  res <- results(dds)
+  res$neg_log10_padj <- -log10(res$padj)
+  res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut,
+                    ifelse(res$log2FoldChange > 0, "Upregulated", "Downregulated"),
+                    "Not Significant")
+  
+  return(list(res = res, dds = dds))
+}
 
-  if (length(unique_gene_symbols) == nrow(dds)) {
-    rownames(dds) <- unique_gene_symbols
-  } else {
-    stop("The number of unique gene symbols does not match the number of rows in the dataset.")
-  }
+
+process_violin_data <- function(dds, display_genes) {
+  #' Process data for violin plot
+  #' @param dds Processed DESeq2 dataset
+  #' @param display_genes Genes to display
+  #' 
+  #' @return Processed data for violin plot
   
-  dds
+  gene_of_interest <- rownames(display_genes)
+  counts <- counts(dds, normalized = TRUE)
+  counts_filtered <- counts[rownames(counts) %in% gene_of_interest, , drop = FALSE]
+  df <- as.data.frame(log(counts_filtered + 1))
+  
+  col_data_df <- as.data.frame(colData(dds))
+  col_data_df <- col_data_df %>%
+    rownames_to_column(var = "patient_id") %>%
+    select(patient_id, condition)
+  
+  df_long <- df %>%
+    rownames_to_column("gene_id") %>%
+    pivot_longer(cols = -gene_id, names_to = "Sample", values_to = "expression")
+  
+  merged_data <- left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
+  
+  # Extract padjust values
+  padjust_values <- data.frame(
+    gene_id = rownames(display_genes),
+    padjust = display_genes$padj
+  )
+  
+  # Merge padjust values with the merged_data
+  merged_data <- left_join(merged_data, padjust_values, by = "gene_id")
+  
+  return(list(merged_data = merged_data, gene_of_interest = gene_of_interest))
 }
 
 
@@ -156,56 +187,4 @@ process_gene_correlations <- function(dds, display_genes, gene_of_interest, thre
   filtered_results <- filtered_results[is.finite(correlation) & is.finite(log_p_value)]
   
   return(filtered_results)
-}
-
-
-process_volcano_data <- function(dds, padj_cut, log2_cut) {
-  #' Process data for volcano plot
-  #' @param dds Processed DESeq2 dataset
-  #' @param padj_cut Adjusted p-value cutoff
-  #' @param log2_cut Log2 fold change cutoff
-  #' @return A list containing processed data for volcano plot and dds
-  
-  res <- results(dds)
-  res$neg_log10_padj <- -log10(res$padj)
-  res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut,
-                    ifelse(res$log2FoldChange > 0, "Upregulated", "Downregulated"),
-                    "Not Significant")
-  
-  return(list(res = res, dds = dds))
-}
-
-
-process_violin_data <- function(dds, display_genes) {
-  #' Process data for violin plot
-  #' @param dds Processed DESeq2 dataset
-  #' @param display_genes Genes to display
-  #' @return Processed data for violin plot
-  
-  gene_of_interest <- rownames(display_genes)
-  counts <- counts(dds, normalized = TRUE)
-  counts_filtered <- counts[rownames(counts) %in% gene_of_interest, , drop = FALSE]
-  df <- as.data.frame(log(counts_filtered + 1))
-  
-  col_data_df <- as.data.frame(colData(dds))
-  col_data_df <- col_data_df %>%
-    rownames_to_column(var = "patient_id") %>%
-    select(patient_id, condition)
-  
-  df_long <- df %>%
-    rownames_to_column("gene_id") %>%
-    pivot_longer(cols = -gene_id, names_to = "Sample", values_to = "expression")
-  
-  merged_data <- left_join(df_long, col_data_df, by = c("Sample" = "patient_id"))
-  
-  # Extract padjust values
-  padjust_values <- data.frame(
-    gene_id = rownames(display_genes),
-    padjust = display_genes$padj
-  )
-  
-  # Merge padjust values with the merged_data
-  merged_data <- left_join(merged_data, padjust_values, by = "gene_id")
-  
-  return(list(merged_data = merged_data, gene_of_interest = gene_of_interest))
 }

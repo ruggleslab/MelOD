@@ -10,7 +10,7 @@ pca_metadata_server <- function(id, shared_reactives) {
     
     pca_data_reactive <- reactive({
       req(shared_reactives$selected_dds())
-      pca_data(shared_reactives$selected_dds())
+      process_pca_data(shared_reactives$selected_dds())
     })
     
     render_plots <- function(output, pca_data_reactive) {

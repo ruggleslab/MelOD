@@ -1,109 +1,3 @@
-#' #' Add Significance Annotations
-#' #' 
-#' #' @description Adds significance annotations to a plot
-#' #' @param merged_data Data containing gene expressions and conditions
-#' #' @param plot The plot object to which annotations will be added
-#' #' @param padj_cut Adjusted p-value cutoff
-#' #' @return The plot with added significance annotations (t.test)
-#' add_significance_annotations <- function(merged_data, plot, padj_cut) {
-#'   
-#' 
-#'   results <- merged_data %>%
-#'     split(.$gene_id) %>%
-#'     lapply(function(df) {
-#'       if (nlevels(factor(df$condition)) == 2) {
-#'         test <- t.test(expression ~ condition, data = df)
-#'         print(test)
-#'         p.value <- test$p.value
-#'       } else {
-#'         p.value <- NA
-#'       }
-#'       return(p.value)
-#'     })
-#'   
-#'   p_values <- data.frame(
-#'     gene_id = names(results),
-#'     p_value = unlist(results)
-#'   )
-#' 
-#'   # Calculate midpoints for annotations
-#'   calculate_midpoints <- function(data) {
-#'     unique_genes <- unique(data$gene_id)
-#'     midpoints <- sapply(unique_genes, function(gene) {
-#'       conditions <- unique(data$condition[data$gene_id == gene])
-#'       if (length(conditions) == 2) {
-#'         return(mean(c(which(unique_genes == gene) - 0.2, which(unique_genes == gene) + 0.2) - 1))
-#'       } else {
-#'         return(NA)
-#'       }
-#'     })
-#'     return(midpoints)
-#' 
-#'   }
-#'   
-#'   midpoints <- calculate_midpoints(merged_data)
-#'   shape_list <- list()
-#'   annotation_list <- list()
-#'   
-#'   # Add annotations and shapes for significant p-values
-#'   for (i in seq_along(p_values$gene_id)) {
-#'     gene_id <- p_values$gene_id[i]
-#'     p_value <- p_values$p_value[i]
-#'     if (!is.na(p_value) && !is.na(midpoints[gene_id])) {
-#'       text_value <- if (p_value < padj_cut) {
-#'         paste("p =", signif(p_value, 3))
-#'       } else {
-#'         "N.S."
-#'       }
-#' 
-#'       annotation_list[[length(annotation_list) + 1]] <- list(
-#'         x = length(annotation_list),
-#'         y = 1.1,
-#'         text = text_value,
-#'         xref = "x", yref = "paper",
-#'         showarrow = FALSE,
-#'         font = list(family = "Arial", size = 10)
-#'       )
-#'       
-#'       shape_list[[length(shape_list) + 1]] <- list(
-#'         type = "line",
-#'         line = list(color = "black", width = 1),
-#'         x0 = midpoints[gene_id] - 0.2,
-#'         y0 = 1,
-#'         x1 = midpoints[gene_id] + 0.2,
-#'         y1 = 1,
-#'         xref = "x", yref = "paper"
-#'       )
-#'       shape_list[[length(shape_list) + 1]] <- list(
-#'         type = "line",
-#'         line = list(color = "black", width = 1),
-#'         x0 = midpoints[gene_id] - 0.2,
-#'         y0 = 1,
-#'         x1 = midpoints[gene_id] - 0.2,
-#'         y1 = 0.99,
-#'         xref = "x", yref = "paper"
-#'       )
-#'       shape_list[[length(shape_list) + 1]] <- list(
-#'         type = "line",
-#'         line = list(color = "black", width = 1),
-#'         x0 = midpoints[gene_id] + 0.2,
-#'         y0 = 1,
-#'         x1 = midpoints[gene_id] + 0.2,
-#'         y1 = 0.99,
-#'         xref = "x", yref = "paper"
-#'       )
-#'     }
-#'   }
-#' 
-#'   plot <- plot %>%
-#'     layout(
-#'       annotations = annotation_list,
-#'       shapes = shape_list
-#'     )
-#'   return(plot)
-#' }
-
-
 add_significance_annotations <- function(merged_data, plot, padj_cut) {
   #' Add Significance Annotations
   #' 
@@ -111,6 +5,7 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
   #' @param merged_data Data containing gene expressions, conditions, and padj values
   #' @param plot The plot object to which annotations will be added
   #' @param padj_cut Adjusted p-value cutoff
+  #' 
   #' @return The plot with added significance annotations
   
   # Calculate midpoints for annotations
@@ -187,13 +82,51 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
 }
 
 
+gene_names_dds <- function(dds) {
+  #' Gene Names DDS
+  #' 
+  #' @description Processes DESeq2 dataset to ensure unique gene names
+  #' @param dds DESeq2 dataset
+  #' 
+  #' @return Processed DESeq2 dataset with unique gene names
+  
+  if ("symbol" %in% names(mcols(dds))) {
+    na_filter <- !is.na(mcols(dds)$symbol)
+    dds <- dds[na_filter, ]
+    gene_symbols <- mcols(dds)$symbol
+  } else {
+    stop("Gene symbols not found in the dataset metadata.")
+  }
+  
+  makeUniqueRowNames <- function(names) {
+    counts <- table(names)
+    duplicates <- names[counts[names] > 1]
+    for (d in unique(duplicates)) {
+      idx <- which(names == d)
+      names[idx] <- paste(d, seq_along(idx), sep = "_")
+    }
+    names
+  }
+  unique_gene_symbols <- makeUniqueRowNames(gene_symbols)
+  
+  if (length(unique_gene_symbols) == nrow(dds)) {
+    rownames(dds) <- unique_gene_symbols
+  } else {
+    stop("The number of unique gene symbols does not match the number of rows in the dataset.")
+  }
+  
+  return(dds)
+}
 
+
+filter_and_order_by_padj <- function(results_data) {
 #' Filter and Order by padj
 #' 
-#' @description Filters and orders genes by adjusted p-value
+#' @description Filters and orders genes by adjusted p-value used in selection.server
 #' @param results_data Data containing results of DESeq2 analysis
+#' 
 #' @return Filtered and ordered data
-filter_and_order_by_padj <- function(results_data) {
+
   if (!"padj" %in% names(results_data)) {
     stop("The provided data does not have a 'padj' column.")
   }
@@ -202,13 +135,16 @@ filter_and_order_by_padj <- function(results_data) {
   return(ordered_data)
 }
 
+
+get_display_genes <- function(all_genes, selected_genes) {
 #' Get Display Genes
 #' 
-#' @description Retrieves the genes to display based on the selected genes
+#' @description Retrieves the genes to display based on the selected genes used in selection.server
 #' @param all_genes All available genes
 #' @param selected_genes Selected genes to display
+#' 
 #' @return A dataframe of genes to display
-get_display_genes <- function(all_genes, selected_genes) {
+  
   if (!is.null(selected_genes) && all(selected_genes %in% rownames(all_genes))) {
     return(all_genes[rownames(all_genes) %in% selected_genes, , drop = FALSE])
   } else {
@@ -217,11 +153,11 @@ get_display_genes <- function(all_genes, selected_genes) {
 }
 
 
-
+setup_download_handler <- function(id, output, name, data_reactive, filename_prefix) {
 #' Download Handlers
 #' 
-#' @description Sets up the download handlers for exporting data
-setup_download_handler <- function(id, output, name, data_reactive, filename_prefix) {
+#' @description Sets up the download handlers for exporting data in the server part
+  
   output[[name]] <- downloadHandler(
     filename = function() {
       paste(id,"_", filename_prefix, "_", Sys.Date(), '.csv', sep = '')
@@ -233,43 +169,5 @@ setup_download_handler <- function(id, output, name, data_reactive, filename_pre
     }
   )
 }
-
-
-#' Event Observers
-#' 
-#' @description Sets up observers for plot interactions and gene selection
-#' @param input Shiny input object
-#' @param session Shiny session object
-#' @param display_genes Reactive expression containing the genes to display
-#' @param filtered_res Reactive expression containing the filtered results
-#' @param selected_genes_plotly Reactive value for selected genes
-#' @param tab_id The ID of the tab to observe
-event_observers <- function(input, session, display_genes, filtered_res, selected_genes_plotly, new_genes) {
- 
-
-  observeEvent(input$info_violin_plot, {
-    shinyalert(title = "Violin Plot Information", html = TRUE,
-               text = 'This is a test<br><img src="./images/violin_example.png" alt="ViolinPlot" style="width:80%;">')
-  })
-
-
-}
-
-#' Update Selected Genes
-#' 
-#' @description Updates the selected genes based on plot interactions
-#' @param new_genes New genes selected from the plot
-#' @param selected_genes_plotly Reactive value for selected genes
-#' @param session Shiny session object
-#' @param filtered_res Reactive expression containing the filtered results
-update_selected_genes <- function(new_genes, selected_genes_plotly, session, filtered_res) {
-  current_genes <- selected_genes_plotly()
-  selected_genes_plotly(unique(c(current_genes, new_genes)))
-  updateSelectizeInput(session, "selected_gene", choices = isolate(rownames(filtered_res())), server = TRUE, selected = selected_genes_plotly())
-  
-}
-
-
-
 
 

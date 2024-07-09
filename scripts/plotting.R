@@ -1,7 +1,6 @@
 source("global.R", local = TRUE)
 
 
-
 plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "condition") {
   #' Create PCA Plot
   #' 
@@ -56,7 +55,6 @@ plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "condition
 }
 
 
-
 plot_variance <- function(vs_data) {
   #' Variance Explained Plot
   #' 
@@ -95,6 +93,14 @@ plot_variance <- function(vs_data) {
 
 
 plot_mortality_curve <- function(clinical_data, group_col = "group") {
+  #' Plot Mortality Curve
+  #'
+  #' @description Generates a mortality curve plot based on clinical data, showing survival probabilities over time.
+  #' @param clinical_data DataFrame containing clinical data with survival information.
+  #' @param group_col Column name by which to group the data for survival analysis, defaults to "group".
+  #' 
+  #' @return A Plotly object representing the survival curves for different groups, or a string message if an error occurs.
+
   tryCatch({
     survival_object <- Surv(time = clinical_data$OS.days., event = clinical_data$status)
     survival_fit <- survfit(as.formula(paste("survival_object ~", group_col)), data = clinical_data)
@@ -144,7 +150,6 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
     return("No metadata available")
   })
 }
-
 
 
 
@@ -497,6 +502,3 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
     return("Wait...")
   })
 }
-
-
-
