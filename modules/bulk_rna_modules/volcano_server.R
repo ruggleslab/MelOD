@@ -1,20 +1,18 @@
+volcano_server <- function(id, shared_reactives) {
 #' Volcano Server
 #'
-#' @description Sets up the server logic for the volcano analysis and related plots
+#' @description Sets up the server logic for the volcano analysis and related plots.
 #' @param id Module ID
 #' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
-volcano_server <- function(id, shared_reactives) {
+
   moduleServer(id, function(input, output, session) {
     blurbs <- fromJSON("./www/info_blurbs.json")
-  
-    filtered_res <- shared_reactives$filtered_res
-    dds_processed <- shared_reactives$dds_processed
     current_selection <- reactiveVal(character())
     
     processed_data <- reactive({
-      process_volcano_data(dds_processed(), input$slider_padj, input$slider_log2)
+      process_volcano_data(shared_reactives$dds_processed(), input$slider_padj, input$slider_log2)
     })
-
+    
     plot_data <- reactive({
       plot_volcano(processed_data()$res, processed_data()$dds, input$selected_gene)
     })
@@ -22,10 +20,13 @@ volcano_server <- function(id, shared_reactives) {
     output$volcano_plot <- renderPlotly({ plot_data() })
     
     observeEvent(input$info_volcano_plot, {
-      shinyalert(title = blurbs$info$volcano$title, html = TRUE,
-                 text = blurbs$info$volcano$text)
+      shinyalert(
+        title = blurbs$info$volcano$title, 
+        html = TRUE,
+        text = blurbs$info$volcano$text
+      )
     })
-
+    
     observe({
       runjs("Shiny.setInputValue('plotly_selected-A', null);
             Shiny.setInputValue('plotly_click-A', null);")
@@ -39,7 +40,7 @@ volcano_server <- function(id, shared_reactives) {
         current_genes <- unique(c(current_genes, new_click))
       }
       current_selection(current_genes)
-      updateSelectizeInput(session, "selected_gene", choices = rownames(filtered_res()), server = TRUE, selected = current_genes)
+      updateSelectizeInput(session, "selected_gene", choices = rownames(shared_reactives$filtered_res()), server = TRUE, selected = current_genes)
     })
     
     observeEvent(input$reset_selection, {
@@ -49,11 +50,8 @@ volcano_server <- function(id, shared_reactives) {
     })
     
     setup_download_handler(id, output, "volcano_data", reactive({ processed_data()$res }), "volcano")
-    
   })
 }
-
-
 
 
 
