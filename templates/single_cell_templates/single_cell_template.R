@@ -51,11 +51,11 @@ cell_info_ui <- function(id) {
       width = 12,
       fluidRow(
         column(
-          4, selectInput(ns("cell_plot_culstered_X_axis"), "X-axis:", choices = NULL),
+          3, selectInput(ns("cell_plot_culstered_X_axis"), "X-axis:", choices = NULL),
           selectInput(ns("cell_plot_culstered_Y_axis"), "Y-axis:", choices = NULL)
         ),
         column(
-          4, selectInput(ns("cell_plot_culstered_info"), "Cell information:", choices = NULL) %>%
+          3, selectInput(ns("cell_plot_culstered_info"), "Cell information:", choices = NULL) %>%
             helper(type = "inline", size = "m", fade = TRUE,
                    title = "Cell information to colour cells by",
                    content = c("Select cell information to colour cells",
@@ -64,16 +64,10 @@ cell_info_ui <- function(id) {
                                       "Blue-Yellow-Red colour scheme, which can be ",
                                       "changed in the plot controls")))
         ),
-        column(
-          4, 
-          radioButtons(ns("cell_plot_culstered_color"), "Colour (Continuous data):",
-                       choices = c("White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),
-                       selected = "Blue-Yellow-Red"),
-          checkboxInput(ns("cell_plot_culstered_label"), "Show cell info labels", value = TRUE)
-          
+        column(3, selectizeInput(ns("cell_plot_culstered_color"), "Colour (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red")),
+        column(3, checkboxInput(ns("cell_plot_culstered_label"), "Show cell info labels", value = TRUE)
         )
       )
-      
     )
   )
 }
@@ -97,12 +91,7 @@ gene_expression_ui <- function(id) {
                                       "White-Red colour scheme which can be ",
                                       "changed in the plot controls")))
         ),
-        column(
-          6, 
-          radioButtons(ns("gene_plot_culstered_color"), "Colour:", choices = c("White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),
-                       selected = "White-Red")
-          
-        )
+        column(4, selectizeInput(ns("gene_plot_culstered_color"), "Colour (Continuous data):", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red")),
       )
     )
   )
