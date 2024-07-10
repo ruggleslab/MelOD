@@ -12,10 +12,10 @@ gene_expression_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_fil
                            maxOptions = 7, create = TRUE, persist = TRUE, render = I(optCrt)))
     
     output$gene_plot_culstered <- renderPlotly({
-      scDRgene_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$gene_plot_culstered_selection,
+      gene_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$gene_plot_culstered_selection,
                       input$cell_subset, input$cell_subset_choices_box,
                       h5_file_path, sc1gene,
-                      debounced_marker_size(), input$gene_plot_culstered_color, input$gene_plot_culstered_order)
+                      debounced_marker_size(), input$gene_plot_culstered_color)
     })
     
     output$gene_plot_culstered_pdf <- downloadHandler(

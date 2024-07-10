@@ -19,11 +19,17 @@ cell_info_server <- function(id, sc1conf, sc1meta, sc1def) {
                       selected = sc1def$meta1)
     
     output$cell_plot_culstered <- renderPlotly({
-      scDRcell_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$cell_plot_culstered_info,
+      cell_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$cell_plot_culstered_info,
                       input$cell_subset, input$cell_subset_choices_box,
-                      debounced_marker_size(), input$cell_plot_culstered_color, input$cell_plot_culstered_order, input$cell_plot_culstered_label)
+                      debounced_marker_size(), input$cell_plot_culstered_color, input$cell_plot_culstered_label)
     })
     
+    
+    
+    
+    
+    
+  
     output$cell_plot_culstered_pdf <- downloadHandler(
       filename = function() {
         paste0("sc1", input$cell_plot_culstered_X_axis, "_", input$cell_plot_culstered_Y_axis, "_",

@@ -45,78 +45,70 @@ g_legend <- function(a.gplot){
 
 
 
-
-
-scDRcell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1, inpsub2,
-                            inpsiz, inpcol, inpord, inplab) {
+cell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL,
+                        inpsiz, inpcol, inplab) {
+  # Default subset if not provided
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   }
   
-  # Prepare data
-  ggData <- inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID,
-                        inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID), with = FALSE]
-  colnames(ggData) <- c("X", "Y", "val", "sub")
+  # Extract and rename data
+  ggData <- inpMeta[, .(X = get(inpConf[UI == inpdrX]$ID),
+                        Y = get(inpConf[UI == inpdrY]$ID),
+                        val = get(inpConf[UI == inp1]$ID),
+                        sub = get(inpConf[UI == inpsub1]$ID))]
   rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
   bgCells <- FALSE
   
-  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
+  # Handle subset2 if specified
+  if (!is.null(inpsub2) && length(inpsub2) != nlevels(factor(ggData$sub))) {
     bgCells <- TRUE
     ggData2 <- ggData[!sub %in% inpsub2]
     ggData <- ggData[sub %in% inpsub2]
   }
   
-  
-  if (inpord == "Max-1st") {
-    ggData <- ggData[order(val)]
-  } else if (inpord == "Min-1st") {
-    ggData <- ggData[order(-val)]
-  } else if (inpord == "Random") {
-    ggData <- ggData[sample(nrow(ggData))]
-  }
-  
-  
-  # Do factoring if required
+  # Color settings if applicable
   if (!is.na(inpConf[UI == inp1]$fCL)) {
     ggCol <- strsplit(inpConf[UI == inp1]$fCL, "\\|")[[1]]
-    names(ggCol) <- levels(ggData$val)
-    ggLvl <- levels(ggData$val)[levels(ggData$val) %in% unique(ggData$val)]
-    ggData$val <- factor(ggData$val, levels = ggLvl)
+    names(ggCol) <- levels(factor(ggData$val))
+    ggLvl <- levels(factor(ggData$val))[levels(factor(ggData$val)) %in% unique(ggData$val)]
+    ggData[, val := factor(val, levels = ggLvl)]
     ggCol <- ggCol[ggLvl]
   }
   
-  
-  # Plotly plot
+  # Create plot
   p <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
                type = 'scatter', mode = 'markers', marker = list(size = inpsiz, opacity = 0.8),
                text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
                hoverinfo = 'text')
   
-  
+  # Add background cells if applicable
   if (bgCells) {
     p <- p %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
                          marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
   }
   
+  # Add color layout
   if (!is.na(inpConf[UI == inp1]$fCL)) {
     p <- p %>% layout(colorway = ggCol)
   } else {
     p <- p %>% colorbar(title = "")
   }
   
+  # Add labels if applicable
   if (inplab) {
-    ggData3 <- ggData[, .(X = mean(X), Y = mean(Y)), by = "val"]
+    ggData3 <- ggData[, .(X = mean(X), Y = mean(Y)), by = val]
     p <- p %>% add_annotations(data = ggData3, x = ~X, y = ~Y, text = ~val,
                                showarrow = TRUE, arrowcolor = "grey10",
                                font = list(color = "grey10"))
   }
   
+  # Final layout adjustments
   p <- p %>% layout(
     xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
     yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
     showlegend = TRUE
   )
-  
   
   return(p)
 }
@@ -164,66 +156,58 @@ scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2,
 }
 
 
-
-scDRgene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1, inpsub2,
-                            inpH5 = h5_file_path, inpGene,
-                            inpsiz, inpcol, inpord) {
+gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL,
+                            inpH5 = h5_file_path, inpGene, inpsiz, inpcol) {
+  # Default subset if not provided
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   }
   
   # Prepare data
-  ggData <- inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID, inpConf[UI == inpsub1]$ID), with = FALSE]
-  colnames(ggData) <- c("X", "Y", "sub")
+  ggData <- inpMeta[, .(X = get(inpConf[UI == inpdrX]$ID),
+                        Y = get(inpConf[UI == inpdrY]$ID),
+                        sub = get(inpConf[UI == inpsub1]$ID))]
   rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
   
+  # Read H5 data
   h5file <- H5File$new(inpH5, mode = "r")
   h5data <- h5file[["grp"]][["data"]]
-  ggData$val = h5data$read(args = list(inpGene[inp1], quote(expr=)))
-  ggData[val < 0]$val = 0
+  ggData[, val := h5data$read(args = list(inpGene[inp1], quote(expr = )))]
+  ggData[val < 0, val := 0]
   h5file$close_all()
   
+  # Handle subset2 if specified
   bgCells <- FALSE
-  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
+  if (!is.null(inpsub2) && length(inpsub2) != nlevels(factor(ggData$sub))) {
     bgCells <- TRUE
     ggData2 <- ggData[!sub %in% inpsub2]
     ggData <- ggData[sub %in% inpsub2]
   }
-  if (inpord == "Max-1st") {
-    ggData <- ggData[order(val)]
-  } else if (inpord == "Min-1st") {
-    ggData <- ggData[order(-val)]
-  } else if (inpord == "Random") {
-    ggData <- ggData[sample(nrow(ggData))]
-  }
   
-  
-  # Plotly plot
+  # Create plot
   p <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
                type = 'scatter', mode = 'markers', marker = list(size = inpsiz),
                text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
                hoverinfo = 'text')
   
+  # Add background cells if applicable
   if (bgCells) {
     p <- p %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
                          marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
   }
   
+  # Add colorbar
   p <- p %>% colorbar(title = inp1, len = 0.5, thickness = 15, x = 0.7, xanchor = 'center',
-                      y = -0.3, yanchor = 'bottom', orientation = 'h') 
+                      y = -0.3, yanchor = 'bottom', orientation = 'h')
   
-  
-  
+  # Final layout adjustments
   p <- p %>% layout(
     xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
     yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
     showlegend = TRUE
   )
   
-  
-  
   return(p)
 }
-
 
 

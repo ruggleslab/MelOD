@@ -1,9 +1,11 @@
+badal_ui <- function(id) {
 #' Badal UI
 #'
 #' @description Creates the UI layout for the Badal analysis tab
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element for the Badal analysis tab
-badal_ui <- function(id) {
+  
   fluidPage(
     fluidRow(blurb_study_ui("badal")),
     fluidRow(column(6, blurb_data_ui("badal")),
@@ -22,7 +24,6 @@ badal_ui <- function(id) {
       column(4, correlation_ui("badal")))
   )
 }
-
 
 
 #' #' Badal Selector UI
@@ -46,17 +47,14 @@ badal_ui <- function(id) {
 #' }
 
 
-
+badal_server <- function() {
 #' Badal Server
 #'
 #' @description Sets up the server logic for the Badal analysis tab
-badal_server <- function() {
   
   show_modal_progress_line(color = "#FFA812",text = "Initialization")
   Sys.sleep(0.5)
-  
   tryCatch({
-    
     update_modal_progress(0.3, text="Downloading data...")
     Sys.sleep(0.5)
     
@@ -76,7 +74,6 @@ badal_server <- function() {
     Sys.sleep(0.5)
     
     clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv"))
-    
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
     
@@ -97,5 +94,4 @@ badal_server <- function() {
     
   })
   remove_modal_progress()
-  
 }

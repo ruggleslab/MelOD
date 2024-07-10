@@ -1,9 +1,10 @@
+gide_ui <- function(id) {
 #' Gide UI
 #'
 #' @description Creates the UI layout for the Gide analysis tab
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element for the Gide analysis tab
-gide_ui <- function(id) {
   
   fluidPage(
     fluidRow(blurb_study_ui("gide")),
@@ -26,13 +27,14 @@ gide_ui <- function(id) {
 }
 
 
-
+gide_selector_ui <- function(id) {
 #' Gide Selector UI
 #' 
 #' @description Creates the UI component for selecting comparisons in the Gide study
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-gide_selector_ui <- function(id) {
+  
   ns <- NS(id)
   box(
     background = 'orange', width = 12,
@@ -48,17 +50,15 @@ gide_selector_ui <- function(id) {
 }
 
 
-
+gide_server <- function() {
 #' Gide Server
 #'
 #' @description Sets up the server logic for the Gide analysis tab
-gide_server <- function() {
   
   show_modal_progress_line(color = "#FFA812",text = "Initialization")
   Sys.sleep(0.5)
   
   tryCatch({
-    
     update_modal_progress(0.3, text="Downloading combotherapy data...")
     Sys.sleep(0.5)
     
@@ -83,7 +83,6 @@ gide_server <- function() {
     Sys.sleep(0.5)
     
     dds <- list(gide_combo_dds, gide_mono_dds)
-    
     update_modal_progress(0.8, text="Loading clinical data...")
     Sys.sleep(0.5)
 
@@ -110,8 +109,6 @@ gide_server <- function() {
   }, error = function(e) {
     showNotification("An error occurred during the process.", type = "error")
     print(e)    
-    
   })
   remove_modal_progress() 
-  
 }

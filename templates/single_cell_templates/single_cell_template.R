@@ -69,9 +69,6 @@ cell_info_ui <- function(id) {
           radioButtons(ns("cell_plot_culstered_color"), "Colour (Continuous data):",
                        choices = c("White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),
                        selected = "Blue-Yellow-Red"),
-          radioButtons(ns("cell_plot_culstered_order"), "Plot order:",
-                       choices = c("Max-1st", "Min-1st", "Original", "Random"),
-                       selected = "Original", inline = TRUE),
           checkboxInput(ns("cell_plot_culstered_label"), "Show cell info labels", value = TRUE)
           
         )
@@ -103,9 +100,7 @@ gene_expression_ui <- function(id) {
         column(
           6, 
           radioButtons(ns("gene_plot_culstered_color"), "Colour:", choices = c("White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),
-                       selected = "White-Red"),
-          radioButtons(ns("gene_plot_culstered_order"), "Plot order:", choices = c("Max-1st", "Min-1st", "Original", "Random"),
-                       selected = "Max-1st", inline = TRUE)
+                       selected = "White-Red")
           
         )
       )

@@ -13,9 +13,9 @@
       "title": "Volcano Plot Information",
       "text": "Volcano plots are used to visualize differential gene expression analysis results. The x-axis represents the log2 fold change, and the y-axis represents the -log10 adjusted p-value. Genes with significant changes in expression are highlighted, with upregulated genes on the right and downregulated genes on the left. <br><br><img src='./images/volcano_example.png' alt='Volcano Plot Example' style='width:100% ;'><br><br>You can select genes of interest directly on the plot by clicking on a single dot or by selecting and dragging a box (Box select/Lasso select) around the desired area."
     },
-    "violin": {
-      "title": "Violin Plot Information",
-      "text": "Violin plots are used to visualize the distribution of gene expression levels across different conditions. The plot combines elements of box plots and density plots, showing the distribution, median, and interquartile range of the expression data. The width of the plot at different values indicates the density of data points.<br><br><img src='./images/violin_example.png' alt='Violin Plot Example' style='width:85%;'>.<br><br> By default, the top 3 differentially expressed genes are represented."
+  "violin": {
+    "title": "Violin Plot Information",
+    "text": "Violin plots are used to visualize the distribution of gene expression levels across different conditions. These plots combine elements of box plots and density plots, showing the distribution, median, and interquartile range of the expression data. The width of the plot at different values indicates the density of data points.<br><br><img src='./images/violin_example.png' alt='Violin Plot Example' style='width:85%;'>.<br><br> By default, the top 3 differentially expressed genes are represented. The p-values for significant differences between conditions are assessed using DESeq2 analysis, which is more powerful than a traditional mean test as it accounts for overdispersion and variance."
     },
     "correlation": {
       "title": "Correlation Plot Information",

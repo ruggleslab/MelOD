@@ -5,12 +5,14 @@ blurbs_info <- fromJSON(blurbs)
 
 
 
+blurb_study_ui <- function(id) {
 #' Blurb Study UI
 #' 
 #' @description Creates the UI component for displaying the study overview
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-blurb_study_ui <- function(id) {
+  
   Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
   box(
     title = "Study Overview", status = "info", solidHeader = TRUE, width = 12, collapsible = TRUE,
@@ -23,12 +25,15 @@ blurb_study_ui <- function(id) {
   )
 }
 
+
+blurb_data_ui <- function(id) {
 #' Blurb Data UI
 #' 
 #' @description Creates the UI component for explaining the data used in the analysis
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-blurb_data_ui <- function(id) {
+  
   Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
   box(
     title = "Data used in analysis", status = "info",
@@ -38,12 +43,15 @@ blurb_data_ui <- function(id) {
   )
 }
 
+
+blurb_comparison_ui <- function(id) {
 #' Blurb Comparison UI
 #' 
 #' @description Creates the UI component for explaining the comparison done in the analysis
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-blurb_comparison_ui <- function(id) {
+  
   Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
   box(
     status = "warning",
@@ -52,14 +60,16 @@ blurb_comparison_ui <- function(id) {
   )
 }
 
+
+pca_ui <- function(id) {
 #' PCA UI
 #' 
 #' @description Creates the UI component for displaying PCA plot
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element (box)
-pca_ui <- function(id) {
-  ns <- NS(id)
   
+  ns <- NS(id)
   tabBox(
     title = HTML(paste("PCA", actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('pca_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
     width = 12,
@@ -90,11 +100,13 @@ pca_ui <- function(id) {
   )
 }
 
+
 metadata_ui <- function(id) {
   #' Metadata UI
   #' 
   #' @description Creates the UI component for displaying metadata plots
   #' @param id Module ID
+  #' 
   #' @return A Shiny UI element (tab box)
   
   ns <- NS(id)
@@ -109,12 +121,14 @@ metadata_ui <- function(id) {
 }
 
 
+input_ui <- function(id) {
 #' Input UI
 #' 
 #' @description Creates the UI component for input parameters
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-input_ui <- function(id) {
+  
   ns <- NS(id)
   box(
     title = "Inputs", status = "warning",
@@ -130,16 +144,18 @@ input_ui <- function(id) {
                 option= list(limit=10),
                 choices = "Loading..."),
              actionButton(ns("reset_selection"), "Reset Selection", class = "btn-primary")
-
   )
 }
 
+
+volcano_ui <- function(id) {
 #' Volcano UI
 #' 
 #' @description Creates the UI component for displaying volcano plot
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-volcano_ui <- function(id) {
+  
   ns <- NS(id)
   fluidRow(
     box(
@@ -149,18 +165,20 @@ volcano_ui <- function(id) {
       solidHeader = TRUE,
       collapsible = TRUE,
       withSpinner(plotlyOutput(ns("volcano_plot")),type = 6, color = "#FFA812", size = 0.5),
-     
+      br(),br(),br(),
     )
   )
 }
 
 
+violin_ui <- function(id) {
 #' Violin UI
 #' 
 #' @description Creates the UI component for displaying violin plot
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-violin_ui <- function(id) {
+  
   ns <- NS(id)
   fluidRow(
     box(
@@ -180,13 +198,14 @@ violin_ui <- function(id) {
 }
 
 
-
+heatmap_ui <- function(id) {
 #' Heatmap UI
 #' 
 #' @description Creates the UI component for displaying heatmaps
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-heatmap_ui <- function(id) {
+  
   ns <- NS(id)
   box(
       useShinyFeedback(), 
@@ -209,12 +228,16 @@ heatmap_ui <- function(id) {
       ),
   )
 }
+
+
+correlation_ui <- function(id) {
 #' Correlation UI
 #'
 #' @description Creates the UI layout for the correlation plot
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element for the correlation plot
-correlation_ui <- function(id) {
+  
   ns <- NS(id)
   box(
     title = HTML(paste("Correlation", actionLink(ns("info_correlation_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('correlation_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
@@ -223,6 +246,8 @@ correlation_ui <- function(id) {
     status = "primary",
     
     withSpinner(uiOutput(ns('correlation_plot')),type = 6, color = "#FFA812", size = 0.5),
+    br(),
+    br(),
     fluidRow(useShinyjs(),
              column(6,selectizeInput(ns("gene_of_interest"), "Gene of interest", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
              column(6,numericInput(ns("correlation_threshold"), "Correlation threshold", value = 0.2, min = 0, max = 1, step = 0.1))
@@ -230,12 +255,15 @@ correlation_ui <- function(id) {
     )
 }
 
+
+deseq2_table_ui <- function(id) {
 #' DESeq2 Table UI
 #' 
 #' @description Creates the UI component for displaying DESeq2 results in a table
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element
-deseq2_table_ui <- function(id) {
+  
   ns <- NS(id)
   fluidRow(
     box(

@@ -1,9 +1,11 @@
+kunz_ui <- function(id) {
 #' Kunz UI
 #'
 #' @description Creates the UI layout for the Kunz analysis tab
 #' @param id Module ID
+#' 
 #' @return A Shiny UI element for the Kunz analysis tab
-kunz_ui <- function(id) {
+  
   fluidPage(
     fluidRow(
       blurb_study_ui("kunz")),
@@ -26,11 +28,10 @@ kunz_ui <- function(id) {
 }
 
 
-
+kunz_server <- function() {
 #' Kunz Server
 #'
 #' @description Sets up the server logic for the Kunz analysis tab
-kunz_server <- function() {
   
   show_modal_progress_line(color = "#FFA812",text = "Initialization")
   Sys.sleep(0.5)
@@ -51,12 +52,10 @@ kunz_server <- function() {
     }
     
     dds <- list(kunz_dds)
-    
     update_modal_progress(0.8, text="Loading clinical data...")
     Sys.sleep(0.5)
     
     clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv", sep = ";"))
-    
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
 
@@ -77,5 +76,4 @@ kunz_server <- function() {
     
   })
   remove_modal_progress()
-  
 }

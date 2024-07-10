@@ -1,10 +1,12 @@
+dashboardTemplate <- function() {
 #' Dashboard Template
 #'
 #' @description Creates the dashboard layout for the Shiny-Seq application
+#' 
 #' @return A Shiny dashboard page layout
-dashboardTemplate <- function() {
+
   dashboardPage(
-    dashboardHeader(title = "Shiny-Seq"),
+    dashboardHeader(title = "MelOD"),
     dashboardSidebar(
       width = 250,
       sidebarMenu(
@@ -31,8 +33,6 @@ dashboardTemplate <- function() {
         tags$link(rel = "stylesheet", type = "text/css", href = "styles_general.css"),
         tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
         tags$link(rel = "stylesheet", type = "text/css", href = "styles_single_cell.css")
-        
-        
       ),
       tabItems(
         tabItem(tabName = "home", home_ui("home_template")),
@@ -45,7 +45,7 @@ dashboardTemplate <- function() {
         tabItem(tabName = "about", in_development_ui("in_development_template"))
       ),
       tags$div(class = "footer",
-               tags$p("Shiny-Seq Application"),
+               tags$p("Melanoma Omics Dashboard (MelOD)"),
                tags$p("Developed by Ruggles Lab"),
                tags$p("Contact: support@ruggleslab.org"),
                tags$p(tags$a(href = "https://ruggleslab.org/shiny-seq/help", "Help & Documentation"))
