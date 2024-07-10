@@ -8,14 +8,12 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
   #' 
   #' @return The plot with added significance annotations
   
-  # Calculate midpoints for annotations
   unique_genes <- unique(merged_data$gene_id)
   gene_indices <- setNames(seq_along(unique_genes), unique_genes)
   
   shape_list <- list()
   annotation_list <- list()
   
-  # Add annotations and shapes for significant padj values
   for (gene_id in unique_genes) {
     df <- merged_data %>% filter(gene_id == !!gene_id)
     padj_value <- unique(df$padjust)
