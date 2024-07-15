@@ -6,7 +6,9 @@ dashboardTemplate <- function() {
 #' @return A Shiny dashboard page layout
 
   dashboardPage(
-    dashboardHeader(title = "MelOD"),
+    dashboardHeader(title = tags$div(
+      tags$img(src = "./images/header_logo2.png", height = "40px"),
+    )),
     dashboardSidebar(
       width = 250,
       sidebarMenu(

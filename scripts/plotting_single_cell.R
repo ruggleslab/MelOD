@@ -45,8 +45,77 @@ g_legend <- function(a.gplot){
 
 
 
+# cell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL,
+#                         inpsiz, inpcol, inplab, inpsplit = FALSE) {
+#   # Default subset if not provided
+#   if (is.null(inpsub1)) {
+#     inpsub1 <- inpConf$UI[1]
+#   }
+#   
+#   # Extract and rename data
+#   ggData <- inpMeta[, .(X = get(inpConf[UI == inpdrX]$ID),
+#                         Y = get(inpConf[UI == inpdrY]$ID),
+#                         val = get(inpConf[UI == inp1]$ID),
+#                         sub = get(inpConf[UI == inpsub1]$ID))]
+#   rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
+#   bgCells <- FALSE
+#   
+#   # Handle subset2 if specified
+#   if (!is.null(inpsub2) && length(inpsub2) != nlevels(factor(ggData$sub))) {
+#     bgCells <- TRUE
+#     ggData2 <- ggData[!sub %in% inpsub2]
+#     ggData <- ggData[sub %in% inpsub2]
+#   }
+#   
+#   # Color settings if applicable
+#   if (!is.na(inpConf[UI == inp1]$fCL)) {
+#     ggCol <- strsplit(inpConf[UI == inp1]$fCL, "\\|")[[1]]
+#     names(ggCol) <- levels(factor(ggData$val))
+#     ggLvl <- levels(factor(ggData$val))[levels(factor(ggData$val)) %in% unique(ggData$val)]
+#     ggData[, val := factor(val, levels = ggLvl)]
+#     ggCol <- ggCol[ggLvl]
+#   }
+#   
+#   # Create plot
+#   p <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
+#                type = 'scatter', mode = 'markers', marker = list(size = inpsiz, opacity = 0.8),
+#                text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
+#                hoverinfo = 'text')
+#   
+#   # Add background cells if applicable
+#   if (bgCells) {
+#     p <- p %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
+#                          marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
+#   }
+#   
+#   # Add color layout
+#   if (!is.na(inpConf[UI == inp1]$fCL)) {
+#     p <- p %>% layout(colorway = ggCol)
+#   } else {
+#     p <- p %>% colorbar(title = "")
+#   }
+#   
+#   # Add labels if applicable
+#   if (inplab) {
+#     ggData3 <- ggData[, .(X = mean(X), Y = mean(Y)), by = val]
+#     p <- p %>% add_annotations(data = ggData3, x = ~X, y = ~Y, text = ~val,
+#                                showarrow = TRUE, arrowcolor = "grey10",
+#                                font = list(color = "grey10"))
+#   }
+#   
+#   # Final layout adjustments
+#   p <- p %>% layout(
+#     xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+#     yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
+#     showlegend = TRUE
+#   )
+#   
+#   return(p)
+# }
+
+
 cell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL,
-                        inpsiz, inpcol, inplab) {
+                        inpsiz, inpcol, inplab, inpsplit = FALSE, inp2=NULL) {
   # Default subset if not provided
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
@@ -75,7 +144,11 @@ cell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
     ggData[, val := factor(val, levels = ggLvl)]
     ggCol <- ggCol[ggLvl]
   }
+
   
+
+ 
+
   # Create plot
   p <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
                type = 'scatter', mode = 'markers', marker = list(size = inpsiz, opacity = 0.8),
@@ -110,10 +183,56 @@ cell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
     showlegend = TRUE
   )
   
+  if (inpsplit) {
+    ggData <- inpMeta[, .(X = get(inpConf[UI == inpdrX]$ID),
+                           Y = get(inpConf[UI == inpdrY]$ID),
+                           val = get(inpConf[UI == inp2]$ID),
+                           sub = get(inpConf[UI == inpsub1]$ID))]
+    rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
+    
+    if (!is.na(inpConf[UI == inp2]$fCL)) {
+      ggCol <- strsplit(inpConf[UI == inp2]$fCL, "\\|")[[1]]
+      names(ggCol) <- levels(factor(ggData$val))
+      ggLvl <- levels(factor(ggData$val))[levels(factor(ggData$val)) %in% unique(ggData$val)]
+      ggData[, val := factor(val, levels = ggLvl)]
+      ggCol <- ggCol[ggLvl]
+    }
+
+    p2 <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
+                 type = 'scatter', mode = 'markers', marker = list(size = inpsiz, opacity = 0.8),
+                 text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
+                 hoverinfo = 'text')
+    
+    if (bgCells) {
+      p2 <- p2 %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
+                           marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
+    }
+    if (!is.na(inpConf[UI == inp2]$fCL)) {
+      p2 <- p2 %>% layout(colorway = ggCol)
+    } else {
+      p2 <- p2 %>% colorbar(title = "")
+    }
+    
+    if (inplab) {
+      ggData3 <- ggData[, .(X = mean(X), Y = mean(Y)), by = val]
+      p2 <- p2 %>% add_annotations(data = ggData3, x = ~X, y = ~Y, text = ~val,
+                                 showarrow = TRUE, arrowcolor = "grey10",
+                                 font = list(color = "grey10"))
+    }
+    
+    p2 <- p2 %>% layout(
+      xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+      yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
+      showlegend = TRUE
+    )
+    
+    
+    
+    p <- subplot(p, p2, nrows = 1, shareX = TRUE, shareY = TRUE, titleX = TRUE, titleY = TRUE)
+  }
+  
   return(p)
 }
-
-
 
 
 
@@ -157,7 +276,7 @@ scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2,
 
 
 gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL,
-                            inpH5 = h5_file_path, inpGene, inpsiz, inpcol) {
+                            inpH5 = h5_file_path, inpGene, inpsiz, inpcol, inpsplit, inp2) {
   # Default subset if not provided
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
@@ -207,6 +326,33 @@ gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
     showlegend = TRUE
   )
   
+  if (inpsplit) {
+    h5file <- H5File$new(inpH5, mode = "r")
+    h5data <- h5file[["grp"]][["data"]]
+    ggData[, val := h5data$read(args = list(inpGene[inp2], quote(expr = )))]
+    ggData[val < 0, val := 0]
+    h5file$close_all()
+    p2 <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
+                 type = 'scatter', mode = 'markers', marker = list(size = inpsiz),
+                 text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
+                 hoverinfo = 'text')
+    
+    if (bgCells) {
+      p2 <- p2 %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
+                           marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
+    }
+  
+    p2 <- p2 %>% colorbar(title = inp1, len = 0.5, thickness = 15, x = 0.7, xanchor = 'center',
+                        y = -0.3, yanchor = 'bottom', orientation = 'h')
+    
+    p2 <- p2 %>% layout(
+      xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+      yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
+      showlegend = TRUE
+    )
+    
+    p <- subplot(p, p2, nrows = 1, shareX = TRUE, shareY = TRUE, titleX = TRUE, titleY = TRUE)
+    }
   return(p)
 }
 

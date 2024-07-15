@@ -23,14 +23,18 @@ home_ui <- function(id) {
            Each of these additions will bring new features and functionalities, enabling a more holistic view of melanoma cancer at various 
            molecular levels."
         ),
-        br(),
+        tags$h3('App Utilization'),
+        tags$p(tags$img(src = "./images/arrow_home.png", width = "50px", style="margin-left: -30px;margin-bottom: 4px;"),
+               "Each study is accessible via the dropdown menu on the sidebar. Studies are classified by the type of data they contain."),
+        tags$p("On a study page, once the data is loaded from the cloud, you will find a brief explanation at the top and several boxes corresponding to different types of visualizations. Each plot is interactive, thanks to the Plotly library. 
+               You can download the data used for each plot by clicking on this button ", tags$img(src = "./images/download-file.png", width = "20px")," For more information on a particular visualization, click on this button", tags$img(src = "./images/information-button.png", width = "20px")),
         br(),
         br(),
         br(),
         tags$h3(
           "We value your feedback! Please take a moment to complete our survey: ",
           tags$a(href = "https://forms.gle/m3o8FMRt3NLPFMrC8", "Take the Survey")
-        )
+        ),
       ),
       column(
         width = 3,

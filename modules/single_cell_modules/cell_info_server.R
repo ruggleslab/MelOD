@@ -18,10 +18,17 @@ cell_info_server <- function(id, sc1conf, sc1meta, sc1def) {
                       choices = sc1conf$UI,
                       selected = sc1def$meta1)
     
+ 
+    updateSelectInput(session, "cell_plot_culstered_info_2",
+                          choices = sc1conf$UI,
+                          selected = sc1def$meta1)
+  
+    
+   
     output$cell_plot_culstered <- renderPlotly({
       cell_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$cell_plot_culstered_info,
                       input$cell_subset, input$cell_subset_choices_box,
-                      debounced_marker_size(), input$cell_plot_culstered_color, input$cell_plot_culstered_label)
+                      debounced_marker_size(), input$cell_plot_culstered_color, input$cell_plot_culstered_label, input$split_view, input$cell_plot_culstered_info_2)
     })
     
     

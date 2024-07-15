@@ -1,5 +1,5 @@
 seurat_ui <- function(id) {
-  
+
   fluidPage(
     fluidRow(
     column(6,inputs_ui("seurat_test")),
@@ -9,6 +9,9 @@ seurat_ui <- function(id) {
     tags$h2("Credit. ShinyCell", tags$style(HTML(".shiny-output-error-validation {color: red; font-weight: bold;}")))
   )
 }
+
+
+
 
 seurat_server <- function(input, output, session) {
   sc1conf <- readRDS("./data/single_cell/sc1conf.rds")
@@ -22,5 +25,7 @@ seurat_server <- function(input, output, session) {
   inputs_server("seurat_test", sc1conf, sc1def)
   cell_info_server("seurat_test", sc1conf, sc1meta, sc1def)
   gene_expression_server("seurat_test", sc1conf, sc1meta, sc1gene, sc1def, h5_file_path)
+  
+ 
 }
 

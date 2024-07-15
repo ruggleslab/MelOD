@@ -12,9 +12,9 @@ correlation_server <- function(id, shared_reactives) {
     gene_of_interest <- debounce(reactive(input$gene_of_interest), 500)
     correlation_threshold <- debounce(reactive(input$correlation_threshold), 500)
     
-    observe({
-      updateSelectizeInput(session, "gene_of_interest", choices = rownames(shared_reactives$filtered_res()), server = TRUE)
-    })
+   
+    updateSelectizeInput(session, "gene_of_interest", choices = rownames(shared_reactives$filtered_res()), server = TRUE)
+
     
     processed_data <- reactive({
       process_gene_correlations(

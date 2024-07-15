@@ -28,14 +28,16 @@ inputs_ui <- function(id) {
              actionButton(ns("cell_subset_all"), "Select all groups", class = "btn btn-primary"),
              actionButton(ns("cell_subset_none"), "Deselect all groups", class = "btn btn-primary")),
       column(4,
-             column(3, numericInput(ns("marker_size"), "Point size:", value = 5, min = 1, max = 10))
-),
-      
+             numericInput(ns("marker_size"), "Point size:", value = 5, min = 1, max = 10),
+             materialSwitch(
+               inputId = ns("split_view"),
+               label = "Split View: ",
+               value = FALSE,
+               status = "warning"
+             )),
     )
   )
 }
-
-
 
 
 
@@ -62,7 +64,11 @@ cell_info_ui <- function(id) {
                                "- Categorical covariates have a fixed colour palette",
                                paste0("- Continuous covariates are coloured in a ",
                                       "Blue-Yellow-Red colour scheme, which can be ",
-                                      "changed in the plot controls")))
+                                      "changed in the plot controls"))),
+          conditionalPanel(
+            condition = paste0("input['", ns("split_view"), "'] == true"),            
+            selectInput(ns("cell_plot_culstered_info_2"), "Cell information 2:", choices = NULL)
+          )
         ),
         column(3, selectizeInput(ns("cell_plot_culstered_color"), "Colour (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red")),
         column(3, checkboxInput(ns("cell_plot_culstered_label"), "Show cell info labels", value = TRUE)
@@ -80,17 +86,21 @@ gene_expression_ui <- function(id) {
       title = HTML(paste("Gene Expression", downloadButton(ns("gene_plot_culstered_pdf"), icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("gene_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
-      plotlyOutput(ns("gene_plot_culstered"), height = '700px'),
+      withSpinner(plotlyOutput(ns("gene_plot_culstered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
-        column(
-          6, selectInput(ns("gene_plot_culstered_selection"), "Gene name:", choices = NULL) %>%
+        column(6,
+          column(6,selectizeInput(ns("gene_plot_culstered_selection"), "Gene name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))) %>%
             helper(type = "inline", size = "m", fade = TRUE,
                    title = "Gene expression to colour cells by",
                    content = c("Select gene to colour cells by gene expression",
                                paste0("- Gene expression are coloured in a ",
                                       "White-Red colour scheme which can be ",
-                                      "changed in the plot controls")))
-        ),
+                                      "changed in the plot controls"))),
+       
+        conditionalPanel(
+          condition = paste0("input['", ns("split_view"), "'] == true"),            
+          column(6,selectizeInput(ns("gene_plot_culstered_selection_2"), "Gene name 2:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)))
+        ) ),
         column(4, selectizeInput(ns("gene_plot_culstered_color"), "Colour (Continuous data):", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red")),
       )
     )
