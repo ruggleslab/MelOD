@@ -221,7 +221,7 @@ cell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
     }
     
     p2 <- p2 %>% layout(
-      xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+      xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE, matches = "x"),
       yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
       showlegend = TRUE
     )
@@ -346,12 +346,12 @@ gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
                         y = -0.3, yanchor = 'bottom', orientation = 'h')
     
     p2 <- p2 %>% layout(
-      xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
+      xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE, matches = "x"),
       yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
       showlegend = TRUE
     )
     
-    p <- subplot(p, p2, nrows = 1, shareX = TRUE, shareY = TRUE, titleX = TRUE, titleY = TRUE)
+    p <- subplot(p, p2)
     }
   return(p)
 }
