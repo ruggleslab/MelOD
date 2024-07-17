@@ -33,9 +33,6 @@ cell_info_server <- function(id, sc1conf, sc1meta, sc1def) {
     
     
     
-    
-    
-    
   
     output$cell_plot_culstered_pdf <- downloadHandler(
       filename = function() {

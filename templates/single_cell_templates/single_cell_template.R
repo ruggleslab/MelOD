@@ -40,6 +40,25 @@ inputs_ui <- function(id) {
 }
 
 
+cell_datatable_ui <- function(id) {
+  
+  ns <- NS(id)
+  fluidRow(
+    box(
+      width = 12,
+      solidHeader = TRUE,
+      title = "Cell DataTable", status = "info", collapsible = TRUE,
+      DT::dataTableOutput(ns("cell_datatable")),
+      selectizeInput(ns("inpsplt"), "Split continious data", choices = c("Quartile","Decile"),  selected = NULL),
+      actionButton(ns("sc1a1splt"), "Select all groups", class = "btn btn-primary"),
+      actionButton(ns("inp2"), "Select all groups", class = "btn btn-primary")
+    )
+  )
+}
+
+
+
+
 
 cell_info_ui <- function(id) {
   ns <- NS(id)
@@ -78,6 +97,8 @@ cell_info_ui <- function(id) {
   )
 }
 
+
+
 gene_expression_ui <- function(id) {
   ns <- NS(id)
   
@@ -106,5 +127,6 @@ gene_expression_ui <- function(id) {
     )
   )
 }
+
 
 

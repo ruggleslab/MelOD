@@ -2,7 +2,8 @@ seurat_ui <- function(id) {
 
   fluidPage(
     fluidRow(
-    column(6,inputs_ui("seurat_test")),
+    column(5,inputs_ui("seurat_test")),
+    column(7, cell_datatable_ui("seurat_test")),
     ),
     cell_info_ui("seurat_test"),
     gene_expression_ui("seurat_test"),
