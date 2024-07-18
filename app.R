@@ -12,6 +12,7 @@ source("modules/single_cell_modules/gene_expression_server.R", local = TRUE)
 source("modules/single_cell_modules/gene_coexpression_server.R", local = TRUE)
 source("modules/single_cell_modules/sc_violin_server.R", local = TRUE)
 source("modules/single_cell_modules/proportion_server.R", local = TRUE)
+source("modules/single_cell_modules/bubheat_server.R", local = TRUE)
 
 
 # Source dashboard template

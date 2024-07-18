@@ -528,3 +528,100 @@ proportion_plotly <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2,
   
   return(plot)
 }
+
+
+scGeneList <- function(inp, inpGene){ 
+  geneList <- data.table(gene = unique(trimws(inp)), present = TRUE) 
+  geneList[!gene %in% names(inpGene)]$present = FALSE 
+  return(geneList) 
+}
+
+
+
+bubheat_plotly <- function(inpConf, inpMeta, inp, inpGrp, inpPlt, 
+                             inpsub1, inpsub2, inpH5, inpGene, inpScl, inpRow, inpCol, 
+                             inpcols){ 
+  if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]} 
+  
+  # Identify genes that are in our dataset 
+  geneList = scGeneList(inp, inpGene) 
+  geneList = geneList[present == TRUE] 
+  shiny::validate(need(nrow(geneList) <= 50, "More than 50 genes to plot! Please reduce the gene list!")) 
+  shiny::validate(need(nrow(geneList) > 1, "Please input at least 2 genes to plot!")) 
+  
+  # Prepare data
+  h5file <- H5File$new(inpH5, mode = "r") 
+  h5data <- h5file[["grp"]][["data"]] 
+  ggData = data.table() 
+  for(iGene in geneList$gene){ 
+    tmp = inpMeta[, c("sampleID", inpConf[UI == inpsub1]$ID), with = FALSE] 
+    colnames(tmp) = c("sampleID", "sub") 
+    tmp$grpBy = inpMeta[[inpConf[UI == inpGrp]$ID]] 
+    tmp$geneName = iGene 
+    tmp$val = h5data$read(args = list(inpGene[iGene], quote(expr=))) 
+    ggData = rbindlist(list(ggData, tmp)) 
+  } 
+  h5file$close_all() 
+  if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){ 
+    ggData = ggData[sub %in% inpsub2] 
+  } 
+  shiny::validate(need(uniqueN(ggData$grpBy) > 1, "Only 1 group present, unable to plot!")) 
+  
+  # Aggregate data
+  ggData$val = expm1(ggData$val) 
+  ggData = ggData[, .(val = mean(val), prop = sum(val > 0) / length(sampleID)), 
+                  by = c("geneName", "grpBy")] 
+  ggData$val = log1p(ggData$val) 
+  
+
+  
+  # Scale if required 
+  colRange = range(ggData$val) 
+  if(inpScl){ 
+    ggData[, val := scale(val), by = "geneName"] 
+    colRange = c(-max(abs(range(ggData$val))), max(abs(range(ggData$val)))) 
+  } 
+  
+  # hclust row/col if necessary 
+  ggMat = dcast.data.table(ggData, geneName ~ grpBy, value.var = "val") 
+  tmp = ggMat$geneName 
+  ggMat = as.matrix(ggMat[, -1]) 
+  rownames(ggMat) = tmp 
+  if(inpRow){ 
+    row_order = hclust(dist(ggMat))$order
+    ggData$geneName = factor(ggData$geneName, levels = rownames(ggMat)[row_order])
+  } else { 
+    ggData$geneName = factor(ggData$geneName, levels = rev(geneList$gene)) 
+  } 
+  if(inpCol){ 
+    col_order = hclust(dist(t(ggMat)))$order
+    ggData$grpBy = factor(ggData$grpBy, levels = colnames(ggMat)[col_order]) 
+  } 
+  # Convert factors to characters
+  ggData$geneName <- as.character(ggData$geneName)
+  ggData$grpBy <- as.character(ggData$grpBy)
+  # Actual plot according to plot type 
+  
+  print(ggData)
+  if(inpPlt == "Bubbleplot"){ 
+    plot <- plot_ly(ggData, x = ~grpBy, y = ~geneName, 
+                    color = ~val, size = ~prop, 
+                    type = 'scatter', mode = 'markers', 
+                    marker = list(sizemode = 'diameter')) %>%
+      layout(title = "Bubble Plot", 
+             xaxis = list(title = inpGrp, tickangle = 45), 
+             yaxis = list(title = "Genes"), 
+             coloraxis = list(colorbar = list(title = "Expression"))) 
+  } else { 
+    plot <- heatmaply(ggMat, 
+                      Rowv = if(inpRow) TRUE else NULL, 
+                      Colv = if(inpCol) TRUE else NULL, 
+                      scale = if(inpScl) "row" else "none", 
+                      colors = cList[[inpcols]], 
+                      fontsize_row = 12, 
+                      fontsize_col = 12, 
+                      main = "Heatmap")
+  } 
+  
+  return(plot)
+}

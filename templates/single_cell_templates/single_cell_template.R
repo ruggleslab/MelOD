@@ -171,7 +171,7 @@ sc_violin_ui <- function(id) {
   ns <- NS(id)
   fluidRow(
     box(
-      title = HTML(paste("Violin/Boxplot", downloadButton(ns("gene_plot_culstered_pdf"), icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("gene_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Violin & Boxplot", downloadButton(ns("gene_plot_culstered_pdf"), icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("gene_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("sc_violin_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
@@ -200,6 +200,35 @@ proportion_ui <- function(id) {
         column(3,selectizeInput(ns("proportion_group_by"), "Cell information to group / colour by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
         column(3,selectizeInput(ns("proportion_type"), "Plot value", choices = c("Proportion" = "Proportion", "Cell Number" ="cell_number"), selected = "Proportion", multiple = FALSE, options = list(maxItems = 1))),
         column(3,checkboxInput(ns("proportion_flip_axis"), "Flip axis", value = FALSE))
+      )
+    )
+  )
+  
+}
+
+
+bubheat_ui <- function(id) {
+  ns <- NS(id)
+  fluidRow(
+    box(
+      title = HTML(paste("Heatmap & Bubble plot", downloadButton(ns("gene_plot_culstered_pdf"), icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("gene_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
+      status = "primary", solidHeader = TRUE,
+      width = 12,
+      withSpinner(plotlyOutput(ns("bubheat_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
+      fluidRow(
+        column(3,multiInput(
+          inputId = ns("bubheat_selected_gene"),
+          label = "Gene(s) selection (up to 10):",
+          autocomplete = TRUE,
+          option= list(limit=10),
+          choices = "Loading...")),
+        column(2,selectizeInput(ns("bubheat_type"), "Type of plot:", choices = c("Default" = "Bubbleplot", "Heatmap" ="Heatmap"), selected = "Bubbleplot", multiple = FALSE, options = list(maxItems = 1))),
+        column(2,selectizeInput(ns("bubheat_group_by"), "Group by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        column(1,checkboxInput(ns("bubheat_scale"), "Scale gene expression", value = TRUE)),
+        column(1,checkboxInput(ns("bubheat_cluster_rows"), "Cluster rows (genes)", value = TRUE)),
+        column(1,checkboxInput(ns("bubheat_cluster_columns"), "Cluster columns (samples)", value = FALSE)),
+        column(2, selectizeInput(ns("bubheat_color"), "Colour:", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red")),
+        
       )
     )
   )
