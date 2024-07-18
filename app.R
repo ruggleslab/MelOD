@@ -9,6 +9,9 @@ source("modules/bulk_rna_modules/correlation_server.R", local = TRUE)
 source("modules/single_cell_modules/input_server.R", local = TRUE)
 source("modules/single_cell_modules/cell_info_server.R", local = TRUE)
 source("modules/single_cell_modules/gene_expression_server.R", local = TRUE)
+source("modules/single_cell_modules/gene_coexpression_server.R", local = TRUE)
+source("modules/single_cell_modules/sc_violin_server.R", local = TRUE)
+
 
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
@@ -61,3 +64,5 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui, server)
+
+

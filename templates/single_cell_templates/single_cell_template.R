@@ -130,3 +130,60 @@ gene_expression_ui <- function(id) {
 
 
 
+gene_coexpression_ui <- function(id) {
+  ns <- NS(id)
+  fluidRow(
+    box(
+      title = HTML(paste("Gene Coexpression", downloadButton(ns("gene_plot_culstered_pdf"), icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("gene_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
+      status = "primary", solidHeader = TRUE,
+      width = 12,
+      withSpinner(plotlyOutput(ns("gene_plot_coexpression"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
+      fluidRow(
+        column(4,selectizeInput(ns("gene_plot_coexpression_selection"), "Gene 1 name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        column(4,selectizeInput(ns("gene_plot_coexpression_selection_2"), "Gene 2 name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        column(4, radioButtons(ns("gene_plot_coexpression_color"), "Colour:", 
+                               choices = c("Red (Gene1); Blue (Gene2)", 
+                                           "Orange (Gene1); Blue (Gene2)", 
+                                           "Red (Gene1); Green (Gene2)", 
+                                           "Green (Gene1); Blue (Gene2)"), 
+                               selected = "Red (Gene1); Blue (Gene2)"))
+      )
+    )
+  )
+}
+
+
+coexpression_gene_datatable_ui <- function(id) {
+  
+  ns <- NS(id)
+  fluidRow(
+    box(
+      width = 12,
+      solidHeader = TRUE,
+      title = "Coexpression gene DataTable", status = "info", collapsible = TRUE,
+      DT::dataTableOutput(ns("gene_datatable_coexpression"))
+    )
+  )
+}
+
+
+sc_violin_ui <- function(id) {
+  ns <- NS(id)
+  fluidRow(
+    box(
+      title = HTML(paste("Violin/Boxplot", downloadButton(ns("gene_plot_culstered_pdf"), icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("gene_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
+      status = "primary", solidHeader = TRUE,
+      width = 12,
+      withSpinner(plotlyOutput(ns("sc_violin_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
+      fluidRow(
+        column(3,selectizeInput(ns("violin_plot_X"), "Cell information (X-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        column(3,selectizeInput(ns("violin_plot_Y"), "Cell Info / Gene name (Y-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        column(3,selectizeInput(ns("sc_box_or_violin"), "Type of plot:", choices = c("Default" = "violin", "Boxplot" ="box"), selected = "violin", multiple = FALSE, options = list(maxItems = 1))),
+        column(3,checkboxInput(ns("sc_violon_dot"), "Dot", value = FALSE))
+)
+      )
+    )
+  
+}
+
+
