@@ -481,3 +481,50 @@ sc_violin_plotly <- function(inpConf, inpMeta, inp1, inp2,
   
   return(plot)
 }
+
+
+
+proportion_plotly <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2, 
+                         inptyp, inpflp){ 
+  if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]} 
+  
+  # Prepare ggData 
+  ggData <- inpMeta[, c(inpConf[UI == inp1]$ID, inpConf[UI == inp2]$ID, 
+                        inpConf[UI == inpsub1]$ID), with = FALSE] 
+  colnames(ggData) <- c("X", "grp", "sub") 
+  if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){ 
+    ggData <- ggData[sub %in% inpsub2] 
+  } 
+  ggData <- ggData[, .(nCells = .N), by = c("X", "grp")] 
+  ggData <- ggData[, {tot <- sum(nCells) 
+  .SD[,.(pctCells = 100 * sum(nCells) / tot, 
+         nCells = nCells), by = "grp"]}, by = "X"] 
+  
+  # Do factoring 
+  ggCol <- strsplit(inpConf[UI == inp2]$fCL, "\\|")[[1]] 
+  names(ggCol) <- levels(ggData$grp) 
+  ggLvl <- levels(ggData$grp)[levels(ggData$grp) %in% unique(ggData$grp)] 
+  ggData$grp <- factor(ggData$grp, levels = ggLvl) 
+  ggCol <- ggCol[ggLvl] 
+  
+  # Actual Plotly plot
+  if(inptyp == "Proportion"){ 
+    plot <- plot_ly(ggData, x = if(inpflp) ~pctCells else ~X, 
+                    y = if(inpflp) ~X else ~pctCells, 
+                    type = 'bar', color = ~grp, colors = ggCol, orientation = if(inpflp) 'h' else 'v') %>%
+      layout(xaxis = list(title = if(inpflp) "Cell Proportion (%)" else inp1, tickangle = if(inpflp) 0 else 45),
+             yaxis = list(title = if(inpflp) inp1 else "Cell Proportion (%)"),
+             barmode = 'stack')
+  } else { 
+    plot <- plot_ly(ggData, x = if(inpflp) ~nCells else ~X, 
+                    y = if(inpflp) ~X else ~nCells, 
+                    type = 'bar', color = ~grp, colors = ggCol, orientation = if(inpflp) 'h' else 'v') %>%
+      layout(xaxis = list(title = if(inpflp) "Number of Cells" else inp1, tickangle = if(inpflp) 0 else 45),
+             yaxis = list(title = if(inpflp) inp1 else "Number of Cells"),
+             barmode = 'stack')
+  }
+  
+  plot <- plot %>% layout(font = list(size = 12), legend = list(orientation = "v"))
+  
+  return(plot)
+}

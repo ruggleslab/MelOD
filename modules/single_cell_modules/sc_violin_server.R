@@ -4,7 +4,7 @@ sc_violin_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_file_path
     
     
 
-    updateSelectInput(session, "violin_plot_X",
+    updateSelectizeInput(session, "violin_plot_X",
                       choices = sc1conf[grp == TRUE]$UI,
                       selected = sc1def$grp1)
     

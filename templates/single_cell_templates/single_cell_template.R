@@ -187,3 +187,21 @@ sc_violin_ui <- function(id) {
 }
 
 
+proportion_ui <- function(id) {
+  ns <- NS(id)
+  fluidRow(
+    box(
+      title = HTML(paste("Proportion plot", downloadButton(ns("gene_plot_culstered_pdf"), icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("gene_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
+      status = "primary", solidHeader = TRUE,
+      width = 12,
+      withSpinner(plotlyOutput(ns("proportion_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
+      fluidRow(
+        column(3,selectizeInput(ns("proportion_plot_X"), "Cell information to plot (X-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        column(3,selectizeInput(ns("proportion_group_by"), "Cell information to group / colour by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        column(3,selectizeInput(ns("proportion_type"), "Plot value", choices = c("Proportion" = "Proportion", "Cell Number" ="cell_number"), selected = "Proportion", multiple = FALSE, options = list(maxItems = 1))),
+        column(3,checkboxInput(ns("proportion_flip_axis"), "Flip axis", value = FALSE))
+      )
+    )
+  )
+  
+}

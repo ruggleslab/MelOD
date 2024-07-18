@@ -9,7 +9,8 @@ seurat_ui <- function(id) {
     gene_expression_ui("seurat_test"),
     column(7,gene_coexpression_ui("seurat_test")),
     column(5,coexpression_gene_datatable_ui("seurat_test")),
-    sc_violin_ui("seurat_test"),
+    column(6, sc_violin_ui("seurat_test")),
+    column(6, proportion_ui("seurat_test")),
     tags$h2("Credit. ShinyCell", tags$style(HTML(".shiny-output-error-validation {color: red; font-weight: bold;}")))
   )
 }
@@ -31,6 +32,7 @@ seurat_server <- function(input, output, session) {
   gene_expression_server("seurat_test", sc1conf, sc1meta, sc1gene, sc1def, h5_file_path)
   gene_coexpression_server("seurat_test", sc1conf, sc1meta, sc1gene, sc1def, h5_file_path)
   sc_violin_server("seurat_test", sc1conf, sc1meta, sc1gene, sc1def, h5_file_path)
+  proportion_server("seurat_test", sc1conf, sc1meta, sc1def)
   
 }
 
