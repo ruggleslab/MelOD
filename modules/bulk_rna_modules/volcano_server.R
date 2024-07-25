@@ -4,7 +4,6 @@ volcano_server <- function(id, shared_reactives) {
 #' @description Sets up the server logic for the volcano analysis and related plots.
 #' @param id Module ID
 #' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
-
   moduleServer(id, function(input, output, session) {
     blurbs <- fromJSON("./www/info_blurbs.json")
     current_selection <- reactiveVal(character())

@@ -227,8 +227,7 @@ bubheat_ui <- function(id) {
         column(1,checkboxInput(ns("bubheat_scale"), "Scale gene expression", value = TRUE)),
         column(1,checkboxInput(ns("bubheat_cluster_rows"), "Cluster rows (genes)", value = TRUE)),
         column(1,checkboxInput(ns("bubheat_cluster_columns"), "Cluster columns (samples)", value = FALSE)),
-        column(2, selectizeInput(ns("bubheat_color"), "Colour:", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red")),
-        
+        column(2, selectizeInput(ns("bubheat_color"), "Colour:", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red"))
       )
     )
   )

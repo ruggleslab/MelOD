@@ -168,14 +168,13 @@ scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2 = NULL,
   h5data <- h5file[["grp"]][["data"]]
   ggData$val2 = h5data$read(args = list(inpGene[inp2], quote(expr=)))
   ggData[val2 < 0]$val2 = 0
-  h5file$close_all()
+  # h5file$close_all()
   if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){
     ggData = ggData[sub %in% inpsub2]
   }
   
   # Split inp1 if necessary
   if(is.na(inpConf[UI == inp1]$fCL)){
-    print ('yes')
     if(inpsplt == "Quartile"){nBk = 4}
     if(inpsplt == "Decile"){nBk = 10}
     ggData$group = cut(ggData$group, breaks = nBk)
@@ -214,7 +213,7 @@ gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
   h5data <- h5file[["grp"]][["data"]]
   ggData[, val := h5data$read(args = list(inpGene[inp1], quote(expr = )))]
   ggData[val < 0, val := 0]
-  h5file$close_all()
+  # h5file$close_all()
   
   # Handle subset2 if specified
   bgCells <- FALSE
@@ -314,7 +313,89 @@ generate_legend_data <- function(inp1, inp2, inpcol) {
   return(gg)
 }
 
-# Main function to create the coexpression plot
+# coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2, 
+#                                 inpsub1, inpsub2, inpH5, inpGene, 
+#                                 inpsiz, inpcol) {
+#   if (is.null(inpsub1)) {
+#     inpsub1 <- inpConf$UI[1]
+#   }
+#   
+#   # Prepare data
+#   ggData <- inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID, inpConf[UI == inpsub1]$ID), with = FALSE]
+#   colnames(ggData) <- c("X", "Y", "sub")
+#   rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
+#   
+#   h5file <- H5File$new(inpH5, mode = "r")
+#   h5data <- h5file[["grp"]][["data"]]
+#   ggData$val1 <- h5data$read(args = list(inpGene[inp1], quote(expr = )))
+#   ggData[val1 < 0]$val1 <- 0
+#   ggData$val2 <- h5data$read(args = list(inpGene[inp2], quote(expr = )))
+#   ggData[val2 < 0]$val2 <- 0
+#   # h5file$close_all()
+#   
+#   bgCells <- FALSE
+#   if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
+#     bgCells <- TRUE
+#     ggData2 <- ggData[!sub %in% inpsub2]
+#     ggData <- ggData[sub %in% inpsub2]
+#   }
+#   
+#   # Generate coex color palette and legend data
+#   legend_data <- generate_legend_data(inp1, inp2, inpcol)
+#   cInp = strsplit(inpcol, "; ")[[1]]
+#   c10 = if (cInp[1] == "Red (Gene1)") c(255, 0, 0) else if (cInp[1] == "Orange (Gene1)") c(255, 140, 0) else c(0, 255, 0)
+#   c01 = if (cInp[2] == "Green (Gene2)") c(0, 255, 0) else c(0, 0, 255)
+#   c00 = c(217, 217, 217)
+#   c11 = c10 + c01
+#   
+#   nGrid <- 16
+#   nPad <- 2
+#   nTot <- nGrid + nPad * 2
+#   gg <- data.table(v1 = rep(0:nTot, nTot + 1), v2 = sort(rep(0:nTot, nTot + 1)))
+#   gg$vv1 <- gg$v1 - nPad
+#   gg[vv1 < 0]$vv1 <- 0
+#   gg[vv1 > nGrid]$vv1 <- nGrid
+#   gg$vv2 <- gg$v2 - nPad
+#   gg[vv2 < 0]$vv2 <- 0
+#   gg[vv2 > nGrid]$vv2 <- nGrid
+#   gg$cR <- bilinear(gg$vv1, gg$vv2, nGrid, c00[1], c10[1], c01[1], c11[1])
+#   gg$cG <- bilinear(gg$vv1, gg$vv2, nGrid, c00[2], c10[2], c01[2], c11[2])
+#   gg$cB <- bilinear(gg$vv1, gg$vv2, nGrid, c00[3], c10[3], c01[3], c11[3])
+#   gg$cMix <- rgb(gg$cR, gg$cG, gg$cB, maxColorValue = 255)
+#   gg <- gg[, .(v1, v2, cMix)]
+#   
+#   # Map colours
+#   ggData$v1 <- round(nTot * ggData$val1 / max(ggData$val1))
+#   ggData$v2 <- round(nTot * ggData$val2 / max(ggData$val2))
+#   ggData$v0 <- ggData$v1 + ggData$v2
+#   ggData <- gg[ggData, on = .(v1, v2)]
+#   
+#   # Plotly plot
+#   p <- plot_ly(data = ggData, x = ~X, y = ~Y, color = ~cMix, colors = ggData$cMix,
+#                type = 'scatter', mode = 'markers', marker = list(size = inpsiz), showlegend = FALSE)
+#   
+#   if (bgCells) {
+#     p <- add_trace(p, data = ggData2, x = ~X, y = ~Y, type = 'scatter', mode = 'markers', 
+#                    marker = list(size = inpsiz, color = 'snow2'), showlegend = FALSE)
+#   }
+#   
+#   p <- p %>% layout(xaxis = list(title = inpdrX), yaxis = list(title = inpdrY))
+#   
+#   p <- layout(p, yaxis = list(scaleanchor = "x", scaleratio = rat))
+#   
+#   # Add legend
+#   legend_plot <- plot_ly(data = legend_data, x = ~v1, y = ~v2, type = 'scatter', mode = 'markers',
+#                          marker = list(symbol = 'square', color = ~cMix, size = 10), showlegend = FALSE) %>%
+#     layout(xaxis = list(title = inp1, tickvals = c(0, nTot), ticktext = c("low", "high")),
+#            yaxis = list(title = inp2, tickvals = c(0, nTot), ticktext = c("low", "high")),
+#            margin = list(l = 50, r = 50, b = 50, t = 50))
+#   # Combine main plot and legend
+#   # combined_plot <- subplot(p, legend_plot, widths = c(0.75, 0.25), shareY = TRUE)
+#   
+#   return(combined_plot)
+# }
+
+
 coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2, 
                                 inpsub1, inpsub2, inpH5, inpGene, 
                                 inpsiz, inpcol) {
@@ -333,7 +414,7 @@ coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
   ggData[val1 < 0]$val1 <- 0
   ggData$val2 <- h5data$read(args = list(inpGene[inp2], quote(expr = )))
   ggData[val2 < 0]$val2 <- 0
-  h5file$close_all()
+  # h5file$close_all()
   
   bgCells <- FALSE
   if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
@@ -372,31 +453,53 @@ coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
   ggData$v0 <- ggData$v1 + ggData$v2
   ggData <- gg[ggData, on = .(v1, v2)]
   
+  ggData$text <- paste(inp1, ":", ggData$val1, "<br>", inp2, ":", ggData$val2)
+  
   # Plotly plot
   p <- plot_ly(data = ggData, x = ~X, y = ~Y, color = ~cMix, colors = ggData$cMix,
-               type = 'scatter', mode = 'markers', marker = list(size = inpsiz))
+               type = 'scatter', mode = 'markers', marker = list(size = inpsiz),text = ~text, hoverinfo = 'text', showlegend = FALSE)
   
   if (bgCells) {
     p <- add_trace(p, data = ggData2, x = ~X, y = ~Y, type = 'scatter', mode = 'markers', 
-                   marker = list(size = inpsiz, color = 'snow2'))
+                   marker = list(size = inpsiz, color = 'snow2'), showlegend = FALSE)
   }
   
   p <- p %>% layout(xaxis = list(title = inpdrX), yaxis = list(title = inpdrY))
-  
+
   p <- layout(p, yaxis = list(scaleanchor = "x", scaleratio = rat))
+
+  legend_data$text <- paste(inp1, ":", legend_data$v1, "<br>", inp2, ":", legend_data$v2)
   
-  # Add legend
+
   legend_plot <- plot_ly(data = legend_data, x = ~v1, y = ~v2, type = 'scatter', mode = 'markers',
                          marker = list(symbol = 'square', color = ~cMix, size = 10), showlegend = FALSE) %>%
     layout(xaxis = list(title = inp1, tickvals = c(0, nTot), ticktext = c("low", "high")),
            yaxis = list(title = inp2, tickvals = c(0, nTot), ticktext = c("low", "high")),
-           margin = list(l = 50, r = 50, b = 50, t = 50))
-  # Combine main plot and legend
-  combined_plot <- subplot(p, legend_plot, widths = c(0.75, 0.25), shareY = TRUE)
-  
-  return(combined_plot)
-}
+           margin = list(l = 10, r = 10, b = 10, t = 10))
 
+  p <- p %>% add_trace(data = legend_data, x = ~v1, y = ~v2, type = 'scatter', mode = 'markers',
+                       marker = list(symbol = 'square', color = ~cMix, size = 10),text = ~text, hoverinfo = 'text', showlegend = FALSE,
+                       inherit = FALSE, xaxis = 'x2', yaxis = 'y2')
+
+  p <- p %>% layout(
+    xaxis2 = list(
+      title = inp1,
+      domain = c(0.75, 0.95),
+      anchor = 'y2',
+      tickvals = c(0, nTot),
+      ticktext = c("low", "high")
+    ),
+    yaxis2 = list(
+      title = inp2,
+      domain = c(0.75, 0.95),
+      anchor = 'x2',
+      tickvals = c(0, nTot),
+      ticktext = c("low", "high")
+    )
+  )
+  
+  return(p)
+}
 
 scDRcoexNum <- function(inpConf, inpMeta, inp1, inp2, 
                         inpsub1, inpsub2, inpH5 = h5_file_path, inpGene){ 
@@ -410,7 +513,7 @@ scDRcoexNum <- function(inpConf, inpMeta, inp1, inp2,
   ggData[val1 < 0]$val1 = 0 
   ggData$val2 = h5data$read(args = list(inpGene[inp2], quote(expr=))) 
   ggData[val2 < 0]$val2 = 0 
-  h5file$close_all() 
+  # h5file$close_all() 
   if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){ 
     ggData = ggData[sub %in% inpsub2] 
   } 
@@ -561,7 +664,7 @@ bubheat_plotly <- function(inpConf, inpMeta, inp, inpGrp, inpPlt,
     tmp$val = h5data$read(args = list(inpGene[iGene], quote(expr=))) 
     ggData = rbindlist(list(ggData, tmp)) 
   } 
-  h5file$close_all() 
+  # h5file$close_all()
   if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){ 
     ggData = ggData[sub %in% inpsub2] 
   } 
@@ -602,7 +705,6 @@ bubheat_plotly <- function(inpConf, inpMeta, inp, inpGrp, inpPlt,
   ggData$grpBy <- as.character(ggData$grpBy)
   # Actual plot according to plot type 
   
-  print(ggData)
   if(inpPlt == "Bubbleplot"){ 
     plot <- plot_ly(ggData, x = ~grpBy, y = ~geneName, 
                     color = ~val, size = ~prop, 

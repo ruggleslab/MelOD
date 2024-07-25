@@ -7,7 +7,7 @@ dashboardTemplate <- function() {
 
   dashboardPage(
     dashboardHeader(title = tags$div(
-      tags$img(src = "./images/header_logo2.png", height = "40px"),
+      tags$img(src = "./images/header_logo_final4.png", height = "45px"),
     )),
     dashboardSidebar(
       width = 250,

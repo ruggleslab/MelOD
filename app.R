@@ -47,6 +47,7 @@ library(shinydashboard)
 ui <- dashboardTemplate()
 
 
+
 # Define server logic
 server <- function(input, output, session) {
   observeEvent(input$tabs, {
@@ -64,7 +65,4 @@ server <- function(input, output, session) {
   })
 }
 
-# Run the application
 shinyApp(ui, server)
-
-

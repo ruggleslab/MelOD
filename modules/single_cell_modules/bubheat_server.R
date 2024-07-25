@@ -6,22 +6,41 @@ bubheat_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_file_path) 
     updateSelectizeInput(session, "bubheat_group_by",
                          choices = sc1conf[grp == TRUE]$UI,
                          selected = sc1def$grp1)
+
+
+    lazyLoadGenes <- function() {
+      future_promise({
+        names(sc1gene)
+      })
+    }
     
     observe({
-      updateMultiInput(
-        session = session,
-        inputId = "bubheat_selected_gene",
-        choices = names(sc1gene),
-        selected = names(sc1gene)[1:5]
-      )
+      lazyLoadGenes() %...>% (function(genes) {
+        updateMultiInput(
+          session = session,
+          inputId = "bubheat_selected_gene",
+          choices = genes,
+          selected = genes[1:5]
+        )
+      }) %...!% (function(e) {
+        # Handle error and print error message
+        showNotification("Error loading genes: ", type = "error")
+      })
     })
     
+    
+    
     output$bubheat_plot <- renderPlotly({ 
-      bubheat_plotly(sc1conf, sc1meta, input$bubheat_selected_gene, input$bubheat_group_by, input$bubheat_type, 
-                 input$cell_subset, input$cell_subset_choices_box, h5_file_path, sc1gene, 
-                 input$bubheat_scale, input$bubheat_cluster_rows, input$bubheat_cluster_columns, 
-                 input$bubheat_color) 
+     req(input$bubheat_group_by, input$bubheat_selected_gene, input$bubheat_group_by,  input$cell_subset, input$cell_subset_choices_box)
+        bubheat_plotly(sc1conf, sc1meta, input$bubheat_selected_gene, input$bubheat_group_by, input$bubheat_type, 
+                       input$cell_subset, input$cell_subset_choices_box, h5_file_path, sc1gene, 
+                       input$bubheat_scale, input$bubheat_cluster_rows, input$bubheat_cluster_columns, 
+                       input$bubheat_color) 
+     
     }) 
+  })
+}
+
 
     # output$sc1d1oup.pdf <- downloadHandler( 
     #   filename = function() { paste0("sc1",input$sc1d1plt,"_",input$sc1d1grp,".pdf") }, 
@@ -43,6 +62,3 @@ bubheat_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_file_path) 
     #   }) 
     # 
     
-
-  })
-}

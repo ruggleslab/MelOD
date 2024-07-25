@@ -1,8 +1,9 @@
 library(Seurat)
 
 
-seu  = readRDS("./data/single_cell/readySeu_rset.rds")
-seu = UpdateSeuratObject(pbmc)
+
+seu  = readRDS("./harmonized_seurat.rds")
+seu = UpdateSeuratObject(seu)
 
 scConf = createConfig(seu)
 

@@ -249,7 +249,7 @@ correlation_ui <- function(id) {
     br(),
     br(),
     fluidRow(useShinyjs(),
-             column(6,selectizeInput(ns("gene_of_interest"), "Gene of interest", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+             column(6,selectizeInput(ns("cor_gene_of_interest"), "Gene of interest", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
              column(6,numericInput(ns("correlation_threshold"), "Correlation threshold", value = 0.2, min = 0, max = 1, step = 0.1))
     )
     )

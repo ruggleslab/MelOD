@@ -2,28 +2,27 @@ sc_violin_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_file_path
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    
-
     updateSelectizeInput(session, "violin_plot_X",
-                      choices = sc1conf[grp == TRUE]$UI,
-                      selected = sc1def$grp1)
-    
-   
+                         choices = sc1conf[grp == TRUE]$UI,
+                         selected = sc1def$grp1)
     
     updateSelectizeInput(session, "violin_plot_Y", server = TRUE, 
-                         choices = c(sc1conf[is.na(fID)]$UI,names(sc1gene)), 
-                         selected = sc1conf[is.na(fID)]$UI[1], options = list( 
-                           maxOptions = length(sc1conf[is.na(fID)]$UI) + 3)) 
-    
-    
+                         choices = c(sc1conf[is.na(fID)]$UI, names(sc1gene)), 
+                         selected = sc1conf[is.na(fID)]$UI[1], options = list(
+                           maxOptions = length(sc1conf[is.na(fID)]$UI) + 3))
     
     output$sc_violin_plot <- renderPlotly({ 
+      req(input$violin_plot_X, input$violin_plot_Y, input$cell_subset, input$cell_subset_choices_box)
+      print("violin")
+      
       sc_violin_plotly(sc1conf, sc1meta, input$violin_plot_X, input$violin_plot_Y, 
-              input$cell_subset, input$cell_subset_choices_box, 
-               h5_file_path, sc1gene, input$sc_box_or_violin, input$sc_violon_dot) 
+                       input$cell_subset, input$cell_subset_choices_box, 
+                       h5_file_path, sc1gene, input$sc_box_or_violin, input$sc_violon_dot) 
     }) 
-    
-  
+  })
+}
+
+
     # output$sc1c1oup.pdf <- downloadHandler( 
     #   filename = function() { paste0("sc1",input$sc1c1typ,"_",input$sc1c1inp1,"_",  
     #                                  input$sc1c1inp2,".pdf") }, 
@@ -45,5 +44,3 @@ sc_violin_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_file_path
     #                     input$sc1c1siz, input$sc1c1fsz) ) 
     #   }) 
     
-  })
-}

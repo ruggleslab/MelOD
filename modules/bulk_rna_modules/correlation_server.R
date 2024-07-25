@@ -4,18 +4,19 @@ correlation_server <- function(id, shared_reactives) {
 #' @description Sets up the server logic for the correlation analysis and related plots.
 #' @param id Module ID
 #' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
-
   moduleServer(id, function(input, output, session) {
     
     blurbs <- fromJSON("./www/info_blurbs.json")
     
-    gene_of_interest <- debounce(reactive(input$gene_of_interest), 500)
+    gene_of_interest <- debounce(reactive(input$cor_gene_of_interest), 500)
     correlation_threshold <- debounce(reactive(input$correlation_threshold), 500)
     
-   
-    updateSelectizeInput(session, "gene_of_interest", choices = rownames(shared_reactives$filtered_res()), server = TRUE)
-
     
+    
+    observe({
+      updateSelectizeInput(session, "cor_gene_of_interest", choices = rownames(shared_reactives$filtered_res()), server = TRUE)
+    })
+
     processed_data <- reactive({
       process_gene_correlations(
         shared_reactives$dds_processed(), 

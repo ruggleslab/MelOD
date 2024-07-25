@@ -2,24 +2,32 @@ proportion_server <- function(id, sc1conf, sc1meta, sc1def) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    
-    
+    # Update the SelectizeInput for proportion_plot_X
     updateSelectizeInput(session, "proportion_plot_X",
-                      choices = sc1conf[grp == TRUE]$UI,
-                      selected = sc1def$grp1)
-    
-    
-    
-    updateSelectizeInput(session, "proportion_group_by",
                          choices = sc1conf[grp == TRUE]$UI,
                          selected = sc1def$grp1)
     
-    output$proportion_plot <- renderPlotly({ 
-      proportion_plotly(sc1conf, sc1meta, input$proportion_plot_X, input$proportion_group_by,  
-             input$cell_subset, input$cell_subset_choices_box, 
-             input$proportion_type, input$proportion_flip_axis) 
-    }) 
+    # Update the SelectizeInput for proportion_group_by
+    updateSelectizeInput(session, "proportion_group_by",
+                         choices = sc1conf[grp == TRUE]$UI,
+                         selected = sc1def$grp2)
+    
  
+ 
+     
+      
+      # Assign the plot to the output
+      output$proportion_plot <- renderPlotly({
+        req(input$proportion_plot_X, input$proportion_group_by, input$cell_subset, input$cell_subset_choices_box, input$proportion_type)
+        print("proportion")
+        proportion_plotly(sc1conf, sc1meta, input$proportion_plot_X, input$proportion_group_by,  
+                          input$cell_subset, input$cell_subset_choices_box, 
+                          input$proportion_type, input$proportion_flip_axis)
+      })
+  })
+}
+
+
     # 
     # output$sc1c2oup.pdf <- downloadHandler( 
     #   filename = function() { paste0("sc1",input$sc1c2typ,"_",input$sc1c2inp1,"_",  
@@ -41,6 +49,3 @@ proportion_server <- function(id, sc1conf, sc1meta, sc1def) {
     #   }) 
     # 
     # 
-   
-  })
-}

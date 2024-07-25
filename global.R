@@ -16,12 +16,13 @@ required_packages <- c(
   "shiny", "bslib", "bsicons", "magrittr", "shinyWidgets", "shinydashboard",
   "shinyjs", "plotly", "DESeq2", "dplyr", "tidyverse", "heatmaply", "reshape2",
   "S4Vectors", "jsonlite", "pheatmap", "RColorBrewer", "shinydlplot", "survival",
-  "readxl", "ggpubr", "shinyalert", "DT", "googledrive", "shinybusy","shinyjqui","data.table","Matrix","shinycssloaders","shinyFeedback"
+  "readxl", "ggpubr", "shinyalert", "DT", "googledrive", "shinybusy","shinyjqui",
+  "data.table","Matrix","shinycssloaders","shinyFeedback","future","promises"
 )
 
 
 check_and_install_packages(required_packages)
-
+plan(multisession)
 # Setting up the auth token location and email
 options(
   gargle_oauth_email = "ruggleslab.shinyseq.backend@gmail.com",

@@ -66,7 +66,6 @@ kunz_server <- function() {
     correlation_server("kunz", selection_result)
     heatmap_server("kunz", selection_result)
     pca_metadata_server("kunz", selection_result)
-    
     update_modal_progress(1, text="Finalizing")
     Sys.sleep(0.5)
     

@@ -1,27 +1,44 @@
 gene_coexpression_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_file_path) {
   moduleServer(id, function(input, output, session) {
+    
+    
     ns <- session$ns
- 
     
-    debounced_marker_size <- debounce(reactive({ input$marker_size }), millis = 500)
-    
-    
-    
+    debounced_marker_size <- debounce(reactive({ input$marker_size }), millis = 0)
     
     updateSelectizeInput(session, "gene_plot_coexpression_selection", choices = names(sc1gene), server = TRUE)
-    updateSelectizeInput(session, "gene_plot_coexpression_selection_2", choices = names(sc1gene), server = TRUE)
-    
-    
+    updateSelectizeInput(session, "gene_plot_coexpression_selection_2", choices = names(sc1gene), selected=names(sc1gene)[3], server = TRUE)
     
     output$gene_plot_coexpression <- renderPlotly({ 
+      req(input$cell_plot_culstered_X_axis, 
+          input$cell_plot_culstered_Y_axis, 
+          input$gene_plot_coexpression_selection,
+          input$gene_plot_coexpression_selection_2,
+          input$cell_subset, 
+          input$cell_subset_choices_box,
+          input$gene_plot_coexpression_color)
+      
       coexpression_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis,   
-               input$gene_plot_coexpression_selection, input$gene_plot_coexpression_selection_2,input$cell_subset, input$cell_subset_choices_box, 
-               h5_file_path, sc1gene, 
-               debounced_marker_size(), input$gene_plot_coexpression_color) 
+                          input$gene_plot_coexpression_selection, input$gene_plot_coexpression_selection_2, input$cell_subset, input$cell_subset_choices_box, 
+                          h5_file_path, sc1gene, 
+                          debounced_marker_size(), input$gene_plot_coexpression_color) 
     }) 
     
- 
-    
+    output$gene_datatable_coexpression <- renderDataTable({ 
+      req(input$gene_plot_coexpression_selection, 
+          input$gene_plot_coexpression_selection_2,
+          input$cell_subset, 
+          input$cell_subset_choices_box)
+      
+      ggData = scDRcoexNum(sc1conf, sc1meta, input$gene_plot_coexpression_selection, input$gene_plot_coexpression_selection_2,
+                           input$cell_subset, input$cell_subset_choices_box, h5_file_path, sc1gene) 
+      datatable(ggData, rownames = FALSE, extensions = "Buttons", 
+                options = list(pageLength = -1, dom = "tB", buttons = c("copy", "csv", "excel"))) %>% 
+        formatRound(columns = c("percent"), digits = 2) 
+    }) 
+  })
+}
+
     
     # 
     # 
@@ -48,13 +65,3 @@ gene_coexpression_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_f
     #                     input$sc1b2fsz, input$sc1b2asp, input$sc1b2txt) ) 
     #   }) 
     
-    output$gene_datatable_coexpression <- renderDataTable({ 
-      ggData = scDRcoexNum(sc1conf, sc1meta, input$gene_plot_coexpression_selection, input$gene_plot_coexpression_selection_2,
-                           input$cell_subset, input$cell_subset_choices_box, h5_file_path, sc1gene) 
-      datatable(ggData, rownames = FALSE, extensions = "Buttons", 
-                options = list(pageLength = -1, dom = "tB", buttons = c("copy", "csv", "excel"))) %>% 
-        formatRound(columns = c("percent"), digits = 2) 
-    }) 
-    
-  })
-}

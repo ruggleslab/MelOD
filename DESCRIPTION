@@ -40,4 +40,6 @@ Imports:
     shinyjqui,
     shinycssloaders,
     shinyFeedback,
+    future,
+    promises
     
