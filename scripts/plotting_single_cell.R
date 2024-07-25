@@ -196,7 +196,7 @@ scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2 = NULL,
 
 
 gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL,
-                            inpH5 = h5_file_path, inpGene, inpsiz, inpcol, inpsplit, inp2) {
+                         inpH5 = h5_file_path, inpGene, inpsiz, inpcol, inpsplit, inp2) {
   # Default subset if not provided
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
@@ -226,7 +226,7 @@ gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
   # Create plot
   p <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
                type = 'scatter', mode = 'markers', marker = list(size = inpsiz),
-               text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
+               text = ~paste('Value:', val, '<br>Gene:', inp1, '<br>Sub:', sub),
                hoverinfo = 'text')
   
   # Add background cells if applicable
@@ -236,165 +236,81 @@ gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
   }
   
   # Add colorbar
-  p <- p %>% colorbar(title = inp1, len = 0.5, thickness = 15, x = 0.7, xanchor = 'center',
-                      y = -0.3, yanchor = 'bottom', orientation = 'h')
+  p <- p %>% colorbar(title = inp1, len = 0.5, thickness = 15, x = 0.9, xanchor = 'center',
+                      y = 0.5, yanchor = 'middle', orientation = 'v')
   
   # Final layout adjustments
   p <- p %>% layout(
     xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
     yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
-    showlegend = TRUE
+    showlegend = FALSE
   )
   
   if (inpsplit) {
-    h5file <- H5File$new(inpH5, mode = "r")
-    h5data <- h5file[["grp"]][["data"]]
     ggData[, val := h5data$read(args = list(inpGene[inp2], quote(expr = )))]
     ggData[val < 0, val := 0]
-    h5file$close_all()
+    
     p2 <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
-                 type = 'scatter', mode = 'markers', marker = list(size = inpsiz),
-                 text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
-                 hoverinfo = 'text')
+                  type = 'scatter', mode = 'markers', marker = list(size = inpsiz),
+                  text = ~paste('Value:', val, '<br>Gene:', inp2, '<br>Sub:', sub),
+                  hoverinfo = 'text')
     
     if (bgCells) {
       p2 <- p2 %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
-                           marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
+                             marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
     }
-  
-    p2 <- p2 %>% colorbar(title = inp1, len = 0.5, thickness = 15, x = 0.7, xanchor = 'center',
-                        y = -0.3, yanchor = 'bottom', orientation = 'h')
+    
+    p2 <- p2 %>% colorbar(title = inp2, len = 0.5, thickness = 15, x = 0.1, xanchor = 'center',
+                          y = 0.5, yanchor = 'middle', orientation = 'v')
     
     p2 <- p2 %>% layout(
       xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE, matches = "x"),
       yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
-      showlegend = TRUE
+      showlegend = FALSE
     )
     
-    p <- subplot(p, p2)
-    }
+    p <- subplot(p, p2, nrows = 1)
+  }
+  
   return(p)
 }
 
 
 
-bilinear <- function(x,y,xy,Q11,Q21,Q12,Q22){ 
-  oup = (xy-x)*(xy-y)*Q11 + x*(xy-y)*Q21 + (xy-x)*y*Q12 + x*y*Q22 
-  oup = oup / (xy*xy) 
-  return(oup) 
-} 
-
+# Bilinear interpolation function
+bilinear <- function(x, y, xy, Q11, Q21, Q12, Q22) {
+  oup <- (xy - x) * (xy - y) * Q11 + x * (xy - y) * Q21 + (xy - x) * y * Q12 + x * y * Q22
+  oup <- oup / (xy * xy)
+  return(oup)
+}
 
 # Helper function to generate the coexpression legend
 generate_legend_data <- function(inp1, inp2, inpcol) {
   # Generate coex color palette
-  cInp = strsplit(inpcol, "; ")[[1]]
-  c10 = if (cInp[1] == "Red (Gene1)") c(255, 0, 0) else if (cInp[1] == "Orange (Gene1)") c(255, 140, 0) else c(0, 255, 0)
-  c01 = if (cInp[2] == "Green (Gene2)") c(0, 255, 0) else c(0, 0, 255)
-  c00 = c(217, 217, 217)
-  c11 = c10 + c01
+  cInp <- strsplit(inpcol, "; ")[[1]]
+  c10 <- if (cInp[1] == "Red (Gene1)") c(255, 0, 0) else if (cInp[1] == "Orange (Gene1)") c(255, 140, 0) else c(0, 255, 0)
+  c01 <- if (cInp[2] == "Green (Gene2)") c(0, 255, 0) else c(0, 0, 255)
+  c00 <- c(217, 217, 217)
+  c11 <- c10 + c01
   
-  nGrid = 16
-  nPad = 2
-  nTot = nGrid + nPad * 2
-  gg = data.table(v1 = rep(0:nTot, nTot + 1), v2 = sort(rep(0:nTot, nTot + 1)))
-  gg$vv1 = gg$v1 - nPad
-  gg[vv1 < 0]$vv1 = 0
-  gg[vv1 > nGrid]$vv1 = nGrid
-  gg$vv2 = gg$v2 - nPad
-  gg[vv2 < 0]$vv2 = 0
-  gg[vv2 > nGrid]$vv2 = nGrid
-  gg$cR = bilinear(gg$vv1, gg$vv2, nGrid, c00[1], c10[1], c01[1], c11[1])
-  gg$cG = bilinear(gg$vv1, gg$vv2, nGrid, c00[2], c10[2], c01[2], c11[2])
-  gg$cB = bilinear(gg$vv1, gg$vv2, nGrid, c00[3], c10[3], c01[3], c11[3])
-  gg$cMix = rgb(gg$cR, gg$cG, gg$cB, maxColorValue = 255)
-  gg = gg[, .(v1, v2, cMix)]
+  nGrid <- 16
+  nPad <- 2
+  nTot <- nGrid + nPad * 2
+  gg <- data.table(v1 = rep(0:nTot, nTot + 1), v2 = sort(rep(0:nTot, nTot + 1)))
+  gg$vv1 <- gg$v1 - nPad
+  gg[vv1 < 0]$vv1 <- 0
+  gg[vv1 > nGrid]$vv1 <- nGrid
+  gg$vv2 <- gg$v2 - nPad
+  gg[vv2 < 0]$vv2 <- 0
+  gg[vv2 > nGrid]$vv2 <- nGrid
+  gg$cR <- bilinear(gg$vv1, gg$vv2, nGrid, c00[1], c10[1], c01[1], c11[1])
+  gg$cG <- bilinear(gg$vv1, gg$vv2, nGrid, c00[2], c10[2], c01[2], c11[2])
+  gg$cB <- bilinear(gg$vv1, gg$vv2, nGrid, c00[3], c10[3], c01[3], c11[3])
+  gg$cMix <- rgb(gg$cR, gg$cG, gg$cB, maxColorValue = 255)
+  gg <- gg[, .(v1, v2, cMix)]
   
   return(gg)
 }
-
-# coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2, 
-#                                 inpsub1, inpsub2, inpH5, inpGene, 
-#                                 inpsiz, inpcol) {
-#   if (is.null(inpsub1)) {
-#     inpsub1 <- inpConf$UI[1]
-#   }
-#   
-#   # Prepare data
-#   ggData <- inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID, inpConf[UI == inpsub1]$ID), with = FALSE]
-#   colnames(ggData) <- c("X", "Y", "sub")
-#   rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
-#   
-#   h5file <- H5File$new(inpH5, mode = "r")
-#   h5data <- h5file[["grp"]][["data"]]
-#   ggData$val1 <- h5data$read(args = list(inpGene[inp1], quote(expr = )))
-#   ggData[val1 < 0]$val1 <- 0
-#   ggData$val2 <- h5data$read(args = list(inpGene[inp2], quote(expr = )))
-#   ggData[val2 < 0]$val2 <- 0
-#   # h5file$close_all()
-#   
-#   bgCells <- FALSE
-#   if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
-#     bgCells <- TRUE
-#     ggData2 <- ggData[!sub %in% inpsub2]
-#     ggData <- ggData[sub %in% inpsub2]
-#   }
-#   
-#   # Generate coex color palette and legend data
-#   legend_data <- generate_legend_data(inp1, inp2, inpcol)
-#   cInp = strsplit(inpcol, "; ")[[1]]
-#   c10 = if (cInp[1] == "Red (Gene1)") c(255, 0, 0) else if (cInp[1] == "Orange (Gene1)") c(255, 140, 0) else c(0, 255, 0)
-#   c01 = if (cInp[2] == "Green (Gene2)") c(0, 255, 0) else c(0, 0, 255)
-#   c00 = c(217, 217, 217)
-#   c11 = c10 + c01
-#   
-#   nGrid <- 16
-#   nPad <- 2
-#   nTot <- nGrid + nPad * 2
-#   gg <- data.table(v1 = rep(0:nTot, nTot + 1), v2 = sort(rep(0:nTot, nTot + 1)))
-#   gg$vv1 <- gg$v1 - nPad
-#   gg[vv1 < 0]$vv1 <- 0
-#   gg[vv1 > nGrid]$vv1 <- nGrid
-#   gg$vv2 <- gg$v2 - nPad
-#   gg[vv2 < 0]$vv2 <- 0
-#   gg[vv2 > nGrid]$vv2 <- nGrid
-#   gg$cR <- bilinear(gg$vv1, gg$vv2, nGrid, c00[1], c10[1], c01[1], c11[1])
-#   gg$cG <- bilinear(gg$vv1, gg$vv2, nGrid, c00[2], c10[2], c01[2], c11[2])
-#   gg$cB <- bilinear(gg$vv1, gg$vv2, nGrid, c00[3], c10[3], c01[3], c11[3])
-#   gg$cMix <- rgb(gg$cR, gg$cG, gg$cB, maxColorValue = 255)
-#   gg <- gg[, .(v1, v2, cMix)]
-#   
-#   # Map colours
-#   ggData$v1 <- round(nTot * ggData$val1 / max(ggData$val1))
-#   ggData$v2 <- round(nTot * ggData$val2 / max(ggData$val2))
-#   ggData$v0 <- ggData$v1 + ggData$v2
-#   ggData <- gg[ggData, on = .(v1, v2)]
-#   
-#   # Plotly plot
-#   p <- plot_ly(data = ggData, x = ~X, y = ~Y, color = ~cMix, colors = ggData$cMix,
-#                type = 'scatter', mode = 'markers', marker = list(size = inpsiz), showlegend = FALSE)
-#   
-#   if (bgCells) {
-#     p <- add_trace(p, data = ggData2, x = ~X, y = ~Y, type = 'scatter', mode = 'markers', 
-#                    marker = list(size = inpsiz, color = 'snow2'), showlegend = FALSE)
-#   }
-#   
-#   p <- p %>% layout(xaxis = list(title = inpdrX), yaxis = list(title = inpdrY))
-#   
-#   p <- layout(p, yaxis = list(scaleanchor = "x", scaleratio = rat))
-#   
-#   # Add legend
-#   legend_plot <- plot_ly(data = legend_data, x = ~v1, y = ~v2, type = 'scatter', mode = 'markers',
-#                          marker = list(symbol = 'square', color = ~cMix, size = 10), showlegend = FALSE) %>%
-#     layout(xaxis = list(title = inp1, tickvals = c(0, nTot), ticktext = c("low", "high")),
-#            yaxis = list(title = inp2, tickvals = c(0, nTot), ticktext = c("low", "high")),
-#            margin = list(l = 50, r = 50, b = 50, t = 50))
-#   # Combine main plot and legend
-#   # combined_plot <- subplot(p, legend_plot, widths = c(0.75, 0.25), shareY = TRUE)
-#   
-#   return(combined_plot)
-# }
-
 
 coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2, 
                                 inpsub1, inpsub2, inpH5, inpGene, 
@@ -425,39 +341,21 @@ coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
   
   # Generate coex color palette and legend data
   legend_data <- generate_legend_data(inp1, inp2, inpcol)
-  cInp = strsplit(inpcol, "; ")[[1]]
-  c10 = if (cInp[1] == "Red (Gene1)") c(255, 0, 0) else if (cInp[1] == "Orange (Gene1)") c(255, 140, 0) else c(0, 255, 0)
-  c01 = if (cInp[2] == "Green (Gene2)") c(0, 255, 0) else c(0, 0, 255)
-  c00 = c(217, 217, 217)
-  c11 = c10 + c01
   
+  # Map colours
   nGrid <- 16
   nPad <- 2
   nTot <- nGrid + nPad * 2
-  gg <- data.table(v1 = rep(0:nTot, nTot + 1), v2 = sort(rep(0:nTot, nTot + 1)))
-  gg$vv1 <- gg$v1 - nPad
-  gg[vv1 < 0]$vv1 <- 0
-  gg[vv1 > nGrid]$vv1 <- nGrid
-  gg$vv2 <- gg$v2 - nPad
-  gg[vv2 < 0]$vv2 <- 0
-  gg[vv2 > nGrid]$vv2 <- nGrid
-  gg$cR <- bilinear(gg$vv1, gg$vv2, nGrid, c00[1], c10[1], c01[1], c11[1])
-  gg$cG <- bilinear(gg$vv1, gg$vv2, nGrid, c00[2], c10[2], c01[2], c11[2])
-  gg$cB <- bilinear(gg$vv1, gg$vv2, nGrid, c00[3], c10[3], c01[3], c11[3])
-  gg$cMix <- rgb(gg$cR, gg$cG, gg$cB, maxColorValue = 255)
-  gg <- gg[, .(v1, v2, cMix)]
-  
-  # Map colours
   ggData$v1 <- round(nTot * ggData$val1 / max(ggData$val1))
   ggData$v2 <- round(nTot * ggData$val2 / max(ggData$val2))
   ggData$v0 <- ggData$v1 + ggData$v2
-  ggData <- gg[ggData, on = .(v1, v2)]
+  ggData <- merge(ggData, legend_data, by.x = c("v1", "v2"), by.y = c("v1", "v2"), all.x = TRUE)
   
   ggData$text <- paste(inp1, ":", ggData$val1, "<br>", inp2, ":", ggData$val2)
   
   # Plotly plot
   p <- plot_ly(data = ggData, x = ~X, y = ~Y, color = ~cMix, colors = ggData$cMix,
-               type = 'scatter', mode = 'markers', marker = list(size = inpsiz),text = ~text, hoverinfo = 'text', showlegend = FALSE)
+               type = 'scatter', mode = 'markers', marker = list(size = inpsiz), text = ~text, hoverinfo = 'text', showlegend = FALSE)
   
   if (bgCells) {
     p <- add_trace(p, data = ggData2, x = ~X, y = ~Y, type = 'scatter', mode = 'markers', 
@@ -465,22 +363,20 @@ coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
   }
   
   p <- p %>% layout(xaxis = list(title = inpdrX), yaxis = list(title = inpdrY))
-
   p <- layout(p, yaxis = list(scaleanchor = "x", scaleratio = rat))
-
+  
   legend_data$text <- paste(inp1, ":", legend_data$v1, "<br>", inp2, ":", legend_data$v2)
   
-
   legend_plot <- plot_ly(data = legend_data, x = ~v1, y = ~v2, type = 'scatter', mode = 'markers',
                          marker = list(symbol = 'square', color = ~cMix, size = 10), showlegend = FALSE) %>%
     layout(xaxis = list(title = inp1, tickvals = c(0, nTot), ticktext = c("low", "high")),
            yaxis = list(title = inp2, tickvals = c(0, nTot), ticktext = c("low", "high")),
            margin = list(l = 10, r = 10, b = 10, t = 10))
-
+  
   p <- p %>% add_trace(data = legend_data, x = ~v1, y = ~v2, type = 'scatter', mode = 'markers',
-                       marker = list(symbol = 'square', color = ~cMix, size = 10),text = ~text, hoverinfo = 'text', showlegend = FALSE,
+                       marker = list(symbol = 'square', color = ~cMix, size = 10), text = ~text, hoverinfo = 'text', showlegend = FALSE,
                        inherit = FALSE, xaxis = 'x2', yaxis = 'y2')
-
+  
   p <- p %>% layout(
     xaxis2 = list(
       title = inp1,
@@ -500,6 +396,8 @@ coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
   
   return(p)
 }
+
+
 
 scDRcoexNum <- function(inpConf, inpMeta, inp1, inp2, 
                         inpsub1, inpsub2, inpH5 = h5_file_path, inpGene){ 
@@ -532,30 +430,35 @@ scDRcoexNum <- function(inpConf, inpMeta, inp1, inp2,
 } 
 
 
+
+
+
 sc_violin_plotly <- function(inpConf, inpMeta, inp1, inp2, 
-                           inpsub1, inpsub2, inpH5, inpGene, 
-                           inptyp, inppts){ 
+                             inpsub1, inpsub2, inpH5, inpGene, 
+                             inptyp, inppts) {
   
-  if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]} 
+  if (is.null(inpsub1)) {
+    inpsub1 <- inpConf$UI[1]
+  } 
   
   # Prepare ggData 
   ggData <- inpMeta[, c(inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID), with = FALSE] 
   colnames(ggData) <- c("X", "sub") 
   
   # Load in either cell meta or gene expr
-  if(inp2 %in% inpConf$UI){ 
+  if (inp2 %in% inpConf$UI) { 
     ggData$val <- inpMeta[[inpConf[UI == inp2]$ID]] 
   } else { 
     h5file <- H5File$new(inpH5, mode = "r") 
     h5data <- h5file[["grp"]][["data"]] 
-    ggData$val <- h5data$read(args = list(inpGene[inp2], quote(expr=))) 
+    ggData$val <- h5data$read(args = list(inpGene[inp2], quote(expr = ))) 
     ggData[val < 0]$val <- 0 
     set.seed(42) 
     tmpNoise <- rnorm(length(ggData$val)) * diff(range(ggData$val)) / 1000 
     ggData$val <- ggData$val + tmpNoise 
     h5file$close_all() 
   } 
-  if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){ 
+  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) { 
     ggData <- ggData[sub %in% inpsub2] 
   } 
   
@@ -566,27 +469,47 @@ sc_violin_plotly <- function(inpConf, inpMeta, inp1, inp2,
   ggData$X <- factor(ggData$X, levels = ggLvl) 
   ggCol <- ggCol[ggLvl] 
   
-  # Actual Plotly plot
-  plot <- plot_ly(ggData, x = ~X, y = ~val, type = ifelse(inptyp == "violin", "violin", "box"), 
-                  color = ~X, colors = ggCol) %>%
-    layout(
-      xaxis = list(title = inp1, tickangle = 45),
-      yaxis = list(title = inp2),
-      showlegend = FALSE,
-      font = list(size = 12)
-    )
-  
-  if(inppts){
-    plot <- plot %>% add_trace(type = 'scatter', mode = 'markers', 
-                               marker = list(size = 8), 
-                               x = ~X, y = ~val)
+  # Choose plot type
+  if (inptyp == "violin") {
+    plot <- plot_ly(ggData, x = ~X, y = ~val, color = ~X, colors = ggCol,
+                    type = "violin", points = inppts,
+                    jitter = 0.1, pointpos = 0,
+                    marker = list(size = 5, line = list(width = 0)),
+                    line = list(width = 1),
+                    box = list(visible = TRUE, fillcolor = ggCol, line = list(width = 1, color = ggCol)),
+                    meanline = list(visible = TRUE),
+                    text = ~paste("Condition:", sub, "<br>Value:", val)) %>%
+      layout(
+        yaxis = list(title = inp2),
+        xaxis = list(title = inp1, tickangle = 45),
+        margin = list(t = 100),
+        zeroline = FALSE)
+  } else {
+    plot <- plot_ly(ggData, x = ~X, y = ~val, color = ~X, colors = ggCol,
+                    type = "box", points = inppts,
+                    jitter = 0.3, pointpos = 0,
+                    marker = list(size = 5, line = list(width = 0)),
+                    boxpoints = inppts,
+                    box = list(visible = TRUE, fillcolor = ggCol, line = list(width = 1, color = ggCol)),
+                    meanline = list(visible = TRUE),
+                    text = ~paste("Condition:", sub, "<br>Value:", val)) %>%
+      layout(
+        yaxis = list(title = inp2),
+        xaxis = list(title = inp1, tickangle = 45),
+        margin = list(t = 100),
+        zeroline = FALSE)
   }
+  
+  plot <- plot %>%  
+    config(modeBarButtonsToAdd = c('drawline', 
+                                   'drawopenpath', 
+                                   'drawclosedpath', 
+                                   'drawcircle', 
+                                   'drawrect', 
+                                   'eraseshape'))
   
   return(plot)
 }
-
-
-
 proportion_plotly <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2, 
                          inptyp, inpflp){ 
   if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]} 

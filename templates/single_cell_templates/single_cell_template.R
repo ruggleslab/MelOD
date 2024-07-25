@@ -179,7 +179,7 @@ sc_violin_ui <- function(id) {
         column(3,selectizeInput(ns("violin_plot_X"), "Cell information (X-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
         column(3,selectizeInput(ns("violin_plot_Y"), "Cell Info / Gene name (Y-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
         column(3,selectizeInput(ns("sc_box_or_violin"), "Type of plot:", choices = c("Default" = "violin", "Boxplot" ="box"), selected = "violin", multiple = FALSE, options = list(maxItems = 1))),
-        column(3,checkboxInput(ns("sc_violon_dot"), "Dot", value = FALSE))
+        column(4,selectizeInput(ns("sc_violon_dot"), "Dot:", choices = c("Outliers "= "outliers", "All" = "all"), selected = "outliers", multiple = FALSE, options = list(maxItems = 1)))
 )
       )
     )
