@@ -17,8 +17,7 @@ source("modules/single_cell_modules/bubheat_server.R", local = TRUE)
 
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
-source("templates/home_template.R", local = TRUE)
-
+source("templates/home_template.R", local = TRUE) 
 source("templates/bulk_rna_templates/gide_template.R", local = TRUE)
 source("templates/bulk_rna_templates/badal_template.R", local = TRUE)
 source("templates/bulk_rna_templates/kunz_template.R", local = TRUE)

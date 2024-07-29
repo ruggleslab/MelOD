@@ -8,21 +8,50 @@ gene_expression_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_fil
     updateSelectizeInput(session, "gene_plot_culstered_selection_2", choices = names(sc1gene), server = TRUE)
 
  
-      output$gene_plot_culstered <- renderPlotly({
-        req(input$cell_plot_culstered_X_axis, 
-            input$cell_plot_culstered_Y_axis, 
-            input$gene_plot_culstered_selection,
-            input$cell_subset, 
-            input$cell_subset_choices_box,
-            input$gene_plot_culstered_color, 
-            input$gene_plot_culstered_selection_2)
-       
-          print("gene expression")
-          gene_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, input$gene_plot_culstered_selection,
-                      input$cell_subset, input$cell_subset_choices_box,
-                      h5_file_path, sc1gene,
-                      input$marker_size, input$gene_plot_culstered_color, input$split_view, input$gene_plot_culstered_selection_2)
-      })
+    output$gene_plot_culstered <- renderPlotly({
+      req(input$cell_plot_culstered_X_axis, 
+          input$cell_plot_culstered_Y_axis, 
+          input$gene_plot_culstered_selection,
+          input$cell_subset, 
+          input$cell_subset_choices_box,
+          input$gene_plot_culstered_color, 
+          input$gene_plot_culstered_selection_2)
+      
+      gene1 <- input$gene_plot_culstered_selection
+      p1 <- gene_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, gene1,
+                        input$cell_subset, input$cell_subset_choices_box,
+                        h5_file_path, sc1gene,
+                        input$marker_size, input$gene_plot_culstered_color)
+      
+      if (input$split_view) {
+        gene2 <- input$gene_plot_culstered_selection_2
+        p2 <- gene_plotly(sc1conf, sc1meta, input$cell_plot_culstered_X_axis, input$cell_plot_culstered_Y_axis, gene2,
+                          input$cell_subset, input$cell_subset_choices_box,
+                          h5_file_path, sc1gene,
+                          input$marker_size, input$gene_plot_culstered_color)
+        
+        # Extract layout properties from the first plot
+        layout_p1 <- layout(p1)$xaxis
+        layout_p1$scaleanchor <- 'x'
+        layout_p1$scaleratio <- layout(p1)$xaxis$scaleratio
+        
+        # Apply the same properties to the second plot
+        p2 <- p2 %>%
+          layout(
+            xaxis = list(scaleanchor = 'x', scaleratio = layout_p1$scaleratio),
+            yaxis = list(scaleanchor = 'x', scaleratio = layout_p1$scaleratio)
+          )
+        
+        # Combine the two plots
+        p <- subplot(p1, p2, nrows = 1, shareX = TRUE, shareY = TRUE)
+      } else {
+        p <- p1
+      }
+      
+      p
+    })
+    
+    
 
     
       output$cell_datatable <- renderDataTable({

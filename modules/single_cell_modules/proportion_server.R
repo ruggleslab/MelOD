@@ -19,7 +19,6 @@ proportion_server <- function(id, sc1conf, sc1meta, sc1def) {
       # Assign the plot to the output
       output$proportion_plot <- renderPlotly({
         req(input$proportion_plot_X, input$proportion_group_by, input$cell_subset, input$cell_subset_choices_box, input$proportion_type)
-        print("proportion")
         proportion_plotly(sc1conf, sc1meta, input$proportion_plot_X, input$proportion_group_by,  
                           input$cell_subset, input$cell_subset_choices_box, 
                           input$proportion_type, input$proportion_flip_axis)

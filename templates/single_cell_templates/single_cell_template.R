@@ -89,7 +89,13 @@ cell_info_ui <- function(id) {
             selectInput(ns("cell_plot_culstered_info_2"), "Cell information 2:", choices = NULL)
           )
         ),
-        column(3, selectizeInput(ns("cell_plot_culstered_color"), "Colour (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red")),
+        column(3, 
+               selectizeInput(ns("cell_plot_culstered_color"), "Colour (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red"),
+               conditionalPanel(
+                 condition = paste0("input['", ns("split_view"), "'] == true"),            
+                 selectizeInput(ns("cell_plot_culstered_color_2"), "Colour 2 (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red")
+               )
+               ),
         column(3, checkboxInput(ns("cell_plot_culstered_label"), "Show cell info labels", value = TRUE)
         )
       )
