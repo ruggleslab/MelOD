@@ -30,3 +30,48 @@
     background-color: #FFD700; /* Hover background color */
     cursor: pointer; /* Cursor on hover */
 }
+
+.bubbleplot_logo {
+  background-image: url('./images/bubbled.png');
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  margin-bottom: -6px;
+  margin-top: -4px;
+  width: 25px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}
+
+.heatmap_logo {
+  background-image: url('./images/heatmap.png');
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  margin-bottom: -6px;
+  margin-top: -4px;
+  width: 25px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}
+
+
+.violin_logo {
+  background-image: url('./images/violin.png');
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  margin-bottom: -6px;
+  margin-top: -4px;
+  width: 25px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}
+
+.boxplot_logo {
+  background-image: url('./images/box-plot.png');
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  margin-bottom: -6px;
+  margin-top: -4px;
+  width: 25px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}

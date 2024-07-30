@@ -99,10 +99,10 @@ cell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
                                showarrow = TRUE, arrowcolor = "grey10",
                                font = list(color = "grey10"))
   }
-  
+ 
   p <- p %>% layout(
-    xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
-    yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
+    xaxis = list(title = inpdrX, zeroline = TRUE, showline = FALSE, showgrid = TRUE),
+    yaxis = list(title = inpdrY, zeroline = TRUE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
     showlegend = TRUE
   )
   
@@ -157,12 +157,15 @@ gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, 
   } else {
     p <- create_plot(ggData, inp1, inpcol) 
   }
+
   p <- p %>% 
     layout(
-      xaxis = list(title = inpdrX, zeroline = FALSE, showline = FALSE, showgrid = TRUE),
-      yaxis = list(title = inpdrY, zeroline = FALSE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
-      showlegend = TRUE)%>%
-    colorbar(title = inp1)
+      xaxis = list(title = inpdrX, zeroline = TRUE, showline = FALSE, showgrid = TRUE),
+      yaxis = list(title = inpdrY, zeroline = TRUE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
+      showlegend = FALSE)%>%
+    colorbar(title = inp1,
+             len = 0.5,
+             thickness = 15)
   
   return(p)
 }
@@ -211,12 +214,6 @@ scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2 = NULL,
 
 
 
-
-
-
-
-
-
 # Bilinear interpolation function
 bilinear <- function(x, y, xy, Q11, Q21, Q12, Q22) {
   oup <- (xy - x) * (xy - y) * Q11 + x * (xy - y) * Q21 + (xy - x) * y * Q12 + x * y * Q22
@@ -252,8 +249,9 @@ generate_legend_data <- function(inp1, inp2, inpcol) {
   return(gg)
 }
 
-coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2, 
-                                inpsub1, inpsub2, inpH5, inpGene, 
+
+coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
+                                inpsub1, inpsub2, inpH5, inpGene,
                                 inpsiz, inpcol) {
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
@@ -272,13 +270,6 @@ coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
   ggData[val2 < 0]$val2 <- 0
   # h5file$close_all()
   
-  bgCells <- FALSE
-  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
-    bgCells <- TRUE
-    ggData2 <- ggData[!sub %in% inpsub2]
-    ggData <- ggData[sub %in% inpsub2]
-  }
-  
   # Generate coex color palette and legend data
   legend_data <- generate_legend_data(inp1, inp2, inpcol)
   
@@ -289,17 +280,45 @@ coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
   ggData$v1 <- round(nTot * ggData$val1 / max(ggData$val1))
   ggData$v2 <- round(nTot * ggData$val2 / max(ggData$val2))
   ggData$v0 <- ggData$v1 + ggData$v2
+  
+  # Ensure merging doesn't fail silently
   ggData <- merge(ggData, legend_data, by.x = c("v1", "v2"), by.y = c("v1", "v2"), all.x = TRUE)
+  if (!"cMix" %in% colnames(ggData)) {
+    stop("Merge failed: 'cMix' not found in ggData")
+  }
   
   ggData$text <- paste(inp1, ":", ggData$val1, "<br>", inp2, ":", ggData$val2)
+  
+  # Filter out the subset of cells if inpsub2 is specified
+  if (!is.null(inpsub2) && length(inpsub2) != 0 && length(inpsub2) != nlevels(ggData$sub)) {
+    ggData2 <- ggData[!sub %in% inpsub2]
+    ggData <- ggData[sub %in% inpsub2]
+  } else {
+    ggData2 <- NULL
+  }
+  
+  # Split and reorder data
+  ggData_no_val_1 <- ggData[val1 == 0]
+  ggData_with_val_1 <- ggData[val1 > 0]
+  
+  ggData_no_val_2 <- ggData[val2 == 0]
+  ggData_with_val_2 <- ggData[val2 > 0]
+  
+  # Shuffle the rows of data with expression values
+  set.seed(123) # Set seed for reproducibility
+  ggData_with_val <- ggData_with_val_1[sample(.N),] 
+  ggData_with_val <- rbind(ggData_with_val, ggData_with_val_2[sample(.N),])
+  
+  ggData <- rbind(ggData_no_val_2, ggData_no_val_1, ggData_with_val)
   
   # Plotly plot
   p <- plot_ly(data = ggData, x = ~X, y = ~Y, color = ~cMix, colors = ggData$cMix,
                type = 'scatter', mode = 'markers', marker = list(size = inpsiz), text = ~text, hoverinfo = 'text', showlegend = FALSE)
   
-  if (bgCells) {
-    p <- add_trace(p, data = ggData2, x = ~X, y = ~Y, type = 'scatter', mode = 'markers', 
-                   marker = list(size = inpsiz, color = 'snow2'), showlegend = FALSE)
+  # Add background cells if applicable
+  if (!is.null(ggData2)) {
+    p <- add_trace(p, data = ggData2, x = ~X, y = ~Y, type = 'scatter', mode = 'markers',
+                   marker = list(size = inpsiz, color = 'snow2'), showlegend = FALSE, visible = FALSE)
   }
   
   p <- p %>% layout(xaxis = list(title = inpdrX), yaxis = list(title = inpdrY))
@@ -336,6 +355,8 @@ coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
   
   return(p)
 }
+
+
 
 
 
@@ -499,30 +520,16 @@ proportion_plotly <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2,
 }
 
 
-scGeneList <- function(inp, inpGene){ 
-  geneList <- data.table(gene = unique(trimws(inp)), present = TRUE) 
-  geneList[!gene %in% names(inpGene)]$present = FALSE 
-  return(geneList) 
-}
-
-
-
 bubheat_plotly <- function(inpConf, inpMeta, inp, inpGrp, inpPlt, 
-                             inpsub1, inpsub2, inpH5, inpGene, inpScl, inpRow, inpCol, 
-                             inpcols){ 
+                           inpsub1, inpsub2, inpH5, inpGene, inpScl, inpRow, inpCol, 
+                           inpcols, plot_height = 700){ 
   if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]} 
-  
-  # Identify genes that are in our dataset 
-  geneList = scGeneList(inp, inpGene) 
-  geneList = geneList[present == TRUE] 
-  shiny::validate(need(nrow(geneList) <= 50, "More than 50 genes to plot! Please reduce the gene list!")) 
-  shiny::validate(need(nrow(geneList) > 1, "Please input at least 2 genes to plot!")) 
   
   # Prepare data
   h5file <- H5File$new(inpH5, mode = "r") 
   h5data <- h5file[["grp"]][["data"]] 
   ggData = data.table() 
-  for(iGene in geneList$gene){ 
+  for(iGene in inp){ 
     tmp = inpMeta[, c("sampleID", inpConf[UI == inpsub1]$ID), with = FALSE] 
     colnames(tmp) = c("sampleID", "sub") 
     tmp$grpBy = inpMeta[[inpConf[UI == inpGrp]$ID]] 
@@ -530,19 +537,26 @@ bubheat_plotly <- function(inpConf, inpMeta, inp, inpGrp, inpPlt,
     tmp$val = h5data$read(args = list(inpGene[iGene], quote(expr=))) 
     ggData = rbindlist(list(ggData, tmp)) 
   } 
+  
+  # Close HDF5 file
   # h5file$close_all()
+  
   if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){ 
     ggData = ggData[sub %in% inpsub2] 
   } 
-  shiny::validate(need(uniqueN(ggData$grpBy) > 1, "Only 1 group present, unable to plot!")) 
+  
+  if(uniqueN(ggData$grpBy) <= 1) {
+    return("Only 1 group present, unable to plot!")
+  }
+  if(uniqueN(ggData$geneName) < 2) {
+    return("Fewer than 2 genes present, unable to plot!")
+  }
   
   # Aggregate data
   ggData$val = expm1(ggData$val) 
   ggData = ggData[, .(val = mean(val), prop = sum(val > 0) / length(sampleID)), 
                   by = c("geneName", "grpBy")] 
   ggData$val = log1p(ggData$val) 
-  
-
   
   # Scale if required 
   colRange = range(ggData$val) 
@@ -556,40 +570,31 @@ bubheat_plotly <- function(inpConf, inpMeta, inp, inpGrp, inpPlt,
   tmp = ggMat$geneName 
   ggMat = as.matrix(ggMat[, -1]) 
   rownames(ggMat) = tmp 
-  if(inpRow){ 
-    row_order = hclust(dist(ggMat))$order
-    ggData$geneName = factor(ggData$geneName, levels = rownames(ggMat)[row_order])
-  } else { 
-    ggData$geneName = factor(ggData$geneName, levels = rev(geneList$gene)) 
-  } 
-  if(inpCol){ 
-    col_order = hclust(dist(t(ggMat)))$order
-    ggData$grpBy = factor(ggData$grpBy, levels = colnames(ggMat)[col_order]) 
-  } 
-  # Convert factors to characters
-  ggData$geneName <- as.character(ggData$geneName)
-  ggData$grpBy <- as.character(ggData$grpBy)
-  # Actual plot according to plot type 
+
+  point_size_mat = dcast.data.table(ggData, geneName ~ grpBy, value.var = "prop")
+  point_size_mat = as.matrix(point_size_mat[, -1])
+  rownames(point_size_mat) = tmp
   
-  if(inpPlt == "Bubbleplot"){ 
-    plot <- plot_ly(ggData, x = ~grpBy, y = ~geneName, 
-                    color = ~val, size = ~prop, 
-                    type = 'scatter', mode = 'markers', 
-                    marker = list(sizemode = 'diameter')) %>%
-      layout(title = "Bubble Plot", 
-             xaxis = list(title = inpGrp, tickangle = 45), 
-             yaxis = list(title = "Genes"), 
-             coloraxis = list(colorbar = list(title = "Expression"))) 
-  } else { 
-    plot <- heatmaply(ggMat, 
-                      Rowv = if(inpRow) TRUE else NULL, 
-                      Colv = if(inpCol) TRUE else NULL, 
-                      scale = if(inpScl) "row" else "none", 
-                      colors = cList[[inpcols]], 
-                      fontsize_row = 12, 
-                      fontsize_col = 12, 
-                      main = "Heatmap")
-  } 
+  plot <- heatmaply(ggMat, 
+                    plot_method = "plotly",
+                    Rowv = if(inpRow) TRUE else FALSE, 
+                    subplot_widths = c(0.95, 0.05),
+                    branches_lwd = 0.01,
+                    Colv = if(inpCol) TRUE else FALSE, 
+                    scale = if(inpScl) "row" else "none", 
+                    colors = cList[[inpcols]], 
+                    fontsize_row = 12, 
+                    fontsize_col = 12, 
+                    plot_height = plot_height,
+                    main = if(inpPlt == "Bubbleplot") "Bubble Plot" else "Heatmap",
+                    point_size_mat = if(inpPlt == "Bubbleplot") point_size_mat else NULL,
+                    point_size_name = if(inpPlt == "Bubbleplot") "Proportion" else NULL)
+  
+  plot <- plot %>%
+    layout(
+      xaxis2 = list(showticklabels = FALSE),  # Hide x-axis tick labels for the top dendrogram
+      yaxis2 = list(showticklabels = FALSE)   # Hide y-axis tick labels for the right dendrogram
+    )
   
   return(plot)
 }

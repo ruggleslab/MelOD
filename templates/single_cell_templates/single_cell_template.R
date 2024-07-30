@@ -94,12 +94,14 @@ cell_info_ui <- function(id) {
                conditionalPanel(
                  condition = paste0("input['", ns("split_view"), "'] == true"),            
                  selectizeInput(ns("cell_plot_culstered_color_2"), "Colour 2 (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red")
-               )
-               ),
-        column(3, checkboxInput(ns("cell_plot_culstered_label"), "Show cell info labels", value = TRUE)
+               )),
+        column(3,br(), awesomeCheckbox(
+          inputId = ns("cell_plot_culstered_label"),
+          label = "Show cell info labels", 
+          value = TRUE,
+        ))
         )
       )
-    )
   )
 }
 
@@ -147,7 +149,7 @@ gene_coexpression_ui <- function(id) {
       fluidRow(
         column(4,selectizeInput(ns("gene_plot_coexpression_selection"), "Gene 1 name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
         column(4,selectizeInput(ns("gene_plot_coexpression_selection_2"), "Gene 2 name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
-        column(4, radioButtons(ns("gene_plot_coexpression_color"), "Colour:", 
+        column(4, selectizeInput(ns("gene_plot_coexpression_color"), "Colour:", 
                                choices = c("Red (Gene1); Blue (Gene2)", 
                                            "Orange (Gene1); Blue (Gene2)", 
                                            "Red (Gene1); Green (Gene2)", 
@@ -184,7 +186,13 @@ sc_violin_ui <- function(id) {
       fluidRow(
         column(3,selectizeInput(ns("violin_plot_X"), "Cell information (X-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
         column(3,selectizeInput(ns("violin_plot_Y"), "Cell Info / Gene name (Y-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
-        column(3,selectizeInput(ns("sc_box_or_violin"), "Type of plot:", choices = c("Default" = "violin", "Boxplot" ="box"), selected = "violin", multiple = FALSE, options = list(maxItems = 1))),
+        column(3,
+               radioGroupButtons(
+                 inputId = ns("sc_box_or_violin"),
+                 label = "Type of graph :", 
+                 choices = c(`<i class='violin_logo'></i>` = "violin", `<i class='boxplot_logo'></i>` = "Boxplot"),
+                 selected="violin",
+                 justified = TRUE)),
         column(4,selectizeInput(ns("sc_violon_dot"), "Dot:", choices = c("Outliers "= "outliers", "All" = "all"), selected = "outliers", multiple = FALSE, options = list(maxItems = 1)))
 )
       )
@@ -205,11 +213,14 @@ proportion_ui <- function(id) {
         column(3,selectizeInput(ns("proportion_plot_X"), "Cell information to plot (X-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
         column(3,selectizeInput(ns("proportion_group_by"), "Cell information to group / colour by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
         column(3,selectizeInput(ns("proportion_type"), "Plot value", choices = c("Proportion" = "Proportion", "Cell Number" ="cell_number"), selected = "Proportion", multiple = FALSE, options = list(maxItems = 1))),
-        column(3,checkboxInput(ns("proportion_flip_axis"), "Flip axis", value = FALSE))
+        column(3, br(),awesomeCheckbox(
+          inputId = ns("proportion_flip_axis"),
+          label = "Flip axis", 
+          value = FALSE,
+        ))
       )
     )
   )
-  
 }
 
 
@@ -220,22 +231,46 @@ bubheat_ui <- function(id) {
       title = HTML(paste("Heatmap & Bubble plot", downloadButton(ns("gene_plot_culstered_pdf"), icon = icon("save-file", lib = "glyphicon")), downloadButton(ns("gene_plot_culstered_png"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
-      withSpinner(plotlyOutput(ns("bubheat_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
+      withSpinner(uiOutput(ns("bubheat_plot")), type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
-        column(3,multiInput(
+        column(4,multiInput(
           inputId = ns("bubheat_selected_gene"),
           label = "Gene(s) selection (up to 10):",
           autocomplete = TRUE,
-          option= list(limit=10),
+          option= list(limit=50),
           choices = "Loading...")),
-        column(2,selectizeInput(ns("bubheat_type"), "Type of plot:", choices = c("Default" = "Bubbleplot", "Heatmap" ="Heatmap"), selected = "Bubbleplot", multiple = FALSE, options = list(maxItems = 1))),
-        column(2,selectizeInput(ns("bubheat_group_by"), "Group by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
-        column(1,checkboxInput(ns("bubheat_scale"), "Scale gene expression", value = TRUE)),
-        column(1,checkboxInput(ns("bubheat_cluster_rows"), "Cluster rows (genes)", value = TRUE)),
-        column(1,checkboxInput(ns("bubheat_cluster_columns"), "Cluster columns (samples)", value = FALSE)),
-        column(2, selectizeInput(ns("bubheat_color"), "Colour:", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red"))
-      )
+        
+        column(4,
+               selectizeInput(ns("bubheat_group_by"), "Group by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
+               selectizeInput(ns("bubheat_color"), "Colour:", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red")),
+        column(2,
+               radioGroupButtons(
+                 inputId = ns("bubheat_type"),
+                 label = "Type of graph :", 
+                 choices = c(`<i class='bubbleplot_logo'></i>` = "Bubbleplot", `<i class='heatmap_logo'></i>` = "Heatmap"),
+                 selected="Bubbleplot",
+                 justified = TRUE)),
+               
+        column(2,
+              br(),
+              br(),
+               awesomeCheckbox(
+                 inputId = ns("bubheat_scale"),
+                 label = "Scale gene expression", 
+                 value = TRUE,
+               ),
+               awesomeCheckbox(
+                 inputId = ns("bubheat_cluster_rows"),
+                 label = "Cluster rows (genes)", 
+                 value = TRUE,
+               ),
+               awesomeCheckbox(
+                 inputId = ns("bubheat_cluster_columns"),
+                 label = "Cluster columns (samples)", 
+                 value = FALSE,
+               )
+        )
     )
   )
-  
+  )
 }

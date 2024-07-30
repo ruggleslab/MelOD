@@ -29,14 +29,23 @@ bubheat_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_file_path) 
     })
     
     
+    plot_data <- reactive({
+      req(input$bubheat_group_by, input$bubheat_selected_gene, input$bubheat_group_by,  input$cell_subset, input$cell_subset_choices_box)
+      
+      bubheat_plotly(sc1conf, sc1meta, input$bubheat_selected_gene, input$bubheat_group_by, input$bubheat_type, 
+                     input$cell_subset, input$cell_subset_choices_box, h5_file_path, sc1gene, 
+                     input$bubheat_scale, input$bubheat_cluster_rows, input$bubheat_cluster_columns, 
+                     input$bubheat_color, 800) 
+    })
     
-    output$bubheat_plot <- renderPlotly({ 
-     req(input$bubheat_group_by, input$bubheat_selected_gene, input$bubheat_group_by,  input$cell_subset, input$cell_subset_choices_box)
-        bubheat_plotly(sc1conf, sc1meta, input$bubheat_selected_gene, input$bubheat_group_by, input$bubheat_type, 
-                       input$cell_subset, input$cell_subset_choices_box, h5_file_path, sc1gene, 
-                       input$bubheat_scale, input$bubheat_cluster_rows, input$bubheat_cluster_columns, 
-                       input$bubheat_color) 
-     
+    
+    output$bubheat_plot <- renderUI({ 
+      result <- plot_data()
+      if (is.character(result)) {
+        div(class = "error-message", result)
+      } else {
+        result
+      }
     }) 
   })
 }
