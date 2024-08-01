@@ -1,8 +1,5 @@
 source("global.R", local = TRUE)
 
-
-
-
 cList = list(c("#d9d9d9","#FFF7EC","#FEE8C8","#FDD49E","#FDBB84",
                "#FC8D59","#EF6548","#D7301F","#B30000","#7F0000"),
              c("#4575B4","#74ADD1","#ABD9E9","#E0F3F8","#FFFFBF",
@@ -14,6 +11,15 @@ names(cList) = c("White-Red", "Blue-Yellow-Red", "Yellow-Green-Purple")
 
 # Plot theme
 sctheme <- function(base_size = 24, XYval = TRUE, Xang = 0, XjusH = 0.5){
+  #' Generate a custom ggplot2 theme
+  #'
+  #' @param base_size Numeric value for base font size
+  #' @param XYval Logical indicating whether to show axis values
+  #' @param Xang Numeric value for x-axis text angle
+  #' @param XjusH Numeric value for x-axis text horizontal justification
+  #'
+  #' @return A ggplot2 theme object
+  
   oupTheme = theme(
     text =             element_text(size = base_size, family = "Helvetica"),
     panel.background = element_rect(fill = "white", colour = NA),
@@ -34,9 +40,14 @@ sctheme <- function(base_size = 24, XYval = TRUE, Xang = 0, XjusH = 0.5){
 }
 
 
-
 # Function to extract legend
 g_legend <- function(a.gplot){
+  #' Extract legend from a ggplot2 plot
+  #'
+  #' @param a.gplot A ggplot2 plot object
+  #'
+  #' @return A gtable object representing the legend
+  
   tmp <- ggplot_gtable(ggplot_build(a.gplot))
   leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
   legend <- tmp$grobs[[leg]]
@@ -44,73 +55,18 @@ g_legend <- function(a.gplot){
 }
 
 
-
-# cell_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL,
-#                         inpsiz, inpcol, inplab, inpsplit = FALSE, inp2 = NULL) {
-# 
-#   if (is.null(inpsub1)) {
-#     inpsub1 <- inpConf$UI[1]
-#   }
-# 
-#   ggData <- inpMeta[, .(
-#     X = get(inpConf[UI == inpdrX]$ID),
-#     Y = get(inpConf[UI == inpdrY]$ID),
-#     val = get(inpConf[UI == inp1]$ID),
-#     sub = get(inpConf[UI == inpsub1]$ID)
-#   )]
-# 
-#   rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
-#   bgCells <- FALSE
-# 
-#   if (!is.null(inpsub2) && length(inpsub2) != nlevels(factor(ggData$sub))) {
-#     bgCells <- TRUE
-#     ggData2 <- ggData[!sub %in% inpsub2]
-#     ggData <- ggData[sub %in% inpsub2]
-#   }
-# 
-#   ggCol <- NULL
-#   if (!is.na(inpConf[UI == inp1]$fCL)) {
-#     ggCol <- strsplit(inpConf[UI == inp1]$fCL, "\\|")[[1]]
-#     names(ggCol) <- levels(factor(ggData$val))
-#     ggLvl <- levels(factor(ggData$val))[levels(factor(ggData$val)) %in% unique(ggData$val)]
-#     ggData[, val := factor(val, levels = ggLvl)]
-#     ggCol <- ggCol[ggLvl]
-#   }
-# 
-#   p <- plot_ly(ggData, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
-#                type = 'scatter', mode = 'markers', marker = list(size = inpsiz, opacity = 0.8),
-#                text = ~paste('Value:', val, '<br>X:', X, '<br>Y:', Y, '<br>Sub:', sub),
-#                hoverinfo = 'text')
-# 
-#   if (bgCells) {
-#     p <- p %>% add_trace(data = ggData2, x = ~X, y = ~Y, mode = 'markers',
-#                          marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
-#   }
-# 
-#   if (!is.null(ggCol)) {
-#     p <- p %>% layout(colorway = ggCol)
-#   } else {
-#     p <- p %>% colorbar(title = "")
-#   }
-# 
-#   if (inplab && !is.numeric(ggData$val)) {
-#     ggData3 <- ggData[, .(X = mean(X), Y = mean(Y)), by = val]
-#     p <- p %>% add_annotations(data = ggData3, x = ~X, y = ~Y, text = ~val,
-#                                showarrow = TRUE, arrowcolor = "grey10",
-#                                font = list(color = "grey10"))
-#   }
-# 
-#   p <- p %>% layout(
-#     xaxis = list(title = inpdrX, zeroline = TRUE, showline = FALSE, showgrid = TRUE),
-#     yaxis = list(title = inpdrY, zeroline = TRUE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
-#     showlegend = TRUE
-#   )
-# 
-#   return(p)
-# }
-
-
-cell_plotly <- function(processed_data, inpsiz,inpdrX, inpdrY,inpcol, inplab) {
+cell_plotly <- function(processed_data, inpsiz, inpdrX, inpdrY, inpcol, inplab) {
+  #' Create a Plotly scatter plot for cell data
+  #'
+  #' @param processed_data List containing processed data for plotting
+  #' @param inpsiz Numeric value for marker size
+  #' @param inpdrX Character string for the X dimension
+  #' @param inpdrY Character string for the Y dimension
+  #' @param inpcol Numeric index for color palette
+  #' @param inplab Logical indicating whether to add labels
+  #'
+  #' @return A Plotly scatter plot object
+  
   ggData <- processed_data$ggData
   ggData2 <- processed_data$ggData2
   ggCol <- processed_data$ggCol
@@ -148,71 +104,18 @@ cell_plotly <- function(processed_data, inpsiz,inpdrX, inpdrY,inpcol, inplab) {
   
   return(p)
 }
-# 
-# gene_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL,
-#                         inpH5 = h5_file_path, inpGene, inpsiz, inpcol) {
-#   # Default subset if not provided
-#   if (is.null(inpsub1)) {
-#     inpsub1 <- inpConf$UI[1]
-#   }
-#   
-#   ggData <- inpMeta[, .(X = get(inpConf[UI == inpdrX]$ID),
-#                         Y = get(inpConf[UI == inpdrY]$ID),
-#                         sub = get(inpConf[UI == inpsub1]$ID))]
-#   rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
-#   
-#   read_h5_data <- function(h5file, gene) {
-#     h5data <- h5file[["grp"]][["data"]]
-#     val <- h5data$read(args = list(gene, quote(expr = )))
-#     val[val < 0] <- 0
-#     return(val)
-#   }
-#   
-#   create_plot <- function(data, gene, inpcol, show_legend = FALSE) {
-#     plot_ly(data, x = ~X, y = ~Y, color = ~val, colors = cList[[inpcol]],
-#             type = 'scatter', mode = 'markers', marker = list(size = inpsiz),
-#             text = ~paste('Value:', val, '<br>Gene:', gene, '<br>Sub:', sub),
-#             hoverinfo = 'text')
-#      
-#   }
-#   
-#   h5file <- H5File$new(inpH5, mode = "r")
-#   # on.exit(h5file$close())  
-#   ggData[, val := read_h5_data(h5file, inpGene[inp1])]
-#   
-#   
-#   ggData_no_val <- ggData[val == 0]
-#   ggData_with_val <- ggData[val > 0]
-#   
-#   # Combine the data back, with ggData_with_val at the end
-#   ggData <- rbind(ggData_no_val, ggData_with_val)
-#   
-#   if (!is.null(inpsub2) && length(inpsub2) != nlevels(factor(ggData$sub))) {
-#     ggData2 <- ggData[sub %in% inpsub2]
-#     ggData <- ggData[!sub %in% inpsub2]
-#     p <- create_plot(ggData2, inp1, inpcol)
-#     p <- p %>% add_trace(data = ggData, x = ~X, y = ~Y, mode = 'markers',
-#                          marker = list(size = inpsiz, opacity = 0.8), visible = FALSE)
-#   } else {
-#     p <- create_plot(ggData, inp1, inpcol) 
-#   }
-# 
-#   p <- p %>% 
-#     layout(
-#       xaxis = list(title = inpdrX, zeroline = TRUE, showline = FALSE, showgrid = TRUE),
-#       yaxis = list(title = inpdrY, zeroline = TRUE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
-#       showlegend = FALSE)%>%
-#     colorbar(title = inp1,
-#              len = 0.5,
-#              thickness = 15)
-#   
-#   return(p)
-# }
-# 
 
-
-
-gene_plotly <- function(processed_data,inpdrX,inpdrY, inpcol, inpsiz) {
+gene_plotly <- function(processed_data, inpdrX, inpdrY, inpcol, inpsiz) {
+  #' Create a Plotly scatter plot for gene data
+  #'
+  #' @param processed_data List containing processed data for plotting
+  #' @param inpdrX Character string for the X dimension
+  #' @param inpdrY Character string for the Y dimension
+  #' @param inpcol Numeric index for color palette
+  #' @param inpsiz Numeric value for marker size
+  #'
+  #' @return A Plotly scatter plot object
+  
   ggData <- processed_data$ggData
   rat <- processed_data$rat
   inp1 <- processed_data$inp1
@@ -244,9 +147,21 @@ gene_plotly <- function(processed_data,inpdrX,inpdrY, inpcol, inpsiz) {
   return(p)
 }
 
-scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2 = NULL,
-                    h5file, inpGene, inpsplt = NULL){
-
+scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2 = NULL, h5file, inpGene, inpsplt = NULL){
+  #' Compute summary statistics for single-cell RNA-seq data
+  #'
+  #' @param inpConf Data frame with configuration settings
+  #' @param inpMeta Data frame with metadata
+  #' @param inp1 Character string for the first variable
+  #' @param inp2 Character string for the second variable
+  #' @param inpsub1 Character string for the first subgroup
+  #' @param inpsub2 Character string for the second subgroup (optional)
+  #' @param h5file HDF5 file containing gene data
+  #' @param inpGene Data frame with gene information
+  #' @param inpsplt Character string indicating how to split inp1 (optional)
+  #'
+  #' @return A data table with summary statistics
+  
   if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]}
   # Prepare ggData
   ggData = inpMeta[, c(inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID),
@@ -281,12 +196,20 @@ scDRnum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2 = NULL,
   return(ggData)
 }
 
-
-
-
-
 # Bilinear interpolation function
 bilinear <- function(x, y, xy, Q11, Q21, Q12, Q22) {
+  #' Perform bilinear interpolation
+  #'
+  #' @param x Numeric value for x coordinate
+  #' @param y Numeric value for y coordinate
+  #' @param xy Numeric value for grid size
+  #' @param Q11 Numeric value at (0, 0)
+  #' @param Q21 Numeric value at (1, 0)
+  #' @param Q12 Numeric value at (0, 1)
+  #' @param Q22 Numeric value at (1, 1)
+  #'
+  #' @return Interpolated value
+  
   oup <- (xy - x) * (xy - y) * Q11 + x * (xy - y) * Q21 + (xy - x) * y * Q12 + x * y * Q22
   oup <- oup / (xy * xy)
   return(oup)
@@ -294,6 +217,14 @@ bilinear <- function(x, y, xy, Q11, Q21, Q12, Q22) {
 
 # Helper function to generate the coexpression legend
 generate_legend_data <- function(inp1, inp2, inpcol) {
+  #' Generate data for coexpression legend
+  #'
+  #' @param inp1 Character string for the first gene
+  #' @param inp2 Character string for the second gene
+  #' @param inpcol Character string for the color scheme
+  #'
+  #' @return A data table with legend data
+  
   # Generate coex color palette
   cInp <- strsplit(inpcol, "; ")[[1]]
   c10 <- if (cInp[1] == "Red (Gene1)") c(255, 0, 0) else if (cInp[1] == "Orange (Gene1)") c(255, 140, 0) else c(0, 255, 0)
@@ -320,122 +251,22 @@ generate_legend_data <- function(inp1, inp2, inpcol) {
   return(gg)
 }
 
-
-# coexpression_plotly <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
-#                                 inpsub1, inpsub2, inpH5, inpGene,
-#                                 inpsiz, inpcol) {
-#   if (is.null(inpsub1)) {
-#     inpsub1 <- inpConf$UI[1]
-#   }
-# 
-#   # Prepare data
-#   ggData <- inpMeta[, c(inpConf[UI == inpdrX]$ID, inpConf[UI == inpdrY]$ID, inpConf[UI == inpsub1]$ID), with = FALSE]
-#   colnames(ggData) <- c("X", "Y", "sub")
-#   rat <- (max(ggData$X) - min(ggData$X)) / (max(ggData$Y) - min(ggData$Y))
-# 
-#   h5file <- H5File$new(inpH5, mode = "r")
-#   h5data <- h5file[["grp"]][["data"]]
-#   ggData$val1 <- h5data$read(args = list(inpGene[inp1], quote(expr = )))
-#   ggData[val1 < 0]$val1 <- 0
-#   ggData$val2 <- h5data$read(args = list(inpGene[inp2], quote(expr = )))
-#   ggData[val2 < 0]$val2 <- 0
-#   # h5file$close_all()
-# 
-#   # Generate coex color palette and legend data
-#   legend_data <- generate_legend_data(inp1, inp2, inpcol)
-# 
-#   # Map colours
-#   nGrid <- 16
-#   nPad <- 2
-#   nTot <- nGrid + nPad * 2
-#   ggData$v1 <- round(nTot * ggData$val1 / max(ggData$val1))
-#   ggData$v2 <- round(nTot * ggData$val2 / max(ggData$val2))
-#   ggData$v0 <- ggData$v1 + ggData$v2
-# 
-#   # Ensure merging doesn't fail silently
-#   ggData <- merge(ggData, legend_data, by.x = c("v1", "v2"), by.y = c("v1", "v2"), all.x = TRUE)
-#   if (!"cMix" %in% colnames(ggData)) {
-#     stop("Merge failed: 'cMix' not found in ggData")
-#   }
-# 
-#   ggData$text <- paste(inp1, ":", ggData$val1, "<br>", inp2, ":", ggData$val2)
-# 
-#   # Filter out the subset of cells if inpsub2 is specified
-#   if (!is.null(inpsub2) && length(inpsub2) != 0 && length(inpsub2) != nlevels(ggData$sub)) {
-#     ggData2 <- ggData[!sub %in% inpsub2]
-#     ggData <- ggData[sub %in% inpsub2]
-#   } else {
-#     ggData2 <- NULL
-#   }
-# 
-#   # Split and reorder data
-#   ggData_no_val_1 <- ggData[val1 == 0]
-#   ggData_with_val_1 <- ggData[val1 > 0]
-# 
-#   ggData_no_val_2 <- ggData[val2 == 0]
-#   ggData_with_val_2 <- ggData[val2 > 0]
-# 
-#   # Shuffle the rows of data with expression values
-#   set.seed(123) # Set seed for reproducibility
-#   ggData_with_val <- ggData_with_val_1[sample(.N),]
-#   ggData_with_val <- rbind(ggData_with_val, ggData_with_val_2[sample(.N),])
-# 
-#   ggData <- rbind(ggData_no_val_2, ggData_no_val_1, ggData_with_val)
-# 
-#   # Plotly plot
-#   p <- plot_ly(data = ggData, x = ~X, y = ~Y, color = ~cMix, colors = ggData$cMix,
-#                type = 'scatter', mode = 'markers', marker = list(size = inpsiz), text = ~text, hoverinfo = 'text', showlegend = FALSE)
-# 
-#   # Add background cells if applicable
-#   if (!is.null(ggData2)) {
-#     p <- add_trace(p, data = ggData2, x = ~X, y = ~Y, type = 'scatter', mode = 'markers',
-#                    marker = list(size = inpsiz, color = 'snow2'), showlegend = FALSE, visible = FALSE)
-#   }
-# 
-#   p <- p %>% layout(xaxis = list(title = inpdrX), yaxis = list(title = inpdrY))
-#   p <- layout(p, yaxis = list(scaleanchor = "x", scaleratio = rat))
-# 
-#   legend_data$text <- paste(inp1, ":", legend_data$v1, "<br>", inp2, ":", legend_data$v2)
-# 
-#   legend_plot <- plot_ly(data = legend_data, x = ~v1, y = ~v2, type = 'scatter', mode = 'markers',
-#                          marker = list(symbol = 'square', color = ~cMix, size = 10), showlegend = FALSE) %>%
-#     layout(xaxis = list(title = inp1, tickvals = c(0, nTot), ticktext = c("low", "high")),
-#            yaxis = list(title = inp2, tickvals = c(0, nTot), ticktext = c("low", "high")),
-#            margin = list(l = 10, r = 10, b = 10, t = 10))
-# 
-#   p <- p %>% add_trace(data = legend_data, x = ~v1, y = ~v2, type = 'scatter', mode = 'markers',
-#                        marker = list(symbol = 'square', color = ~cMix, size = 10), text = ~text, hoverinfo = 'text', showlegend = FALSE,
-#                        inherit = FALSE, xaxis = 'x2', yaxis = 'y2')
-# 
-#   p <- p %>% layout(
-#     xaxis2 = list(
-#       title = inp1,
-#       domain = c(0.75, 0.95),
-#       anchor = 'y2',
-#       tickvals = c(0, nTot),
-#       ticktext = c("low", "high")
-#     ),
-#     yaxis2 = list(
-#       title = inp2,
-#       domain = c(0.75, 0.95),
-#       anchor = 'x2',
-#       tickvals = c(0, nTot),
-#       ticktext = c("low", "high")
-#     )
-#   )
-# 
-#   return(p)
-# }
-
 coexpression_plotly <- function (processed_data, inpdrX, inpdrY, inpcol, inpsiz) {
-  
+  #' Create a Plotly scatter plot for coexpression data
+  #'
+  #' @param processed_data List containing processed data for plotting
+  #' @param inpdrX Character string for the X dimension
+  #' @param inpdrY Character string for the Y dimension
+  #' @param inpcol Character string for the color scheme
+  #' @param inpsiz Numeric value for marker size
+  #'
+  #' @return A Plotly scatter plot object
   
   ggData <- processed_data$ggData
   rat <- processed_data$rat
   inp1 <- processed_data$inp1
   inp2 <- processed_data$inp2
   inpsub2 <- processed_data$inpsub2
-  
   
   # Generate coex color palette and legend data
   legend_data <- generate_legend_data(inp1, inp2, inpcol)
@@ -523,10 +354,20 @@ coexpression_plotly <- function (processed_data, inpdrX, inpdrY, inpcol, inpsiz)
   return(p)
 }
 
-
-
-scDRcoexNum <- function(inpConf, inpMeta, inp1, inp2, 
-                        inpsub1, inpsub2, h5file, inpGene){ 
+scDRcoexNum <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2, h5file, inpGene){
+  #' Compute summary statistics for coexpression data
+  #'
+  #' @param inpConf Data frame with configuration settings
+  #' @param inpMeta Data frame with metadata
+  #' @param inp1 Character string for the first gene
+  #' @param inp2 Character string for the second gene
+  #' @param inpsub1 Character string for the first subgroup
+  #' @param inpsub2 Character string for the second subgroup
+  #' @param h5file HDF5 file containing gene data
+  #' @param inpGene Data frame with gene information
+  #'
+  #' @return A data table with summary statistics
+  
   if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]} 
   # Prepare ggData 
   ggData = inpMeta[, c(inpConf[UI == inpsub1]$ID), with = FALSE] 
@@ -555,88 +396,15 @@ scDRcoexNum <- function(inpConf, inpMeta, inp1, inp2,
 } 
 
 
-
-
-# 
-# sc_violin_plotly <- function(inpConf, inpMeta, inp1, inp2, 
-#                              inpsub1, inpsub2, inpH5, inpGene, 
-#                              inptyp, inppts) {
-#   
-#   if (is.null(inpsub1)) {
-#     inpsub1 <- inpConf$UI[1]
-#   } 
-#   
-#   # Prepare ggData 
-#   ggData <- inpMeta[, c(inpConf[UI == inp1]$ID, inpConf[UI == inpsub1]$ID), with = FALSE] 
-#   colnames(ggData) <- c("X", "sub") 
-#   
-#   # Load in either cell meta or gene expr
-#   if (inp2 %in% inpConf$UI) { 
-#     ggData$val <- inpMeta[[inpConf[UI == inp2]$ID]] 
-#   } else { 
-#     h5file <- H5File$new(inpH5, mode = "r") 
-#     h5data <- h5file[["grp"]][["data"]] 
-#     ggData$val <- h5data$read(args = list(inpGene[inp2], quote(expr = ))) 
-#     ggData[val < 0]$val <- 0 
-#     set.seed(42) 
-#     tmpNoise <- rnorm(length(ggData$val)) * diff(range(ggData$val)) / 1000 
-#     ggData$val <- ggData$val + tmpNoise 
-#     h5file$close_all() 
-#   } 
-#   if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) { 
-#     ggData <- ggData[sub %in% inpsub2] 
-#   } 
-#   
-#   # Do factoring 
-#   ggCol <- strsplit(inpConf[UI == inp1]$fCL, "\\|")[[1]] 
-#   names(ggCol) <- levels(ggData$X) 
-#   ggLvl <- levels(ggData$X)[levels(ggData$X) %in% unique(ggData$X)] 
-#   ggData$X <- factor(ggData$X, levels = ggLvl) 
-#   ggCol <- ggCol[ggLvl] 
-#   
-#   # Choose plot type
-#   if (inptyp == "violin") {
-#     plot <- plot_ly(ggData, x = ~X, y = ~val, color = ~X, colors = ggCol,
-#                     type = "violin", points = inppts,
-#                     jitter = 0.1, pointpos = 0,
-#                     marker = list(size = 5, line = list(width = 0)),
-#                     line = list(width = 1),
-#                     box = list(visible = TRUE, fillcolor = ggCol, line = list(width = 1, color = ggCol)),
-#                     meanline = list(visible = TRUE),
-#                     text = ~paste("Condition:", sub, "<br>Value:", val)) %>%
-#       layout(
-#         yaxis = list(title = inp2),
-#         xaxis = list(title = inp1, tickangle = 45),
-#         margin = list(t = 100),
-#         zeroline = FALSE)
-#   } else {
-#     plot <- plot_ly(ggData, x = ~X, y = ~val, color = ~X, colors = ggCol,
-#                     type = "box", points = inppts,
-#                     jitter = 0.3, pointpos = 0,
-#                     marker = list(size = 5, line = list(width = 0)),
-#                     boxpoints = inppts,
-#                     box = list(visible = TRUE, fillcolor = ggCol, line = list(width = 1, color = ggCol)),
-#                     meanline = list(visible = TRUE),
-#                     text = ~paste("Condition:", sub, "<br>Value:", val)) %>%
-#       layout(
-#         yaxis = list(title = inp2),
-#         xaxis = list(title = inp1, tickangle = 45),
-#         margin = list(t = 100),
-#         zeroline = FALSE)
-#   }
-#   
-#   plot <- plot %>%  
-#     config(modeBarButtonsToAdd = c('drawline', 
-#                                    'drawopenpath', 
-#                                    'drawclosedpath', 
-#                                    'drawcircle', 
-#                                    'drawrect', 
-#                                    'eraseshape'))
-#   
-#   return(plot)
-# }
-
 sc_violin_plotly <- function(processed_data, inptyp, inppts) {
+  #' Create a Plotly violin or box plot
+  #'
+  #' @param processed_data List containing processed data for plotting
+  #' @param inptyp Character string indicating plot type ("violin" or "box")
+  #' @param inppts Character string indicating points display type
+  #'
+  #' @return A Plotly violin or box plot object
+  
   ggData <- processed_data$ggData
   ggCol <- processed_data$ggCol
   inp1 <- processed_data$inp1
@@ -683,54 +451,15 @@ sc_violin_plotly <- function(processed_data, inptyp, inppts) {
   return(plot)
 }
 
-
-# proportion_plotly <- function(inpConf, inpMeta, inp1, inp2, inpsub1, inpsub2, 
-#                          inptyp, inpflp){ 
-#   if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]} 
-#   
-#   # Prepare ggData 
-#   ggData <- inpMeta[, c(inpConf[UI == inp1]$ID, inpConf[UI == inp2]$ID, 
-#                         inpConf[UI == inpsub1]$ID), with = FALSE] 
-#   colnames(ggData) <- c("X", "grp", "sub") 
-#   if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){ 
-#     ggData <- ggData[sub %in% inpsub2] 
-#   } 
-#   ggData <- ggData[, .(nCells = .N), by = c("X", "grp")] 
-#   ggData <- ggData[, {tot <- sum(nCells) 
-#   .SD[,.(pctCells = 100 * sum(nCells) / tot, 
-#          nCells = nCells), by = "grp"]}, by = "X"] 
-#   
-#   # Do factoring 
-#   ggCol <- strsplit(inpConf[UI == inp2]$fCL, "\\|")[[1]] 
-#   names(ggCol) <- levels(ggData$grp) 
-#   ggLvl <- levels(ggData$grp)[levels(ggData$grp) %in% unique(ggData$grp)] 
-#   ggData$grp <- factor(ggData$grp, levels = ggLvl) 
-#   ggCol <- ggCol[ggLvl] 
-#   
-#   # Actual Plotly plot
-#   if(inptyp == "Proportion"){ 
-#     plot <- plot_ly(ggData, x = if(inpflp) ~pctCells else ~X, 
-#                     y = if(inpflp) ~X else ~pctCells, 
-#                     type = 'bar', color = ~grp, colors = ggCol, orientation = if(inpflp) 'h' else 'v') %>%
-#       layout(xaxis = list(title = if(inpflp) "Cell Proportion (%)" else inp1, tickangle = if(inpflp) 0 else 45),
-#              yaxis = list(title = if(inpflp) inp1 else "Cell Proportion (%)"),
-#              barmode = 'stack')
-#   } else { 
-#     plot <- plot_ly(ggData, x = if(inpflp) ~nCells else ~X, 
-#                     y = if(inpflp) ~X else ~nCells, 
-#                     type = 'bar', color = ~grp, colors = ggCol, orientation = if(inpflp) 'h' else 'v') %>%
-#       layout(xaxis = list(title = if(inpflp) "Number of Cells" else inp1, tickangle = if(inpflp) 0 else 45),
-#              yaxis = list(title = if(inpflp) inp1 else "Number of Cells"),
-#              barmode = 'stack')
-#   }
-#   
-#   plot <- plot %>% layout(font = list(size = 12), legend = list(orientation = "v"))
-#   
-#   return(plot)
-# }
-
-
 proportion_plotly <- function(processed_data, inptyp, inpflp) {
+  #' Create a Plotly bar plot for proportions
+  #'
+  #' @param processed_data List containing processed data for plotting
+  #' @param inptyp Character string indicating plot type ("Proportion" or "Count")
+  #' @param inpflp Logical indicating whether to flip the axes
+  #'
+  #' @return A Plotly bar plot object
+  
   ggData <- processed_data$ggData
   ggCol <- processed_data$ggCol
   inp1 <- processed_data$inp1
@@ -757,88 +486,19 @@ proportion_plotly <- function(processed_data, inptyp, inpflp) {
   return(plot)
 }
 
-
-# bubheat_plotly <- function(inpConf, inpMeta, inp, inpGrp, inpPlt, 
-#                            inpsub1, inpsub2, inpH5, inpGene, inpScl, inpRow, inpCol, 
-#                            inpcols, plot_height = 700){ 
-#   if(is.null(inpsub1)){inpsub1 = inpConf$UI[1]} 
-#   
-#   # Prepare data
-#   h5file <- H5File$new(inpH5, mode = "r") 
-#   h5data <- h5file[["grp"]][["data"]] 
-#   ggData = data.table() 
-#   for(iGene in inp){ 
-#     tmp = inpMeta[, c("sampleID", inpConf[UI == inpsub1]$ID), with = FALSE] 
-#     colnames(tmp) = c("sampleID", "sub") 
-#     tmp$grpBy = inpMeta[[inpConf[UI == inpGrp]$ID]] 
-#     tmp$geneName = iGene 
-#     tmp$val = h5data$read(args = list(inpGene[iGene], quote(expr=))) 
-#     ggData = rbindlist(list(ggData, tmp)) 
-#   } 
-#   
-#   # Close HDF5 file
-#   # h5file$close_all()
-#   
-#   if(length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)){ 
-#     ggData = ggData[sub %in% inpsub2] 
-#   } 
-#   
-#   if(uniqueN(ggData$grpBy) <= 1) {
-#     return("Only 1 group present, unable to plot!")
-#   }
-#   if(uniqueN(ggData$geneName) < 2) {
-#     return("Fewer than 2 genes present, unable to plot!")
-#   }
-#   
-#   # Aggregate data
-#   ggData$val = expm1(ggData$val) 
-#   ggData = ggData[, .(val = mean(val), prop = sum(val > 0) / length(sampleID)), 
-#                   by = c("geneName", "grpBy")] 
-#   ggData$val = log1p(ggData$val) 
-#   
-#   # Scale if required 
-#   colRange = range(ggData$val) 
-#   if(inpScl){ 
-#     ggData[, val := scale(val), by = "geneName"] 
-#     colRange = c(-max(abs(range(ggData$val))), max(abs(range(ggData$val)))) 
-#   } 
-#   
-#   # hclust row/col if necessary 
-#   ggMat = dcast.data.table(ggData, geneName ~ grpBy, value.var = "val") 
-#   tmp = ggMat$geneName 
-#   ggMat = as.matrix(ggMat[, -1]) 
-#   rownames(ggMat) = tmp 
-# 
-#   point_size_mat = dcast.data.table(ggData, geneName ~ grpBy, value.var = "prop")
-#   point_size_mat = as.matrix(point_size_mat[, -1])
-#   rownames(point_size_mat) = tmp
-#   
-#   plot <- heatmaply(ggMat, 
-#                     plot_method = "plotly",
-#                     Rowv = if(inpRow) TRUE else FALSE, 
-#                     subplot_widths = c(0.95, 0.05),
-#                     branches_lwd = 0.01,
-#                     Colv = if(inpCol) TRUE else FALSE, 
-#                     scale = if(inpScl) "row" else "none", 
-#                     colors = cList[[inpcols]], 
-#                     fontsize_row = 12, 
-#                     fontsize_col = 12, 
-#                     plot_height = plot_height,
-#                     main = if(inpPlt == "Bubbleplot") "Bubble Plot" else "Heatmap",
-#                     point_size_mat = if(inpPlt == "Bubbleplot") point_size_mat else NULL,
-#                     point_size_name = if(inpPlt == "Bubbleplot") "Proportion" else NULL)
-#   
-#   plot <- plot %>%
-#     layout(
-#       xaxis2 = list(showticklabels = FALSE),  # Hide x-axis tick labels for the top dendrogram
-#       yaxis2 = list(showticklabels = FALSE)   # Hide y-axis tick labels for the right dendrogram
-#     )
-#   
-#   return(plot)
-# }
-
-
 bubheat_plotly <- function(processed_data, inpPlt, inpRow, inpCol, inpScl, inpcols, plot_height = 700) {
+  #' Create a Plotly bubble heatmap or heatmap
+  #'
+  #' @param processed_data List containing processed data for plotting
+  #' @param inpPlt Character string indicating plot type ("Bubbleplot" or "Heatmap")
+  #' @param inpRow Logical indicating whether to cluster rows
+  #' @param inpCol Logical indicating whether to cluster columns
+  #' @param inpScl Logical indicating whether to scale data by rows
+  #' @param inpcols Numeric index for color palette
+  #' @param plot_height Numeric value for plot height
+  #'
+  #' @return A Plotly bubble heatmap or heatmap object
+  
   ggMat <- processed_data$ggMat
   point_size_mat <- processed_data$point_size_mat
   colRange <- processed_data$colRange
@@ -857,6 +517,5 @@ bubheat_plotly <- function(processed_data, inpPlt, inpRow, inpCol, inpScl, inpco
                     point_size_mat = if (inpPlt == "Bubbleplot") point_size_mat else NULL,
                     point_size_name = if (inpPlt == "Bubbleplot") "Proportion" else NULL)
   
-
   return(plot)
 }

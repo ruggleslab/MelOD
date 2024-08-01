@@ -1,4 +1,16 @@
 process_cell_data <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL) {
+  #' Process cell data for visualization
+  #'
+  #' @param inpConf Data frame with configuration settings.
+  #' @param inpMeta Data frame with metadata.
+  #' @param inpdrX Character string for the X dimension.
+  #' @param inpdrY Character string for the Y dimension.
+  #' @param inp1 Character string for the main variable.
+  #' @param inpsub1 Character string for the first subgroup. Default is NULL.
+  #' @param inpsub2 Character string for the second subgroup. Default is NULL.
+  #'
+  #' @return A list containing ggData, ggData2, ggCol, rat, and bgCells.
+  
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   }
@@ -35,6 +47,20 @@ process_cell_data <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = 
 
 
 process_gene_data <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = NULL, inpsub2 = NULL, h5file, inpGene) {
+  #' Process gene data for visualization
+  #'
+  #' @param inpConf Data frame with configuration settings.
+  #' @param inpMeta Data frame with metadata.
+  #' @param inpdrX Character string for the X dimension.
+  #' @param inpdrY Character string for the Y dimension.
+  #' @param inp1 Character string for the main variable.
+  #' @param inpsub1 Character string for the first subgroup. Default is NULL.
+  #' @param inpsub2 Character string for the second subgroup. Default is NULL.
+  #' @param h5file HDF5 file containing gene data.
+  #' @param inpGene Data frame with gene information.
+  #'
+  #' @return A list containing ggData, rat, inp1, and inpsub2.
+  
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   }
@@ -61,8 +87,22 @@ process_gene_data <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inpsub1 = 
 }
 
 
-process_coexpression_data <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2,
-                                      inpsub1 = NULL, inpsub2 = NULL, h5file, inpGene) {
+process_coexpression_data <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, inp2, inpsub1 = NULL, inpsub2 = NULL, h5file, inpGene) {
+  #' Process co-expression data for visualization
+  #'
+  #' @param inpConf Data frame with configuration settings.
+  #' @param inpMeta Data frame with metadata.
+  #' @param inpdrX Character string for the X dimension.
+  #' @param inpdrY Character string for the Y dimension.
+  #' @param inp1 Character string for the first gene.
+  #' @param inp2 Character string for the second gene.
+  #' @param inpsub1 Character string for the first subgroup. Default is NULL.
+  #' @param inpsub2 Character string for the second subgroup. Default is NULL.
+  #' @param h5file HDF5 file containing gene data.
+  #' @param inpGene Data frame with gene information.
+  #'
+  #' @return A list containing ggData, rat, inp1, inp2, and inpsub2.
+  
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   }
@@ -81,8 +121,20 @@ process_coexpression_data <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, in
 }
 
 
-
 process_violin_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL, inpsub2 = NULL, h5file, inpGene) {
+  #' Process violin plot data for visualization
+  #'
+  #' @param inpConf Data frame with configuration settings.
+  #' @param inpMeta Data frame with metadata.
+  #' @param inp1 Character string for the main variable.
+  #' @param inp2 Character string for the second variable.
+  #' @param inpsub1 Character string for the first subgroup. Default is NULL.
+  #' @param inpsub2 Character string for the second subgroup. Default is NULL.
+  #' @param h5file HDF5 file containing gene data.
+  #' @param inpGene Data frame with gene information.
+  #'
+  #' @return A list containing ggData, ggCol, inp1, and inp2.
+  
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   } 
@@ -116,8 +168,18 @@ process_violin_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL, in
 }
 
 
-
 process_proportion_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL, inpsub2 = NULL) {
+  #' Process proportion data for visualization
+  #'
+  #' @param inpConf Data frame with configuration settings.
+  #' @param inpMeta Data frame with metadata.
+  #' @param inp1 Character string for the main variable.
+  #' @param inp2 Character string for the second variable.
+  #' @param inpsub1 Character string for the first subgroup. Default is NULL.
+  #' @param inpsub2 Character string for the second subgroup. Default is NULL.
+  #'
+  #' @return A list containing ggData, ggCol, inp1, and inp2.
+  
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   }
@@ -125,7 +187,7 @@ process_proportion_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL
   ggData <- inpMeta[, c(inpConf[UI == inp1]$ID, inpConf[UI == inp2]$ID, inpConf[UI == inpsub1]$ID), with = FALSE]
   colnames(ggData) <- c("X", "grp", "sub")
   
-  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
+  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(factor(ggData$sub))) {
     ggData <- ggData[sub %in% inpsub2]
   }
   
@@ -134,8 +196,8 @@ process_proportion_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL
   .SD[, .(pctCells = 100 * sum(nCells) / tot, nCells = nCells), by = "grp"]}, by = "X"]
   
   ggCol <- strsplit(inpConf[UI == inp2]$fCL, "\\|")[[1]]
-  names(ggCol) <- levels(ggData$grp)
-  ggLvl <- levels(ggData$grp)[levels(ggData$grp) %in% unique(ggData$grp)]
+  names(ggCol) <- levels(factor(ggData$grp))
+  ggLvl <- levels(factor(ggData$grp))[levels(factor(ggData$grp)) %in% unique(ggData$grp)]
   ggData$grp <- factor(ggData$grp, levels = ggLvl)
   ggCol <- ggCol[ggLvl]
   
@@ -143,8 +205,21 @@ process_proportion_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL
 }
 
 
-
 process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL, inpsub2 = NULL, h5file, inpGene, inpScl) {
+  #' Process bubble heatmap data for visualization
+  #'
+  #' @param inpConf Data frame with configuration settings.
+  #' @param inpMeta Data frame with metadata.
+  #' @param inp Character vector of input genes.
+  #' @param inpGrp Character string for the group variable.
+  #' @param inpsub1 Character string for the first subgroup. Default is NULL.
+  #' @param inpsub2 Character string for the second subgroup. Default is NULL.
+  #' @param h5file HDF5 file containing gene data.
+  #' @param inpGene Data frame with gene information.
+  #' @param inpScl Logical indicating if scaling should be applied.
+  #'
+  #' @return A list containing ggMat, point_size_mat, and colRange.
+  
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   }
@@ -161,7 +236,7 @@ process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL, 
     ggData <- rbindlist(list(ggData, tmp))
   }
   
-  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(ggData$sub)) {
+  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(factor(ggData$sub))) {
     ggData <- ggData[sub %in% inpsub2]
   }
   

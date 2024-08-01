@@ -7,7 +7,7 @@ bubheat_server <- function(id, shared_reactives) {
                          selected = shared_reactives$sc1def_data()$grp1)
     
 
-      
+
      updateMultiInput(
           session = session,
           inputId = "bubheat_selected_gene",
@@ -15,7 +15,7 @@ bubheat_server <- function(id, shared_reactives) {
           selected = names(shared_reactives$sc1gene_data())[1:5]
         )
 
-   
+
     
     processed_data <- reactive({
       req(input$bubheat_group_by, input$bubheat_selected_gene, input$bubheat_group_by, input$cell_subset, input$cell_subset_choices_box)

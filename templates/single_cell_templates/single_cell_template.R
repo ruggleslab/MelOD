@@ -27,6 +27,10 @@ inputs_ui <- function(id) {
              br(),br(),
              actionButton(ns("cell_subset_all"), "Select all groups", class = "btn btn-primary"),
              actionButton(ns("cell_subset_none"), "Deselect all groups", class = "btn btn-primary")),
+      column(
+        4, selectInput(ns("cell_plot_culstered_X_axis"), "X-axis:", choices = NULL),
+        selectInput(ns("cell_plot_culstered_Y_axis"), "Y-axis:", choices = NULL)
+      ),
       column(4,
              numericInput(ns("marker_size"), "Point size:", value = 5, min = 1, max = 10),
              materialSwitch(
@@ -70,10 +74,7 @@ cell_info_ui <- function(id) {
       withSpinner(plotlyOutput(ns("cell_plot_culstered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
       width = 12,
       fluidRow(
-        column(
-          3, selectInput(ns("cell_plot_culstered_X_axis"), "X-axis:", choices = NULL),
-          selectInput(ns("cell_plot_culstered_Y_axis"), "Y-axis:", choices = NULL)
-        ),
+        
         column(
           3, selectInput(ns("cell_plot_culstered_info"), "Cell information:", choices = NULL) %>%
             helper(type = "inline", size = "m", fade = TRUE,
