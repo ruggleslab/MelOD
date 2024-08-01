@@ -155,7 +155,7 @@ setup_download_handler <- function(id, output, name, data_reactive, filename_pre
 #' Download Handlers
 #' 
 #' @description Sets up the download handlers for exporting data in the server part
-  
+
   output[[name]] <- downloadHandler(
     filename = function() {
       paste(id,"_", filename_prefix, "_", Sys.Date(), '.csv', sep = '')

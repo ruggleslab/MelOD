@@ -2,6 +2,11 @@ seurat_ui <- function(id) {
 
   fluidPage(
     fluidRow(
+      blurb_study_ui("kunz")),
+    fluidRow(
+      column(6, blurb_data_ui("kunz")),
+      column(6, blurb_comparison_ui("kunz"))),
+    fluidRow(
     column(5,inputs_ui("seurat_test")),
     column(7, cell_datatable_ui("seurat_test")),
     ),
@@ -29,13 +34,16 @@ seurat_server <- function(input, output, session) {
   
   observe_helpers()
   
-  inputs_server("seurat_test", sc1conf, sc1def)
-  cell_info_server("seurat_test", sc1conf, sc1meta, sc1def)
-  gene_expression_server("seurat_test", sc1conf, sc1meta, sc1gene, sc1def, h5_file_path)
-  gene_coexpression_server("seurat_test", sc1conf, sc1meta, sc1gene, sc1def, h5_file_path)
-  sc_violin_server("seurat_test", sc1conf, sc1meta, sc1gene, sc1def, h5_file_path)
-  proportion_server("seurat_test", sc1conf, sc1meta, sc1def)
-  bubheat_server("seurat_test", sc1conf, sc1meta, sc1gene, sc1def, h5_file_path)
+  
+  selection_result <- selection_server_single_cell(sc1conf, sc1def, h5_file_path, sc1gene, sc1meta, "seurat_test")
+  
+  inputs_server("seurat_test", selection_result)
+  cell_info_server("seurat_test",selection_result)
+  gene_expression_server("seurat_test", selection_result)
+  gene_coexpression_server("seurat_test", selection_result)
+  sc_violin_server("seurat_test", selection_result)
+  proportion_server("seurat_test", selection_result)
+  bubheat_server("seurat_test", selection_result)
   
 }
 

@@ -1,46 +1,31 @@
-sc_violin_server <- function(id, sc1conf, sc1meta, sc1gene, sc1def, h5_file_path) {
+sc_violin_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
     updateSelectizeInput(session, "violin_plot_X",
-                         choices = sc1conf[grp == TRUE]$UI,
-                         selected = sc1def$grp1)
+                         choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                         selected = shared_reactives$sc1def_data()$grp1)
     
     updateSelectizeInput(session, "violin_plot_Y", server = TRUE, 
-                         choices = c(sc1conf[is.na(fID)]$UI, names(sc1gene)), 
-                         selected = sc1conf[is.na(fID)]$UI[1], options = list(
-                           maxOptions = length(sc1conf[is.na(fID)]$UI) + 3))
+                         choices = c(shared_reactives$sc1conf_data()[is.na(fID)]$UI, names(shared_reactives$sc1gene_data())), 
+                         selected = shared_reactives$sc1conf_data()[is.na(fID)]$UI[1], options = list(
+                           maxOptions = length(shared_reactives$sc1conf_data()[is.na(fID)]$UI) + 3))
+    
+    processed_data <- reactive({
+      req(input$violin_plot_X, input$violin_plot_Y, input$cell_subset, input$cell_subset_choices_box)
+      
+      process_violin_data(shared_reactives$sc1conf_data(), shared_reactives$sc1meta_data(), input$violin_plot_X, input$violin_plot_Y, 
+                          input$cell_subset, input$cell_subset_choices_box, 
+                          shared_reactives$h5_data(), shared_reactives$sc1gene_data())
+    })
     
     output$sc_violin_plot <- renderPlotly({ 
-      req(input$violin_plot_X, input$violin_plot_Y, input$cell_subset, input$cell_subset_choices_box)
-      print("violin")
+      req(processed_data())
       
-      sc_violin_plotly(sc1conf, sc1meta, input$violin_plot_X, input$violin_plot_Y, 
-                       input$cell_subset, input$cell_subset_choices_box, 
-                       h5_file_path, sc1gene, input$sc_box_or_violin, input$sc_violon_dot) 
+      sc_violin_plotly(processed_data(), input$sc_box_or_violin, input$sc_violon_dot)
     }) 
+    setup_download_handler(id, output, "sc_violin_boxplot_data", reactive({processed_data()$ggData}), "gene_plot_data")
+    
+    
   })
 }
-
-
-    # output$sc1c1oup.pdf <- downloadHandler( 
-    #   filename = function() { paste0("sc1",input$sc1c1typ,"_",input$sc1c1inp1,"_",  
-    #                                  input$sc1c1inp2,".pdf") }, 
-    #   content = function(file) { ggsave( 
-    #     file, device = "pdf", height = input$sc1c1oup.h, width = input$sc1c1oup.w, useDingbats = FALSE, 
-    #     plot = scVioBox(sc1conf, sc1meta, input$sc1c1inp1, input$sc1c1inp2, 
-    #                     input$sc1c1sub1, input$sc1c1sub2, 
-    #                     "sc1gexpr.h5", sc1gene, input$sc1c1typ, input$sc1c1pts, 
-    #                     input$sc1c1siz, input$sc1c1fsz) ) 
-    #   }) 
-    # output$sc1c1oup.png <- downloadHandler( 
-    #   filename = function() { paste0("sc1",input$sc1c1typ,"_",input$sc1c1inp1,"_",  
-    #                                  input$sc1c1inp2,".png") }, 
-    #   content = function(file) { ggsave( 
-    #     file, device = "png", height = input$sc1c1oup.h, width = input$sc1c1oup.w, 
-    #     plot = scVioBox(sc1conf, sc1meta, input$sc1c1inp1, input$sc1c1inp2, 
-    #                     input$sc1c1sub1, input$sc1c1sub2, 
-    #                     "sc1gexpr.h5", sc1gene, input$sc1c1typ, input$sc1c1pts, 
-    #                     input$sc1c1siz, input$sc1c1fsz) ) 
-    #   }) 
-    

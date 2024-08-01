@@ -107,3 +107,23 @@ shared_server_utilities <- function(dds) {
 }
 
 
+selection_server_single_cell <- function(sc1conf, sc1def, h5_file_path, sc1gene, sc1meta, id) {
+  moduleServer(id, function(input, output, session) {
+    
+    sc1conf_data <- reactiveVal(sc1conf)
+    sc1def_data <- reactiveVal(sc1def)
+    sc1gene_data <- reactiveVal(sc1gene)
+    sc1meta_data <- reactiveVal(sc1meta)
+    h5_data <- reactiveVal({
+      H5File$new(h5_file_path, mode = "r")
+    })
+    
+    return(list(
+      sc1conf_data = sc1conf_data,
+      sc1def_data = sc1def_data,
+      sc1gene_data = sc1gene_data,
+      sc1meta_data = sc1meta_data,
+      h5_data = h5_data
+    ))
+  })
+}

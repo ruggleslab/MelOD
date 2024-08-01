@@ -1,50 +1,32 @@
-proportion_server <- function(id, sc1conf, sc1meta, sc1def) {
+proportion_server <- function(id,shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    # Update the SelectizeInput for proportion_plot_X
     updateSelectizeInput(session, "proportion_plot_X",
-                         choices = sc1conf[grp == TRUE]$UI,
-                         selected = sc1def$grp1)
+                         choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                         selected = shared_reactives$sc1def_data()$grp1)
     
-    # Update the SelectizeInput for proportion_group_by
     updateSelectizeInput(session, "proportion_group_by",
-                         choices = sc1conf[grp == TRUE]$UI,
-                         selected = sc1def$grp2)
+                         choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                         selected = shared_reactives$sc1def_data()$grp2)
     
- 
- 
-     
+    processed_data <- reactive({
+      req(input$proportion_plot_X, input$proportion_group_by, input$cell_subset, input$cell_subset_choices_box)
       
-      # Assign the plot to the output
-      output$proportion_plot <- renderPlotly({
-        req(input$proportion_plot_X, input$proportion_group_by, input$cell_subset, input$cell_subset_choices_box, input$proportion_type)
-        proportion_plotly(sc1conf, sc1meta, input$proportion_plot_X, input$proportion_group_by,  
-                          input$cell_subset, input$cell_subset_choices_box, 
-                          input$proportion_type, input$proportion_flip_axis)
-      })
+      process_proportion_data(shared_reactives$sc1conf_data(), shared_reactives$sc1meta_data(), input$proportion_plot_X, input$proportion_group_by,
+                              input$cell_subset, input$cell_subset_choices_box)
+    })
+    
+    output$proportion_plot <- renderPlotly({
+      req(processed_data())
+      
+      proportion_plotly(processed_data(), input$proportion_type, input$proportion_flip_axis)
+    })
+    
+    setup_download_handler(id, output, "proportion_data", reactive({processed_data()$ggData}), "proportion_data")
+    
+    
   })
 }
 
 
-    # 
-    # output$sc1c2oup.pdf <- downloadHandler( 
-    #   filename = function() { paste0("sc1",input$sc1c2typ,"_",input$sc1c2inp1,"_",  
-    #                                  input$sc1c2inp2,".pdf") }, 
-    #   content = function(file) { ggsave( 
-    #     file, device = "pdf", height = input$sc1c2oup.h, width = input$sc1c2oup.w, useDingbats = FALSE, 
-    #     plot = scProp(sc1conf, sc1meta, input$sc1c2inp1, input$sc1c2inp2,  
-    #                   input$sc1c2sub1, input$sc1c2sub2, 
-    #                   input$sc1c2typ, input$sc1c2flp, input$sc1c2fsz) ) 
-    #   }) 
-    # output$sc1c2oup.png <- downloadHandler( 
-    #   filename = function() { paste0("sc1",input$sc1c2typ,"_",input$sc1c2inp1,"_",  
-    #                                  input$sc1c2inp2,".png") }, 
-    #   content = function(file) { ggsave( 
-    #     file, device = "png", height = input$sc1c2oup.h, width = input$sc1c2oup.w, 
-    #     plot = scProp(sc1conf, sc1meta, input$sc1c2inp1, input$sc1c2inp2,  
-    #                   input$sc1c2sub1, input$sc1c2sub2, 
-    #                   input$sc1c2typ, input$sc1c2flp, input$sc1c2fsz) ) 
-    #   }) 
-    # 
-    # 

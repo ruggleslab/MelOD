@@ -189,7 +189,13 @@ violin_ui <- function(id) {
       collapsible = TRUE,
       withSpinner(plotlyOutput(ns(id = 'violin_plot')),type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
-        column(4,selectizeInput(ns("box_or_violin"), "Type of plot:", choices = c("Default" = "violin", "Boxplot" ="boxplot"), selected = "violin", multiple = FALSE, options = list(maxItems = 1))),
+        column(4,
+               radioGroupButtons(
+                 inputId = ns("box_or_violin"),
+                 label = "Type of graph :", 
+                 choices = c(`<i class='violin_logo'></i>` = "violin", `<i class='boxplot_logo'></i>` = "Boxplot"),
+                 selected="violin",
+                 justified = TRUE)),
         column(4,selectizeInput(ns("violon_color"), "Color:", choices = c("Default"="Red & Blue", "Green & Purple"), selected = "Red & Blue", multiple = FALSE, options = list(maxItems = 1))),
         column(4,selectizeInput(ns("violon_dot"), "Dot:", choices = c("Outliers "= "outliers", "All" = "all"), selected = "outliers", multiple = FALSE, options = list(maxItems = 1)))
       )
