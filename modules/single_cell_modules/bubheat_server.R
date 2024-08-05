@@ -2,18 +2,21 @@ bubheat_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    updateSelectizeInput(session, "bubheat_group_by",
-                         choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
-                         selected = shared_reactives$sc1def_data()$grp1)
+    observe({updateSelectizeInput(session, "bubheat_group_by",
+                                  choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                                  selected = shared_reactives$sc1def_data()$grp1)
     
-
-
-     updateMultiInput(
-          session = session,
-          inputId = "bubheat_selected_gene",
-          choices = names(shared_reactives$sc1gene_data()),
-          selected = names(shared_reactives$sc1gene_data())[1:5]
-        )
+    updateSelectizeInput(session, "bubheat_group_by",
+                                   choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                                   selected = shared_reactives$sc1def_data()$grp1)
+    
+      updateMultiInput(
+        session = session,
+        inputId = "bubheat_selected_gene",
+        choices = names(shared_reactives$sc1gene_data()),
+        selected = names(shared_reactives$sc1gene_data())[1:5])
+ 
+})
 
 
     

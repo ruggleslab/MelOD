@@ -54,5 +54,16 @@
         "data_explanation": "135 total samples, 86 melanoma brain metastases, 49 extracranial metastases (from various locations). Samples were collected from 80 patients with some patients contributing multiple samples from different locations (both brain and extracranial).",
         "data_comparison": " The ground truth for the comparison was Brain Metastases vs. Extracranial Metastases."
 
+    },
+    "mayumi_info" : {
+        "title": "A novel mouse model demonstrates that oncogenic melanocyte stem cells engender melanoma resembling human disease",
+        "lead_author": "Mayumi",
+        "abstract": "Melanoma, the deadliest skin cancer, remains largely incurable at advanced stages. Currently, there is a lack of animal models that resemble human melanoma initiation and progression. Recent studies using a Tyr-CreER driven mouse model have drawn contradictory conclusions about the potential of melanocyte stem cells (McSCs) to form melanoma. Here, we employ a c-Kit-CreER-driven model that specifically targets McSCs to show that oncogenic McSCs are a bona fide source of melanoma that expand in the niche, and then establish epidermal melanomas that invade into the underlying dermis. Further, normal Wnt and Endothelin niche signals during hair anagen onset are hijacked to promote McSC malignant transformation during melanoma induction. Finally, molecular profiling reveals strong resemblance of murine McSC-derived melanoma to human melanoma in heterogeneity and gene signatures. These findings provide experimental validation of the human melanoma progression model and key insights into the transformation and heterogeneity of McSC-derived melanoma.",
+        "paper_link": "https://aacrjournals.org/cancerdiscovery/article/9/5/628/42007/Molecular-Profiling-Reveals-Unique-Immune-and",
+        "doi": "10.1158/2159-8290.CD-18-1489",
+        "data_link": "https://ega-archive.org/datasets/EGAD00001005046",
+        "data_explanation": "135 total samples, 86 melanoma brain metastases, 49 extracranial metastases (from various locations). Samples were collected from 80 patients with some patients contributing multiple samples from different locations (both brain and extracranial).",
+        "data_comparison": " The ground truth for the comparison was TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed)"
+
     }
 }

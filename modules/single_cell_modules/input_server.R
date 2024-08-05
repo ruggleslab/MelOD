@@ -2,9 +2,13 @@ inputs_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    updateSelectInput(session, "cell_subset",
-                      choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
-                      selected = shared_reactives$sc1def_data()$grp1)
+
+    
+    print(shared_reactives$sc1conf_data)
+    
+    observe({updateSelectInput(session, "cell_subset",
+                               choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                               selected = shared_reactives$sc1def_data()$grp1)})
     
     output$cell_subset_choices <- renderUI({
       req(input$cell_subset) # Ensure input$cell_subset is not NULL

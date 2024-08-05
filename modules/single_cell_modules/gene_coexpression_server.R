@@ -2,11 +2,16 @@ gene_coexpression_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
+    
     debounced_marker_size <- debounce(reactive({ input$marker_size }), millis = 0)
     
-    updateSelectizeInput(session, "gene_plot_coexpression_selection", choices = names(shared_reactives$sc1gene_data()), server = TRUE)
-    updateSelectizeInput(session, "gene_plot_coexpression_selection_2", choices = names(shared_reactives$sc1gene_data()), selected = names(shared_reactives$sc1gene_data())[3], server = TRUE)
-    
+
+    observe({ 
+      
+      updateSelectizeInput(session, "gene_plot_coexpression_selection", choices = names(shared_reactives$sc1gene_data()), server = TRUE)
+      updateSelectizeInput(session, "gene_plot_coexpression_selection_2", choices = names(shared_reactives$sc1gene_data()), selected = names(shared_reactives$sc1gene_data())[3], server = TRUE)
+    })
+   
     processed_data <- reactive({
       req(input$cell_plot_culstered_X_axis, 
           input$cell_plot_culstered_Y_axis, 

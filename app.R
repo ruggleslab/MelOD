@@ -26,7 +26,8 @@ source("templates/bulk_rna_templates/bulk_rna_template.R", local = TRUE)
 
 source("templates/in_development_template.R", local = TRUE)
 source("templates/single_cell_templates/single_cell_template.R", local = TRUE)
-source("templates/single_cell_templates/shiny_cell_template.R", local = TRUE)
+source("templates/single_cell_templates/mayumi_template.R", local = TRUE)
+source("templates/single_cell_templates/KBPT_template.R", local = TRUE)
 
 
 
@@ -60,10 +61,13 @@ server <- function(input, output, session) {
       gide_server()
     } else if (input$tabs == "fischer") {
       fischer_server()
-    } else if (input$tabs == "seurat_test") {
-      seurat_server()
+    } else if (input$tabs == "mayumi") {
+      mayumi_server()
+    } else if (input$tabs == "KBPT") {
+      KBPT_server()
     }
   })
 }
 
 shinyApp(ui, server)
+

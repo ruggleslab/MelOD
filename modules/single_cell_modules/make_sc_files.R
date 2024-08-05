@@ -2,7 +2,7 @@ library(Seurat)
 
 
 
-seu  = readRDS("./harmonized_seurat.rds")
+seu  = readRDS("./harmonized_seurat_postfilt.rds")
 seu = UpdateSeuratObject(seu)
 
 scConf = createConfig(seu)

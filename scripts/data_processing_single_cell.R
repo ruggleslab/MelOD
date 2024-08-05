@@ -121,7 +121,7 @@ process_coexpression_data <- function(inpConf, inpMeta, inpdrX, inpdrY, inp1, in
 }
 
 
-process_violin_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL, inpsub2 = NULL, h5file, inpGene) {
+process_violin_single_cell_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL, inpsub2 = NULL, h5file, inpGene) {
   #' Process violin plot data for visualization
   #'
   #' @param inpConf Data frame with configuration settings.

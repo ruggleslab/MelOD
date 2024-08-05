@@ -107,15 +107,68 @@ shared_server_utilities <- function(dds) {
 }
 
 
-selection_server_single_cell <- function(sc1conf, sc1def, h5_file_path, sc1gene, sc1meta, id) {
+
+
+
+
+
+
+selection_list_single_cell_server <- function(sc1conf, sc1def, h5_file, sc1gene, sc1meta, id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
-    
-    sc1conf_data <- reactiveVal(sc1conf)
-    sc1def_data <- reactiveVal(sc1def)
-    sc1gene_data <- reactiveVal(sc1gene)
-    sc1meta_data <- reactiveVal(sc1meta)
-    h5_data <- reactiveVal({
-      H5File$new(h5_file_path, mode = "r")
+
+    observe({
+      req(input$selection)
+      sc1conf_data = NULL
+      sc1def_data = NULL
+      sc1gene_data = NULL
+      sc1meta_data = NULL
+      h5_data = NULL
+      
+      if ("TBPT" %in% input$selection) {
+        sc1conf_data <- sc1conf[[1]]
+        sc1def_data <- sc1def[[1]]
+        sc1gene_data <- sc1gene[[1]]
+        sc1meta_data <- sc1meta[[1]]
+        h5_data <- h5_file[[1]]
+      } else if ("KBPT" %in% input$selection) {
+        sc1conf_data <- sc1conf[[2]]
+        sc1def_data <- sc1def[[2]]
+        sc1gene_data <- sc1gene[[2]]
+        sc1meta_data <- sc1meta[[2]]
+        h5_data <- h5_file[[2]]
+      }
+      if (!is.null(sc1conf_data)) {
+        shared_reactives$sc1conf_data(sc1conf_data)
+        shared_reactives$sc1def_data(sc1def_data)
+        shared_reactives$sc1gene_data(sc1gene_data)
+        shared_reactives$sc1meta_data(sc1meta_data)
+        shared_reactives$h5_data(h5_data)
+      }
+    })
+  })
+}
+
+
+
+selection_server_single_cell <- function(sc1conf, sc1def, h5_file, sc1gene, sc1meta, id) {
+  moduleServer(id, function(input, output, session) {
+
+        sc1conf_data <- reactiveVal()
+        sc1def_data <- reactiveVal()
+        sc1gene_data <- reactiveVal()
+        sc1meta_data <- reactiveVal()
+        h5_data <- reactiveVal()
+
+    observe({
+      if (length(sc1conf) > 1) {
+        selection_list_single_cell_server(sc1conf, sc1def, h5_file, sc1gene, sc1meta, id, shared_reactives)
+      } else {
+        sc1conf_data(sc1conf[[1]])
+        sc1def_data(sc1def[[1]])
+        sc1gene_data(sc1gene[[1]])
+        sc1meta_data(sc1meta[[1]])
+        h5_data(h5_file[[1]])
+      }
     })
     
     return(list(
@@ -127,3 +180,6 @@ selection_server_single_cell <- function(sc1conf, sc1def, h5_file_path, sc1gene,
     ))
   })
 }
+
+
+

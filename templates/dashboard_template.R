@@ -7,7 +7,7 @@ dashboardTemplate <- function() {
 
   dashboardPage(
     dashboardHeader(title = tags$div(
-      tags$img(src = "./images/header_logo_final4.png", height = "45px"),
+      tags$img(src = "./images/header_logo_final4.png", height = "40px"),
     )),
     dashboardSidebar(
       width = 250,
@@ -22,7 +22,8 @@ dashboardTemplate <- function() {
                           menuSubItem("Fischer, Davies 2019", tabName = "fischer")
                  ),
                  menuItem("Single Cell", tabName = "single",
-                          menuSubItem("Seurat Test", tabName = "seurat_test")
+                          menuSubItem("Mayumi et al. 2019", tabName = "mayumi"),
+                          menuSubItem("Internal Data (KBPT)", tabName = "KBPT")
                  ),
                  menuItem("Proteomic", tabName = "proteomic")
         ),
@@ -42,7 +43,9 @@ dashboardTemplate <- function() {
         tabItem(tabName = "badal", badal_ui("badal_template")),
         tabItem(tabName = "kunz", kunz_ui("kunz_template")),
         tabItem(tabName = "fischer", fischer_ui("fischer_template")),
-        tabItem(tabName = "seurat_test", seurat_ui("shiny_cell_template")),
+        tabItem(tabName = "mayumi", mayumi_ui("mayumi_template")),
+        tabItem(tabName = "KBPT", KBPT_ui("KBPT_template")),
+        
         tabItem(tabName = "proteomic", in_development_ui("in_development_template")),
         tabItem(tabName = "about", in_development_ui("in_development_template"))
       ),

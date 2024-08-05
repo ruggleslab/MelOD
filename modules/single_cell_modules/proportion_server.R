@@ -2,13 +2,16 @@ proportion_server <- function(id,shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    updateSelectizeInput(session, "proportion_plot_X",
-                         choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
-                         selected = shared_reactives$sc1def_data()$grp1)
     
-    updateSelectizeInput(session, "proportion_group_by",
-                         choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
-                         selected = shared_reactives$sc1def_data()$grp2)
+    observe({updateSelectizeInput(session, "proportion_plot_X",
+                                  choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                                  selected = shared_reactives$sc1def_data()$grp1)
+      
+      updateSelectizeInput(session, "proportion_group_by",
+                           choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                           selected = shared_reactives$sc1def_data()$grp2)
+    })
+    
     
     processed_data <- reactive({
       req(input$proportion_plot_X, input$proportion_group_by, input$cell_subset, input$cell_subset_choices_box)
