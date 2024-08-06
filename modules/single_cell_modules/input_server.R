@@ -8,7 +8,17 @@ inputs_server <- function(id, shared_reactives) {
     
     observe({updateSelectInput(session, "cell_subset",
                                choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
-                               selected = shared_reactives$sc1def_data()$grp1)})
+                               selected = shared_reactives$sc1def_data()$grp1)
+      
+      
+      updateSelectInput(session, "cell_plot_clustered_X_axis",
+                        choices = shared_reactives$sc1conf_data()[dimred == TRUE]$UI,
+                        selected =  shared_reactives$sc1def_data()$dimred[1])
+      
+      updateSelectInput(session, "cell_plot_clustered_Y_axis",
+                        choices = shared_reactives$sc1conf_data()[dimred == TRUE]$UI,
+                        selected =  shared_reactives$sc1def_data()$dimred[2])
+      })
     
     output$cell_subset_choices <- renderUI({
       req(input$cell_subset) # Ensure input$cell_subset is not NULL

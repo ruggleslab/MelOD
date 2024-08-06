@@ -142,7 +142,7 @@ gene_plotly <- function(processed_data, inpdrX, inpdrY, inpcol, inpsiz) {
     xaxis = list(title = inpdrX, zeroline = TRUE, showline = FALSE, showgrid = TRUE),
     yaxis = list(title = inpdrY, zeroline = TRUE, showline = FALSE, showgrid = TRUE, scaleanchor = "x", scaleratio = rat),
     showlegend = FALSE
-  ) %>% colorbar(title = inp1, len = 0.5, thickness = 15)
+  ) %>% colorbar(title = inp1, len = 0.3, thickness = 15)
   
   return(p)
 }

@@ -28,17 +28,11 @@ inputs_ui <- function(id) {
              actionButton(ns("cell_subset_all"), "Select all groups", class = "btn btn-primary"),
              actionButton(ns("cell_subset_none"), "Deselect all groups", class = "btn btn-primary")),
       column(
-        4, selectInput(ns("cell_plot_culstered_X_axis"), "X-axis:", choices = NULL),
-        selectInput(ns("cell_plot_culstered_Y_axis"), "Y-axis:", choices = NULL)
+        4, selectInput(ns("cell_plot_clustered_X_axis"), "X-axis:", choices = NULL),
+        selectInput(ns("cell_plot_clustered_Y_axis"), "Y-axis:", choices = NULL)
       ),
       column(4,
-             numericInput(ns("marker_size"), "Point size:", value = 5, min = 1, max = 10),
-             materialSwitch(
-               inputId = ns("split_view"),
-               label = "Split View: ",
-               value = FALSE,
-               status = "warning"
-             )),
+             numericInput(ns("marker_size"), "Point size:", value = 5, min = 1, max = 10)),
     )
   )
 }
@@ -61,76 +55,123 @@ cell_datatable_ui <- function(id) {
 
 
 
+# 
+# cell_info_ui <- function(id) {
+#   ns <- NS(id)
+#   
+#   fluidRow(
+# 
+#     box(
+#       title = HTML(paste("Cell Information", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("cell_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
+#       status = "primary", solidHeader = TRUE,
+#       
+#       withSpinner(plotlyOutput(ns("cell_plot_clustered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
+#       width = 12,
+#       fluidRow(
+#         
+#         column(3,pickerInput(
+#           inputId = ns("choice_comparison_cell_gene"),
+#           label = "Style : primary", 
+#           choices = c("Cell Vs Cell", "Cell Vs Gene", "Gene Vs Gene"),
+#           selected = "Cell Vs Gene",
+#           options = list(
+#             style = "btn-primary")
+#         )),
+#         
+#         column(
+#           3, selectInput(ns("cell_plot_clustered_info"), "Cell information:", choices = NULL) %>%
+#             helper(type = "inline", size = "m", fade = TRUE,
+#                    title = "Cell information to colour cells by",
+#                    content = c("Select cell information to colour cells",
+#                                "- Categorical covariates have a fixed colour palette",
+#                                paste0("- Continuous covariates are coloured in a ",
+#                                       "Blue-Yellow-Red colour scheme, which can be ",
+#                                       "changed in the plot controls"))),
+#           conditionalPanel(
+#             condition = paste0("input['", ns("split_view"), "'] == true"),            
+#             selectInput(ns("cell_plot_clustered_info_2"), "Cell information 2:", choices = NULL)
+#           )
+#         ),
+#         column(3, 
+#                selectizeInput(ns("cell_plot_clustered_color"), "Colour (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red"),
+#                conditionalPanel(
+#                  condition = paste0("input['", ns("split_view"), "'] == true"),            
+#                  selectizeInput(ns("cell_plot_clustered_color_2"), "Colour 2 (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red")
+#                )),
+#         column(3,br(), awesomeCheckbox(
+#           inputId = ns("cell_plot_clustered_label"),
+#           label = "Show cell info labels", 
+#           value = TRUE,
+#         ))
+#         )
+#       )
+#   )
+# }
 
-cell_info_ui <- function(id) {
+
+comparison_ui <- function(id) {
   ns <- NS(id)
   
   fluidRow(
-
     box(
-      title = HTML(paste("Cell Information", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("cell_plot_culstered_data"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Gene Expression", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
+      width = 12,
+      withSpinner(plotlyOutput(ns("gene_plot_clustered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
       
-      withSpinner(plotlyOutput(ns("cell_plot_culstered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
-      width = 12,
       fluidRow(
+        column(2, pickerInput(
+          inputId = ns("choice_comparison_cell_gene"),
+          label = "Style : primary",
+          choices = c("Cell Vs Cell", "Cell Vs Gene", "Gene Vs Gene"),
+          selected = "Cell Vs Gene",
+          options = list(style = "btn-primary")
+        )),
         
-        column(
-          3, selectInput(ns("cell_plot_culstered_info"), "Cell information:", choices = NULL) %>%
-            helper(type = "inline", size = "m", fade = TRUE,
-                   title = "Cell information to colour cells by",
-                   content = c("Select cell information to colour cells",
-                               "- Categorical covariates have a fixed colour palette",
-                               paste0("- Continuous covariates are coloured in a ",
-                                      "Blue-Yellow-Red colour scheme, which can be ",
-                                      "changed in the plot controls"))),
-          conditionalPanel(
-            condition = paste0("input['", ns("split_view"), "'] == true"),            
-            selectInput(ns("cell_plot_culstered_info_2"), "Cell information 2:", choices = NULL)
-          )
-        ),
-        column(3, 
-               selectizeInput(ns("cell_plot_culstered_color"), "Colour (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red"),
-               conditionalPanel(
-                 condition = paste0("input['", ns("split_view"), "'] == true"),            
-                 selectizeInput(ns("cell_plot_culstered_color_2"), "Colour 2 (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red")
-               )),
-        column(3,br(), awesomeCheckbox(
-          inputId = ns("cell_plot_culstered_label"),
-          label = "Show cell info labels", 
-          value = TRUE,
-        ))
-        )
-      )
-  )
-}
-
-
-
-gene_expression_ui <- function(id) {
-  ns <- NS(id)
-  
-  fluidRow(
-    box(
-      title = HTML(paste("Gene Expression", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("gene_plot_culstered_data"), icon = icon("save-file", lib = "glyphicon")))),
-      status = "primary", solidHeader = TRUE,
-      width = 12,
-      withSpinner(plotlyOutput(ns("gene_plot_culstered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
-      fluidRow(
-        column(6,
-          column(6,selectizeInput(ns("gene_plot_culstered_selection"), "Gene name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))) %>%
-            helper(type = "inline", size = "m", fade = TRUE,
-                   title = "Gene expression to colour cells by",
-                   content = c("Select gene to colour cells by gene expression",
-                               paste0("- Gene expression are coloured in a ",
-                                      "White-Red colour scheme which can be ",
-                                      "changed in the plot controls"))),
-       
         conditionalPanel(
-          condition = paste0("input['", ns("split_view"), "'] == true"),            
-          column(6,selectizeInput(ns("gene_plot_culstered_selection_2"), "Gene name 2:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)))
-        ) ),
-        column(4, selectizeInput(ns("gene_plot_culstered_color"), "Colour (Continuous data):", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red")),
+          condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Gene' || input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Cell'"),
+          column(3, selectInput(ns("cell_plot_clustered_info"), "Cell information:", choices = NULL) %>%
+                   helper(type = "inline", size = "m", fade = TRUE,
+                          title = "Cell information to colour cells by",
+                          content = c("Select cell information to colour cells",
+                                      "- Categorical covariates have a fixed colour palette",
+                                      paste0("- Continuous covariates are coloured in a ",
+                                             "Blue-Yellow-Red colour scheme, which can be ",
+                                             "changed in the plot controls"))),
+                 selectizeInput(ns("cell_plot_clustered_color"), "Cell Colour (Continuous data):", choices = c("White-Red", "Default" = "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "Blue-Yellow-Red")),
+          
+          conditionalPanel(
+            condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Cell'"),
+          column(3,
+            selectInput(ns("cell_plot_clustered_info_2"), "Cell information 2:", choices = NULL),
+            selectizeInput(ns("cell_plot_clustered_color_2"), "Colour 2 (Continuous data):", choices = c("White-Red", "Default" = "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "Blue-Yellow-Red")
+          )),
+                 
+            column(1, br(), awesomeCheckbox(
+            inputId = ns("cell_plot_clustered_label"),
+            label = "Show cell info labels",
+            value = TRUE
+          ))
+        ),
+        
+        conditionalPanel(
+          condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Gene' || input['", ns("choice_comparison_cell_gene"), "'] == 'Gene Vs Gene'"),
+          column(3, selectizeInput(ns("gene_plot_clustered_selection"), "Gene name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)) %>%
+                   helper(type = "inline", size = "m", fade = TRUE,
+                          title = "Gene expression to colour cells by",
+                          content = c("Select gene to colour cells by gene expression",
+                                      paste0("- Gene expression are coloured in a ",
+                                             "White-Red colour scheme which can be ",
+                                             "changed in the plot controls")
+                          )
+                   ),
+                 selectizeInput(ns("gene_plot_clustered_color"), "Gene Colour (Continuous data):", choices = c("Default" = "White-Red", "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "White-Red")),
+          conditionalPanel(
+                   condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Gene Vs Gene'"),                   
+                   column(3, selectizeInput(ns("gene_plot_clustered_selection_2"), "Gene name 2:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)))
+                 ),
+          
+        )
       )
     )
   )
@@ -142,7 +183,7 @@ gene_coexpression_ui <- function(id) {
   ns <- NS(id)
   fluidRow(
     box(
-      title = HTML(paste("Gene Coexpression", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("coexpressed_gene_plot_culstered_data"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Gene Coexpression", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("coexpressed_gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("gene_plot_coexpression"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
