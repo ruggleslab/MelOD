@@ -21,7 +21,7 @@ inputs_server <- function(id, shared_reactives) {
       })
     
     output$cell_subset_choices <- renderUI({
-      req(input$cell_subset) # Ensure input$cell_subset is not NULL
+      req(input$cell_subset)
       
       sub <- strsplit(shared_reactives$sc1conf_data()[UI == input$cell_subset]$fID, "\\|")[[1]]
       checkboxGroupInput(ns("cell_subset_choices_box"), "Select which cells to show", inline = TRUE,
@@ -29,7 +29,7 @@ inputs_server <- function(id, shared_reactives) {
     })
     
     observeEvent(input$cell_subset_none, {
-      req(input$cell_subset) # Ensure input$cell_subset is not NULL
+      req(input$cell_subset)
       
       sub <- strsplit(shared_reactives$sc1conf_data()[UI == input$cell_subset]$fID, "\\|")[[1]]
       updateCheckboxGroupInput(session, "cell_subset_choices_box", label = "Select which cells to show",
@@ -37,7 +37,7 @@ inputs_server <- function(id, shared_reactives) {
     })
     
     observeEvent(input$cell_subset_all, {
-      req(input$cell_subset) # Ensure input$cell_subset is not NULL
+      req(input$cell_subset) 
       
       sub <- strsplit(shared_reactives$sc1conf_data()[UI == input$cell_subset]$fID, "\\|")[[1]]
       updateCheckboxGroupInput(session, "cell_subset_choices_box", label = "Select which cells to show",

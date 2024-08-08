@@ -10,7 +10,7 @@ dashboardTemplate <- function() {
       tags$img(src = "./images/header_logo_final4.png", height = "40px"),
     )),
     dashboardSidebar(
-      width = 250,
+      width = 275,
       sidebarMenu(
         id = "tabs",
         menuItem("Home", tabName = "home", icon = icon("home")),
@@ -53,7 +53,7 @@ dashboardTemplate <- function() {
                tags$p("Melanoma Omics Dashboard (MelOD)"),
                tags$p("Developed by Ruggles Lab"),
                tags$p("Contact: support@ruggleslab.org"),
-               tags$p(tags$a(href = "https://ruggleslab.org/shiny-seq/help", "Help & Documentation"))
+               tags$p(tags$a(href = "https://github.com/orgs/ruggleslab/repositories", "Help & Documentation"))
       )
     )
   )

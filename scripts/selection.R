@@ -170,7 +170,7 @@ selection_server_single_cell <- function(sc1conf, sc1def, h5_file, sc1gene, sc1m
         h5_data(h5_file[[1]])
       }
     })
-    
+
     return(list(
       sc1conf_data = sc1conf_data,
       sc1def_data = sc1def_data,

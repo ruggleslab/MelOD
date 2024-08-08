@@ -1,14 +1,3 @@
-library(shinyhelper)
-library(data.table)
-library(Matrix)
-library(DT)
-library(magrittr)
-library(ggplot2)
-library(ggrepel)
-library(hdf5r)
-library(ggdendro)
-library(gridExtra)
-
 source("global.R", local = TRUE)
 
 
@@ -32,7 +21,7 @@ inputs_ui <- function(id) {
         selectInput(ns("cell_plot_clustered_Y_axis"), "Y-axis:", choices = NULL)
       ),
       column(4,
-             numericInput(ns("marker_size"), "Point size:", value = 5, min = 1, max = 10)),
+             numericInput(ns("marker_size"), "Point size:", value = 4, min = 1, max = 10)),
     )
   )
 }
@@ -53,62 +42,6 @@ cell_datatable_ui <- function(id) {
 }
 
 
-
-
-# 
-# cell_info_ui <- function(id) {
-#   ns <- NS(id)
-#   
-#   fluidRow(
-# 
-#     box(
-#       title = HTML(paste("Cell Information", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("cell_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
-#       status = "primary", solidHeader = TRUE,
-#       
-#       withSpinner(plotlyOutput(ns("cell_plot_clustered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
-#       width = 12,
-#       fluidRow(
-#         
-#         column(3,pickerInput(
-#           inputId = ns("choice_comparison_cell_gene"),
-#           label = "Style : primary", 
-#           choices = c("Cell Vs Cell", "Cell Vs Gene", "Gene Vs Gene"),
-#           selected = "Cell Vs Gene",
-#           options = list(
-#             style = "btn-primary")
-#         )),
-#         
-#         column(
-#           3, selectInput(ns("cell_plot_clustered_info"), "Cell information:", choices = NULL) %>%
-#             helper(type = "inline", size = "m", fade = TRUE,
-#                    title = "Cell information to colour cells by",
-#                    content = c("Select cell information to colour cells",
-#                                "- Categorical covariates have a fixed colour palette",
-#                                paste0("- Continuous covariates are coloured in a ",
-#                                       "Blue-Yellow-Red colour scheme, which can be ",
-#                                       "changed in the plot controls"))),
-#           conditionalPanel(
-#             condition = paste0("input['", ns("split_view"), "'] == true"),            
-#             selectInput(ns("cell_plot_clustered_info_2"), "Cell information 2:", choices = NULL)
-#           )
-#         ),
-#         column(3, 
-#                selectizeInput(ns("cell_plot_clustered_color"), "Colour (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red"),
-#                conditionalPanel(
-#                  condition = paste0("input['", ns("split_view"), "'] == true"),            
-#                  selectizeInput(ns("cell_plot_clustered_color_2"), "Colour 2 (Continuous data):", choices = c("White-Red","Default"="Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "Blue-Yellow-Red")
-#                )),
-#         column(3,br(), awesomeCheckbox(
-#           inputId = ns("cell_plot_clustered_label"),
-#           label = "Show cell info labels", 
-#           value = TRUE,
-#         ))
-#         )
-#       )
-#   )
-# }
-
-
 comparison_ui <- function(id) {
   ns <- NS(id)
   
@@ -122,7 +55,7 @@ comparison_ui <- function(id) {
       fluidRow(
         column(2, pickerInput(
           inputId = ns("choice_comparison_cell_gene"),
-          label = "Style : primary",
+          label = "Choose comparison:",
           choices = c("Cell Vs Cell", "Cell Vs Gene", "Gene Vs Gene"),
           selected = "Cell Vs Gene",
           options = list(style = "btn-primary")
@@ -274,14 +207,28 @@ bubheat_ui <- function(id) {
       width = 12,
       withSpinner(uiOutput(ns("bubheat_plot")), type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
-        column(4,multiInput(
+        
+        column(3,multiInput(
           inputId = ns("bubheat_selected_gene"),
-          label = "Gene(s) selection (up to 10):",
+          label = "Gene(s) selection (up to 50):",
           autocomplete = TRUE,
           option= list(limit=50),
           choices = "Loading...")),
+        column(3,
+               
+          textAreaInput(ns("bubheat_selected_gene_text"), HTML("List of gene names <br /> 
+                                          (Max 50 genes, separated <br /> 
+                                           by , or ; or newline):"), 
+                             height = "200px") %>% 
+                 helper(type = "inline", size = "m", fade = TRUE, 
+                        title = "List of genes to plot on bubbleplot / heatmap", 
+                        content = c("Input genes to plot", 
+                                    "- Maximum 50 genes (due to ploting space limitations)", 
+                                    "- Genes should be separated by comma, semicolon or newline")),
+          actionButton(ns("select_genes_single_cell"), "Send list", class = "btn btn-primary"),
+          actionButton(ns("reset_selection_single_cell"), "Reset", class = "btn btn-primary")),
         
-        column(4,
+        column(2,
                selectizeInput(ns("bubheat_group_by"), "Group by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
                selectizeInput(ns("bubheat_color"), "Colour:", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red")),
         column(2,

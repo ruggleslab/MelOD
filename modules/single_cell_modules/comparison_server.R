@@ -98,13 +98,10 @@ comparison_server <- function(id, shared_reactives) {
       }
       
       
-
-        # Extract layout properties from the first plot
         layout_p1 <- layout(p1)$xaxis
         layout_p1$scaleanchor <- 'x'
         layout_p1$scaleratio <- layout(p1)$xaxis$scaleratio
         
-        # Apply the same properties to the second plot
         p2 <- p2 %>%
           layout(
             xaxis = list(scaleanchor = 'x', scaleratio = layout_p1$scaleratio),
@@ -113,7 +110,6 @@ comparison_server <- function(id, shared_reactives) {
             
           )
         
-        # Combine the two plots
         p <- subplot(p1, p2, nrows = 1, shareX = TRUE, shareY = TRUE)
       
       p

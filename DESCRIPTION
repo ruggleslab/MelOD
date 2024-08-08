@@ -41,5 +41,7 @@ Imports:
     shinycssloaders,
     shinyFeedback,
     future,
-    promises
+    promises,
+    shinyhelper,
+    hdf5r
     
