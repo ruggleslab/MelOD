@@ -47,7 +47,7 @@ comparison_ui <- function(id) {
   
   fluidRow(
     box(
-      title = HTML(paste("Gene Expression", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Cell & Gene info", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("gene_plot_clustered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
@@ -159,7 +159,28 @@ sc_violin_ui <- function(id) {
       withSpinner(plotlyOutput(ns("sc_violin_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
         column(3,selectizeInput(ns("violin_plot_X"), "Cell information (X-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
-        column(3,selectizeInput(ns("violin_plot_Y"), "Cell Info / Gene name (Y-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        
+        column(3, pickerInput(
+            inputId = ns("choice_comparison_violin"),
+            label = "Choose Y axis:",
+            choices = c("Cell info", "Gene"),
+            selected = "Cell info",
+            options = list(style = "btn-primary")
+          ),
+        
+        conditionalPanel(
+          condition = paste0("input['", ns("choice_comparison_violin"), "'] == 'Cell info'"),
+          selectizeInput(ns("violin_plot_Y_cell"), "Cell Info (Y-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
+          
+        ),
+        
+        conditionalPanel(
+          condition = paste0("input['", ns("choice_comparison_violin"), "'] == 'Gene'"),
+          selectizeInput(ns("violin_plot_Y_gene"), "Gene name (Y-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
+          
+        )),
+        
+    
         column(3,
                radioGroupButtons(
                  inputId = ns("sc_box_or_violin"),

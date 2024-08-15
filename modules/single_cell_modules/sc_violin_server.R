@@ -6,18 +6,29 @@ sc_violin_server <- function(id, shared_reactives) {
                                     choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
                                     selected = shared_reactives$sc1def_data()$grp1)
       
-      updateSelectizeInput(session, "violin_plot_Y", server = TRUE, 
-                           choices = c(shared_reactives$sc1conf_data()[is.na(fID)]$UI, names(shared_reactives$sc1gene_data())), 
-                           selected = shared_reactives$sc1conf_data()[is.na(fID)]$UI[1], options = list(
-                             maxOptions = length(shared_reactives$sc1conf_data()[is.na(fID)]$UI) + 3))})
+      updateSelectizeInput(session, "violin_plot_Y_cell", server = TRUE, 
+                           choices = c(shared_reactives$sc1conf_data()[is.na(fID)]$UI), 
+                           selected = shared_reactives$sc1conf_data()[is.na(fID)]$UI[1])
+      
+      
+      updateSelectizeInput(session, "violin_plot_Y_gene", server = TRUE, 
+                           choices =  names(shared_reactives$sc1gene_data()))
+      
+      })
     
     
   
     
     processed_data <- reactive({
-      req(input$violin_plot_X, input$violin_plot_Y, input$cell_subset, input$cell_subset_choices_box)
       
-      process_violin_single_cell_data(shared_reactives$sc1conf_data(), shared_reactives$sc1meta_data(), input$violin_plot_X, input$violin_plot_Y, 
+      if (input$choice_comparison_violin == "Cell info"){
+        violin_y_axis <- input$violin_plot_Y_cell
+      } else violin_y_axis <- input$violin_plot_Y_gene
+       
+      req(input$violin_plot_X, input$cell_subset,violin_y_axis, input$cell_subset_choices_box)
+      
+      
+      process_violin_single_cell_data(shared_reactives$sc1conf_data(), shared_reactives$sc1meta_data(), input$violin_plot_X, violin_y_axis, 
                           input$cell_subset, input$cell_subset_choices_box, 
                           shared_reactives$h5_data(), shared_reactives$sc1gene_data())
     })
