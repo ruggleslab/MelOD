@@ -1,6 +1,7 @@
 sc_violin_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    blurbs <- fromJSON("./www/info_blurbs.json")
     
     observe({  updateSelectizeInput(session, "violin_plot_X",
                                     choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
@@ -17,7 +18,13 @@ sc_violin_server <- function(id, shared_reactives) {
       })
     
     
-  
+    observeEvent(input$info_sc_violin_plot, {
+      shinyalert(
+        title = blurbs$info$sc_violin$title, 
+        html = TRUE,
+        text = blurbs$info$sc_violin$text
+      )
+    })
     
     processed_data <- reactive({
       

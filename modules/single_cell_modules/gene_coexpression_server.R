@@ -1,6 +1,7 @@
 gene_coexpression_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    blurbs <- fromJSON("./www/info_blurbs.json")
     
     
     debounced_marker_size <- debounce(reactive({ input$marker_size }), millis = 0)
@@ -10,6 +11,14 @@ gene_coexpression_server <- function(id, shared_reactives) {
       
       updateSelectizeInput(session, "gene_plot_coexpression_selection", choices = names(shared_reactives$sc1gene_data()), server = TRUE)
       updateSelectizeInput(session, "gene_plot_coexpression_selection_2", choices = names(shared_reactives$sc1gene_data()), selected = names(shared_reactives$sc1gene_data())[3], server = TRUE)
+    })
+    
+    observeEvent(input$info_coexpression_plot, {
+      shinyalert(
+        title = blurbs$info$coexpression$title, 
+        html = TRUE,
+        text = blurbs$info$coexpression$text
+      )
     })
 
     processed_data <- reactive({

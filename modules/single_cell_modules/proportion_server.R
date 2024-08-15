@@ -1,6 +1,7 @@
 proportion_server <- function(id,shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    blurbs <- fromJSON("./www/info_blurbs.json")
     
     
     observe({updateSelectizeInput(session, "proportion_plot_X",
@@ -12,6 +13,13 @@ proportion_server <- function(id,shared_reactives) {
                            selected = shared_reactives$sc1def_data()$grp2)
     })
     
+    observeEvent(input$info_proportion_plot, {
+      shinyalert(
+        title = blurbs$info$proportion$title, 
+        html = TRUE,
+        text = blurbs$info$proportion$text
+      )
+    })
     
     processed_data <- reactive({
       req(input$proportion_plot_X, input$proportion_group_by, input$cell_subset, input$cell_subset_choices_box)

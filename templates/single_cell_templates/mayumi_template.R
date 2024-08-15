@@ -43,34 +43,48 @@ mayumi_server <- function() {
 
     h5_file_path_TBPT <- drive_download("TBPT/sc1gexpr.h5", overwrite = TRUE)
 
-
     update_modal_progress(0.6, text="Loading data...")
     Sys.sleep(0.5)
 
 
 
-    sc1conf_TBPT <- readRDS(sc1conf_TBPT$local_path)
-    sc1def_TBPT <- readRDS(sc1def_TBPT$local_path)
-    sc1gene_TBPT <- readRDS(sc1gene_TBPT$local_path)
-    sc1meta_TBPT <- readRDS(sc1meta_TBPT$local_path)
-    h5_file_path_TBPT <- h5_file_path_TBPT$local_path
+    sc1conf_TBPT_file <- readRDS(sc1conf_TBPT$local_path)
+    sc1def_TBPT_file <- readRDS(sc1def_TBPT$local_path)
+    sc1gene_TBPT_file <- readRDS(sc1gene_TBPT$local_path)
+    sc1meta_TBPT_file <- readRDS(sc1meta_TBPT$local_path)
+    h5_file_path_TBPT_file <- h5_file_path_TBPT$local_path
 
+    h5_file_path_TBPT_file <- H5File$new(h5_file_path_TBPT_file, mode = "r")
+    
+   
+    
+    if (file.exists(sc1conf_TBPT$local_path)) {
+      file.remove(sc1conf_TBPT$local_path)
+    }
+    
+    if (file.exists(sc1def_TBPT$local_path)) {
+      file.remove(sc1def_TBPT$local_path)
+    }
+    
+    if (file.exists(sc1gene_TBPT$local_path)) {
+      file.remove(sc1gene_TBPT$local_path)
+    }
+    
+    if (file.exists(sc1meta_TBPT$local_path)) {
+      file.remove(sc1meta_TBPT$local_path)
+    }
+    
+    if (file.exists(h5_file_path_TBPT$local_path)) {
+      file.remove(h5_file_path_TBPT$local_path)
+    }
   
-  # 
-  # sc1conf_TBPT <- readRDS("/Users/paul/Documents/pro/shiny-seq/data/single_cell/mayumi/TBPT/sc1conf.rds")
-  # sc1def_TBPT <- readRDS("/Users/paul/Documents/pro/shiny-seq/data/single_cell/mayumi/TBPT/sc1def.rds")
-  # sc1gene_TBPT <- readRDS("/Users/paul/Documents/pro/shiny-seq/data/single_cell/mayumi/TBPT/sc1gene.rds")
-  # sc1meta_TBPT <- readRDS("/Users/paul/Documents/pro/shiny-seq/data/single_cell/mayumi/TBPT/sc1meta.rds")
-  # h5_file_path_TBPT <- "/Users/paul/Documents/pro/shiny-seq/data/single_cell/mayumi/TBPT/sc1gexpr.h5"
 
-  sc1conf <- list(sc1conf_TBPT)
-  sc1def <- list(sc1def_TBPT)
-  sc1gene <- list(sc1gene_TBPT)
-  sc1meta <- list(sc1meta_TBPT)
+  sc1conf <- list(sc1conf_TBPT_file)
+  sc1def <- list(sc1def_TBPT_file)
+  sc1gene <- list(sc1gene_TBPT_file)
+  sc1meta <- list(sc1meta_TBPT_file)
   
-  h5_file_path_TBPT <- H5File$new(h5_file_path_TBPT, mode = "r")
-
-  h5_file <- list(h5_file_path_TBPT)
+  h5_file <- list(h5_file_path_TBPT_file)
   
   observe_helpers()
   

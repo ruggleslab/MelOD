@@ -1,6 +1,7 @@
 bubheat_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    blurbs <- fromJSON("./www/info_blurbs.json")
     
     observe({updateSelectizeInput(session, "bubheat_group_by",
                                   choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
@@ -17,6 +18,14 @@ bubheat_server <- function(id, shared_reactives) {
         selected = names(shared_reactives$sc1gene_data())[1:5])
       
 })
+    
+    observeEvent(input$info_bubheat_plot, {
+      shinyalert(
+        title = blurbs$info$bubheat$title, 
+        html = TRUE,
+        text = blurbs$info$bubheat$text
+      )
+    })
 
 selected_genes <- eventReactive(input$select_genes_single_cell, {
       gene_text <- input$bubheat_selected_gene_text

@@ -10,7 +10,11 @@ inputs_ui <- function(id) {
       width = 12,
       column(8,
              selectInput(ns("cell_subset"), "Cell information to subset:",
-                             choices = NULL),
+                             choices = NULL) %>%
+               helper(type = "inline", size = "m", fade = TRUE,
+                      title = "Subseting cells",
+                      content = c("You can select the type of cells you want to subset for downstream analysis."
+                      )),
              br(),
              withSpinner(uiOutput(ns("cell_subset_choices")), type = 6, color = "#FFA812", size = 0.5),
              br(),br(),
@@ -47,7 +51,7 @@ comparison_ui <- function(id) {
   
   fluidRow(
     box(
-      title = HTML(paste("Cell & Gene info", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Cell & Gene info", actionLink(ns("info_comparison_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("gene_plot_clustered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
@@ -63,15 +67,15 @@ comparison_ui <- function(id) {
         
         conditionalPanel(
           condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Gene' || input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Cell'"),
-          column(3, selectInput(ns("cell_plot_clustered_info"), "Cell information:", choices = NULL) %>%
+          column(3, selectInput(ns("cell_plot_clustered_info"), "Cell information:", choices = NULL),
+                 selectizeInput(ns("cell_plot_clustered_color"), "Cell Colour (Continuous data):", choices = c("White-Red", "Default" = "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "Blue-Yellow-Red")%>%
                    helper(type = "inline", size = "m", fade = TRUE,
                           title = "Cell information to colour cells by",
                           content = c("Select cell information to colour cells",
                                       "- Categorical covariates have a fixed colour palette",
                                       paste0("- Continuous covariates are coloured in a ",
                                              "Blue-Yellow-Red colour scheme, which can be ",
-                                             "changed in the plot controls"))),
-                 selectizeInput(ns("cell_plot_clustered_color"), "Cell Colour (Continuous data):", choices = c("White-Red", "Default" = "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "Blue-Yellow-Red")),
+                                             "changed in the plot controls")))),
           
           conditionalPanel(
             condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Cell'"),
@@ -89,7 +93,8 @@ comparison_ui <- function(id) {
         
         conditionalPanel(
           condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Gene' || input['", ns("choice_comparison_cell_gene"), "'] == 'Gene Vs Gene'"),
-          column(3, selectizeInput(ns("gene_plot_clustered_selection"), "Gene name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)) %>%
+          column(3, selectizeInput(ns("gene_plot_clustered_selection"), "Gene name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
+                 selectizeInput(ns("gene_plot_clustered_color"), "Gene Colour (Continuous data):", choices = c("Default" = "White-Red", "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "White-Red")%>%
                    helper(type = "inline", size = "m", fade = TRUE,
                           title = "Gene expression to colour cells by",
                           content = c("Select gene to colour cells by gene expression",
@@ -97,8 +102,8 @@ comparison_ui <- function(id) {
                                              "White-Red colour scheme which can be ",
                                              "changed in the plot controls")
                           )
-                   ),
-                 selectizeInput(ns("gene_plot_clustered_color"), "Gene Colour (Continuous data):", choices = c("Default" = "White-Red", "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "White-Red")),
+                   )
+                 ),
           conditionalPanel(
                    condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Gene Vs Gene'"),                   
                    column(3, selectizeInput(ns("gene_plot_clustered_selection_2"), "Gene name 2:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)))
@@ -116,7 +121,7 @@ gene_coexpression_ui <- function(id) {
   ns <- NS(id)
   fluidRow(
     box(
-      title = HTML(paste("Gene Coexpression", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("coexpressed_gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Gene Coexpression", actionLink(ns("info_coexpression_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("coexpressed_gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("gene_plot_coexpression"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
@@ -153,7 +158,7 @@ sc_violin_ui <- function(id) {
   ns <- NS(id)
   fluidRow(
     box(
-      title = HTML(paste("Violin & Boxplot", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("sc_violin_boxplot_data"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Violin & Boxplot", actionLink(ns("info_sc_violin_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("sc_violin_boxplot_data"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("sc_violin_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
@@ -200,7 +205,7 @@ proportion_ui <- function(id) {
   ns <- NS(id)
   fluidRow(
     box(
-      title = HTML(paste("Proportion plot", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("proportion_data"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Proportion plot", actionLink(ns("info_proportion_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("proportion_data"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("proportion_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
@@ -223,7 +228,7 @@ bubheat_ui <- function(id) {
   ns <- NS(id)
   fluidRow(
     box(
-      title = HTML(paste("Heatmap & Bubble plot", actionLink(ns("info_heatmap_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("bubheat_data"), icon = icon("save-file", lib = "glyphicon")))),
+      title = HTML(paste("Heatmap & Bubble plot", actionLink(ns("info_bubheat_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("bubheat_data"), icon = icon("save-file", lib = "glyphicon")))),
       status = "primary", solidHeader = TRUE,
       width = 12,
       withSpinner(uiOutput(ns("bubheat_plot")), type = 6, color = "#FFA812", size = 0.5),
@@ -231,7 +236,7 @@ bubheat_ui <- function(id) {
         
         column(3,multiInput(
           inputId = ns("bubheat_selected_gene"),
-          label = "Gene(s) selection (up to 50):",
+          label = "Genes selection (up to 50):",
           autocomplete = TRUE,
           option= list(limit=50),
           choices = "Loading...")),
@@ -239,13 +244,15 @@ bubheat_ui <- function(id) {
                
           textAreaInput(ns("bubheat_selected_gene_text"), HTML("List of gene names <br /> 
                                           (Max 50 genes, separated <br /> 
-                                           by , or ; or newline):"), 
+                                           by , or ; or newline):
+                                          "), 
                              height = "200px") %>% 
                  helper(type = "inline", size = "m", fade = TRUE, 
                         title = "List of genes to plot on bubbleplot / heatmap", 
                         content = c("Input genes to plot", 
                                     "- Maximum 50 genes (due to ploting space limitations)", 
-                                    "- Genes should be separated by comma, semicolon or newline")),
+                                    "- Genes should be separated by comma, semicolon or newline",
+                                    "- Don't forget to click on Send list")),
           actionButton(ns("select_genes_single_cell"), "Send list", class = "btn btn-primary"),
           actionButton(ns("reset_selection_single_cell"), "Reset", class = "btn btn-primary")),
         

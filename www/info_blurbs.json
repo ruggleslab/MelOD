@@ -24,6 +24,26 @@
     "mortality_curve": {
       "title": "Mortality Curve Information",
       "text": "Mortality curves are used to visualize the survival rates of patients based on the status (dead or alive) and the overall survival in days. The curve can be split by the condition of the study or for a selected gene, into quartiles (Q1, Q2, or Q3) to further analyze survival rates within different expression ranges."
-    }
+    },
+  "comparison": {
+    "title": "Comparison Plot Information",
+    "text": "This plot displays cell or gene information, both of which can be selected via input. The plot can be split by either cell information or gene information, making it easier to compare two different genes or two different cell types. The linked cell data table provides the number of cells in each category for the selected information. The input box at the top of the dashboard allows customization, such as subsetting cell types or changing axis parameters."
+  },
+  "coexpression": {
+    "title": "Coexpression Plot Information",
+    "text": "The coexpression plot visualizes the expression levels of two genes selected via input. The legend indicates each gene with its own color, while a third color represents the coexpression of both genes in the same cell. By default, gene 1 is shown in red, gene 2 in blue, and the coexpression in purple. A coexpression table provides additional details, including the number of cells expressing each gene."
+  },
+  "sc_violin": {
+    "title": "Violin & BoxPlot Information",
+    "text": "The violin or boxplot visualizes cell information on the X-axis in relation to either cell metadata or gene expression levels on the Y-axis."
+  },
+  "proportion": {
+    "title": "Proportion Plot Information",
+    "text": "The proportion plot displays the distribution of cell proportions based on user input. It can also be used to show the number of cells in each category."
+  },
+  "bubheat": {
+    "title": "Heatmap Plot Information",
+    "text": "The heatmap or bubble plot shows gene expression levels (optionally scaled by Z-score) in relation to selected cell information. Genes can be input individually (left input) or as a list (right input). For list input, gene names should be separated by spaces, newlines, commas, or semicolons. You can also choose to cluster rows and/or columns."
+  }
   }
 }

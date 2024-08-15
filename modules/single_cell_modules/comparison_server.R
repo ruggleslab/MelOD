@@ -2,6 +2,7 @@ comparison_server <- function(id, shared_reactives) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
+    blurbs <- fromJSON("./www/info_blurbs.json")
     
     debounced_marker_size <- debounce(reactive({ input$marker_size }), millis = 0)
     
@@ -20,7 +21,15 @@ comparison_server <- function(id, shared_reactives) {
                         choices = shared_reactives$sc1conf_data()$UI,
                         selected =  shared_reactives$sc1def_data()$meta1)
     })
-   
+    
+    observeEvent(input$info_comparison_plot, {
+      shinyalert(
+        title = blurbs$info$comparison$title, 
+        html = TRUE,
+        text = blurbs$info$comparison$text
+      )
+    })
+    
     processed_data <- reactive({
       req(input$cell_plot_clustered_X_axis, 
           input$cell_plot_clustered_Y_axis, 
