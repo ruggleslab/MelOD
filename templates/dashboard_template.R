@@ -52,8 +52,7 @@ dashboardTemplate <- function() {
       tags$div(class = "footer",
                tags$p("Melanoma Omics Dashboard (MelOD)"),
                tags$p("Developed by Ruggles Lab"),
-               tags$p("Contact: support@ruggleslab.org"),
-               tags$p(tags$a(href = "https://github.com/orgs/ruggleslab/repositories", "Help & Documentation"))
+               tags$p(tags$a(href = "https://github.com/ruggleslab/shiny-seq", "Help & Documentation"))
       )
     )
   )

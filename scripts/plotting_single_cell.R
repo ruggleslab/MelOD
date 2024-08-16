@@ -88,12 +88,23 @@ cell_plotly <- function(processed_data, inpsiz, inpdrX, inpdrY, inpcol, inplab) 
   } else {
     p <- p %>% colorbar(title = "")
   }
-  
+
   if (inplab && !is.numeric(ggData$val)) {
     ggData3 <- ggData[, .(X = mean(X), Y = mean(Y)), by = val]
-    p <- p %>% add_annotations(data = ggData3, x = ~X, y = ~Y, text = ~val,
-                               showarrow = TRUE, arrowcolor = "grey10",
-                               font = list(color = "grey10"))
+    p <- p %>% add_annotations(
+      data = ggData3, 
+      x = ~X, 
+      y = ~Y, 
+      text = ~val,
+      showarrow = FALSE, 
+      font = list(
+        color = "black", 
+        size = 14,  # Increase font size for better readability
+        family = "Arial"
+      ),
+      bgcolor = "rgba(255, 255, 255, 0.5)"  # Add a semi-transparent white background for better contrast
+    )
+    
   }
   
   p <- p %>% layout(

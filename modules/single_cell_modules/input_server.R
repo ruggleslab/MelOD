@@ -1,11 +1,8 @@
-inputs_server <- function(id, shared_reactives) {
+inputs_server <- function(id, shared_reactives, DEG= NA) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
 
-    
-    print(shared_reactives$sc1conf_data)
-    
     observe({updateSelectInput(session, "cell_subset",
                                choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
                                selected = shared_reactives$sc1def_data()$grp1)
@@ -43,5 +40,6 @@ inputs_server <- function(id, shared_reactives) {
       updateCheckboxGroupInput(session, "cell_subset_choices_box", label = "Select which cells to show",
                                choices = sub, selected = sub, inline = TRUE)
     })
+
   })
 }

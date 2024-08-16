@@ -40,7 +40,6 @@ comparison_server <- function(id, shared_reactives) {
           input$gene_plot_clustered_selection_2,
           input$cell_plot_clustered_info, 
           input$cell_plot_clustered_color, 
-          input$cell_plot_clustered_label, 
           input$cell_plot_clustered_info_2)
       
       

@@ -23,13 +23,34 @@ home_ui <- function(id) {
         margin-right: 10px;
       }
       p { font-size: 16px;}
+      .dropdown-header {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .dropdown-content {
+        padding-left: 20px;
+      }
+      /* Make logo responsive */
+      .responsive-logo {
+        max-width: 100%;
+        height: auto;
+      }
+         .clickable {
+        cursor: pointer;
+        color: #007bff;
+        text-decoration: none;
+      }
+      .clickable:hover {
+        color: #0056b3;
+        text-decoration: underline;
+      }
     ")),
-    # Project Overview
-    fluidRow(
+    # Project Overview Box
+    column(7, box(
+      title = HTML(paste("Project Overview")),
+      status = "warning", solidHeader = TRUE,
       width = 12,
       div(class = ".content_home",
-          tags$img(src = "./images/melod_large_logo.png", width = "500px"),
-          div(class = "section-header", "Project Overview"),
           tags$p(
             "Welcome to MelOD, the Melanoma Omics Dashboard. 
             This RShiny application is dedicated to the analysis and visualization of melanoma cancer datasets. 
@@ -42,10 +63,19 @@ home_ui <- function(id) {
             molecular levels."
           )
       )
+    )),
+    
+    column(4, box(
+      title = HTML(paste("Logo")),
+      status = "info", solidHeader = TRUE,
+      width = 12, 
+      tags$img(src = "./images/melod_large_logo.png", class = "responsive-logo"))          
     ),
-    # App Utilization
-    div(class = "section-header", "App Utilization"),
-    fluidRow(
+    
+    # App Utilization Box
+    box(
+      title = HTML(paste("App Utilization")),
+      status = "primary", solidHeader = TRUE,
       width = 12,
       div(class = ".content_home",
           tags$p(tags$img(src = "./images/arrow_home.png", width = "50px", class = "image-inline"),
@@ -57,11 +87,52 @@ home_ui <- function(id) {
           )
       )
     ),
-    br(),
-    br(),
-    # Survey and Citation
-    div(class = "section-header", "We value your feedback!"),
-    fluidRow(
+    
+    # Dropdown Bullet Points Box
+    box(
+      title = HTML(paste("Frequently Asked Questions")),
+      status = "primary", solidHeader = TRUE,
+      width = 12,
+      div(class = ".content_home",
+          tags$div(class = "dropdown-header", "Currently Working on:"),
+          tags$ul(
+            tags$li("Adding possibility to download Differential expressed gene for Single cell study"),
+          ),
+          tags$div(class = "dropdown-header", "How to use MelOD?"),
+          tags$div(
+            class = "clickable", 
+            `data-toggle` = "collapse", `data-target` = "#collapseInstructions", 
+            "Toggle Instructions"
+          ),
+          tags$div(id = "collapseInstructions", class = "collapse dropdown-content",
+                   tags$ul(
+                     tags$li("Select a study from the sidebar."),
+                     tags$li("Navigate to the desired analysis tab."),
+                     tags$li("Interact with plots by hovering or clicking on them."),
+                     tags$li("Download results using the download button.")
+                   )
+          ),
+          tags$div(class = "dropdown-header", "What data formats are supported?"),
+          tags$div(
+            class = "clickable", 
+            `data-toggle` = "collapse", `data-target` = "#collapseDataFormats", 
+            "Toggle Data Formats"
+          ),
+          tags$div(id = "collapseDataFormats", class = "collapse dropdown-content",
+                   tags$ul(
+                     tags$li("Bulk RNA-Seq data (currently supported)."),
+                     tags$li("Single-cell RNA-Seq data (coming soon)."),
+                     tags$li("Proteomics data (coming soon)."),
+                     tags$li("Array-based data (coming soon).")
+                   )
+          )
+      )
+    ),
+    
+    # Survey and Citation Box
+    box(
+      title = HTML(paste("We value your feedback!")),
+      status = "primary", solidHeader = TRUE,
       width = 12,
       div(class = ".content_home",
           tags$p(
@@ -73,14 +144,13 @@ home_ui <- function(id) {
           )
       )
     )
-    )
+  )
 }
 
-
 home_server <- function(id) {
-#' Home Server
-#'
-#' @description Sets up the server logic for the Home analysis tab
+  #' Home Server
+  #'
+  #' @description Sets up the server logic for the Home analysis tab
   
   moduleServer(id, function(input, output, session) {
   })

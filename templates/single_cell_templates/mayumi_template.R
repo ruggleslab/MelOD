@@ -78,7 +78,6 @@ mayumi_server <- function() {
       file.remove(h5_file_path_TBPT$local_path)
     }
   
-
   sc1conf <- list(sc1conf_TBPT_file)
   sc1def <- list(sc1def_TBPT_file)
   sc1gene <- list(sc1gene_TBPT_file)
@@ -91,12 +90,14 @@ mayumi_server <- function() {
   selection_result <- selection_server_single_cell(sc1conf, sc1def, h5_file, sc1gene, sc1meta, "mayumi")
 
   
-  inputs_server("mayumi", selection_result)
+  inputs_server("mayumi", selection_result, DEG= "TBPT/harmonized_seurat_DE.rds")
   comparison_server("mayumi", selection_result)
   gene_coexpression_server("mayumi", selection_result)
   sc_violin_server("mayumi", selection_result)
   proportion_server("mayumi", selection_result)
   bubheat_server("mayumi", selection_result)
+  
+
   
   }, error = function(e) {
     showNotification("An error occurred during the process.", type = "error")

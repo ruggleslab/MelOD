@@ -155,15 +155,15 @@ h2.home {
 /* Change Orange Color Boxes Info */
 .box.box-solid.box-info>.box-header {
     color: #fff;
-    background: #566676;
-    background-color: #566676;
+    background: #8999A9;
+    background-color: #8999A9;
 }
 .box.box-solid.box-info {
-    border: 1px solid #566676;
+    border: 1px solid #8999A9;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 .box.box-info {
-    border-top-color: #566676;
+    border-top-color: #8999A9;
 }
 
 /* Change Orange Color Boxes Primary */

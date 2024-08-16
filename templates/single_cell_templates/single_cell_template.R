@@ -45,7 +45,6 @@ cell_datatable_ui <- function(id) {
   )
 }
 
-
 comparison_ui <- function(id) {
   ns <- NS(id)
   

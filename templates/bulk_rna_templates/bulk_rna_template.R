@@ -27,32 +27,36 @@ blurb_study_ui <- function(id) {
 
 
 blurb_data_ui <- function(id) {
-#' Blurb Data UI
-#' 
-#' @description Creates the UI component for explaining the data used in the analysis
-#' @param id Module ID
-#' 
-#' @return A Shiny UI element
+  #' Blurb Data UI
+  #' 
+  #' @description Creates the UI component for explaining the data used in the analysis
+  #' @param id Module ID
+  #' 
+  #' @return A Shiny UI element
   
   Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
+  
   box(
     title = "Data used in analysis", status = "info",
     collapsible = TRUE,
     solidHeader = TRUE, width = 12,
-    tags$p(Id_info$data_explanation)
+    tags$p(HTML(gsub("\n", "<br>", Id_info$data_explanation)))
   )
 }
 
 
-blurb_comparison_ui <- function(id) {
-#' Blurb Comparison UI
-#' 
-#' @description Creates the UI component for explaining the comparison done in the analysis
-#' @param id Module ID
-#' 
-#' @return A Shiny UI element
+
+blurb_comparison_ui <- function(id, file = NA) {
+  #' Blurb Comparison UI
+  #' 
+  #' @description Creates the UI component for explaining the comparison done in the analysis
+  #' @param id Module ID
+  #' 
+  #' @return A Shiny UI element
   
   Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
+  ns <- NS(id)
+
   box(
     status = "warning",
     background = "orange", width = 12,
