@@ -1,10 +1,11 @@
-#' Selection Badal Server
-#' 
-#' @description Handles selection for the Badal input module, ensuring that the required input selection is available before proceeding.
-#' @param dds A DESeq2 dataset containing the data to be processed.
-#' @param clinical_data A data frame containing clinical data associated with the DESeq2 dataset.
-#' @param id A unique module ID used to identify the module in the Shiny application.
 selection_badal_server <- function(dds, clinical_data, id) {
+  #' Selection Badal Server
+  #' 
+  #' @description Handles selection for the Badal input module, ensuring that the required input selection is available before proceeding.
+  #' @param dds A DESeq2 dataset containing the data to be processed.
+  #' @param clinical_data A data frame containing clinical data associated with the DESeq2 dataset.
+  #' @param id A unique module ID used to identify the module in the Shiny application.
+  
   moduleServer(id, function(input, output, session) {
     observe({
       req(input$selection_badal)  # Ensure that input selection is available before proceeding
@@ -12,14 +13,15 @@ selection_badal_server <- function(dds, clinical_data, id) {
   })
 }
 
-#' Selection List Server
-#' 
-#' @description Handles selection for list input, updating the shared reactive variables based on the user's selection.
-#' @param dds A list of DESeq2 datasets for different treatment types.
-#' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
-#' @param id A unique module ID used to identify the module in the Shiny application.
-#' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
 selection_list_server <- function(dds, clinical_data, id, shared_reactives) {
+  #' Selection List Server
+  #' 
+  #' @description Handles selection for list input, updating the shared reactive variables based on the user's selection.
+  #' @param dds A list of DESeq2 datasets for different treatment types.
+  #' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
+  #' @param id A unique module ID used to identify the module in the Shiny application.
+  #' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
+  
   moduleServer(id, function(input, output, session) {
     observe({
       req(input$selection)  # Ensure that input selection is available before proceeding
@@ -42,14 +44,16 @@ selection_list_server <- function(dds, clinical_data, id, shared_reactives) {
   })
 }
 
-#' Selection Server
-#' 
-#' @description Handles the overall selection logic for the application, including processing and filtering of the DESeq2 dataset based on the user's selection.
-#' @param dds A list of DESeq2 datasets for different treatment types.
-#' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
-#' @param id A unique module ID used to identify the module in the Shiny application.
-#' @return A list of reactive values and utilities including selected datasets, filtered results, processed datasets, and display genes.
 selection_server <- function(dds, clinical_data, id) {
+  #' Selection Server
+  #' 
+  #' @description Handles the overall selection logic for the application, including processing and filtering of the DESeq2 dataset based on the user's selection.
+  #' @param dds A list of DESeq2 datasets for different treatment types.
+  #' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
+  #' @param id A unique module ID used to identify the module in the Shiny application.
+  #' 
+  #' @return A list of reactive values and utilities including selected datasets, filtered results, processed datasets, and display genes.
+  
   moduleServer(id, function(input, output, session) {
     selected_dds <- reactiveVal()
     selected_clinical_data <- reactiveVal()
@@ -89,12 +93,14 @@ selection_server <- function(dds, clinical_data, id) {
   })
 }
 
-#' Shared Server Utilities
-#' 
-#' @description Provides shared utilities for server modules, including processing of the DESeq2 dataset and filtering of genes.
-#' @param dds A DESeq2 dataset to be processed and analyzed.
-#' @return A list of utilities including the processed DESeq2 dataset and filtered genes.
 shared_server_utilities <- function(dds) {
+  #' Shared Server Utilities
+  #' 
+  #' @description Provides shared utilities for server modules, including processing of the DESeq2 dataset and filtering of genes.
+  #' @param dds A DESeq2 dataset to be processed and analyzed.
+  #' 
+  #' @return A list of utilities including the processed DESeq2 dataset and filtered genes.
+  
   dds_processed <- gene_names_dds(dds)
   res <- results(dds_processed)
   filtered_genes <- filter_and_order_by_padj(res)
@@ -106,16 +112,20 @@ shared_server_utilities <- function(dds) {
   )
 }
 
-
-
-
-
-
-
-
 selection_list_single_cell_server <- function(sc1conf, sc1def, h5_file, sc1gene, sc1meta, id, shared_reactives) {
+  #' Selection List Single Cell Server
+  #' 
+  #' @description Handles selection for single-cell data, updating the shared reactive variables based on the user's selection.
+  #' @param sc1conf A list of configuration data for single-cell datasets.
+  #' @param sc1def A list of default settings for single-cell datasets.
+  #' @param h5_file A list of HDF5 files corresponding to the single-cell datasets.
+  #' @param sc1gene A list of gene expression data for the single-cell datasets.
+  #' @param sc1meta A list of metadata for the single-cell datasets.
+  #' @param id A unique module ID used to identify the module in the Shiny application.
+  #' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
+  
   moduleServer(id, function(input, output, session) {
-
+    
     observe({
       req(input$selection)
       sc1conf_data = NULL
@@ -148,17 +158,27 @@ selection_list_single_cell_server <- function(sc1conf, sc1def, h5_file, sc1gene,
   })
 }
 
-
-
 selection_server_single_cell <- function(sc1conf, sc1def, h5_file, sc1gene, sc1meta, id) {
+  #' Selection Server Single Cell
+  #' 
+  #' @description Handles the overall selection logic for single-cell data, including processing and filtering of the datasets based on the user's selection.
+  #' @param sc1conf A list of configuration data for single-cell datasets.
+  #' @param sc1def A list of default settings for single-cell datasets.
+  #' @param h5_file A list of HDF5 files corresponding to the single-cell datasets.
+  #' @param sc1gene A list of gene expression data for the single-cell datasets.
+  #' @param sc1meta A list of metadata for the single-cell datasets.
+  #' @param id A unique module ID used to identify the module in the Shiny application.
+  #'
+  #' @return A list of reactive values including the selected configuration data, default settings, gene expression data, metadata, and HDF5 file.
+  
   moduleServer(id, function(input, output, session) {
-
-        sc1conf_data <- reactiveVal()
-        sc1def_data <- reactiveVal()
-        sc1gene_data <- reactiveVal()
-        sc1meta_data <- reactiveVal()
-        h5_data <- reactiveVal()
-
+    
+    sc1conf_data <- reactiveVal()
+    sc1def_data <- reactiveVal()
+    sc1gene_data <- reactiveVal()
+    sc1meta_data <- reactiveVal()
+    h5_data <- reactiveVal()
+    
     observe({
       if (length(sc1conf) > 1) {
         selection_list_single_cell_server(sc1conf, sc1def, h5_file, sc1gene, sc1meta, id, shared_reactives)
@@ -170,7 +190,7 @@ selection_server_single_cell <- function(sc1conf, sc1def, h5_file, sc1gene, sc1m
         h5_data(h5_file[[1]])
       }
     })
-
+    
     return(list(
       sc1conf_data = sc1conf_data,
       sc1def_data = sc1def_data,
@@ -180,6 +200,5 @@ selection_server_single_cell <- function(sc1conf, sc1def, h5_file, sc1gene, sc1m
     ))
   })
 }
-
 
 

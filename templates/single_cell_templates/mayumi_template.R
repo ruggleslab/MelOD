@@ -1,5 +1,11 @@
 mayumi_ui <- function(id) {
-
+#' mayumi UI
+#'
+#' @description Creates the UI layout for the mayumi analysis tab
+#' @param id Module ID
+#' 
+#' @return A Shiny UI element for the mayumi analysis tab
+  
   fluidPage(
     fluidRow(blurb_study_ui("mayumi")),
     fluidRow(column(6, blurb_data_ui("mayumi")),
@@ -14,15 +20,15 @@ mayumi_ui <- function(id) {
     column(6, sc_violin_ui("mayumi")),
     column(6, proportion_ui("mayumi")),
     bubheat_ui("mayumi"),
-    
-    tags$h2("Credit. ShinyCell", tags$style(HTML(".shiny-output-error-validation {color: red; font-weight: bold;}")))
   )
 }
 
 
 
 mayumi_server <- function() {
-  
+#' mayumi Server
+#'
+#' @description Sets up the server logic for the mayumi analysis tab  
   
   show_modal_progress_line(color = "#FFA812",text = "Initialization")
   Sys.sleep(0.5)
@@ -45,8 +51,6 @@ mayumi_server <- function() {
 
     update_modal_progress(0.6, text="Loading data...")
     Sys.sleep(0.5)
-
-
 
     sc1conf_TBPT_file <- readRDS(sc1conf_TBPT$local_path)
     sc1def_TBPT_file <- readRDS(sc1def_TBPT$local_path)

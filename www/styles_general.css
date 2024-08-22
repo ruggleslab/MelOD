@@ -104,7 +104,6 @@ h2.home {
     bottom: 0;
     left: 0;
     padding-left: 275px;
-    padding-bottom: 15px;
     padding-top: 15px;
     width: 100%;
     z-index: 1000; /* Ensures it stays on top of other elements */
@@ -207,7 +206,7 @@ div.dt-buttons {
 /* Padding of the content page */
 
 .content {
-    padding-bottom: 400px;
+    padding-bottom: 200px;
 }
 
 .content-wrapper {

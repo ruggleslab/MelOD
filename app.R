@@ -33,7 +33,7 @@ source("templates/single_cell_templates/KBPT_template.R", local = TRUE)
 # Source scripts files
 source("scripts/selection.R", local = TRUE)
 source("scripts/utils.R", local = TRUE)
-source("scripts/plotting.R", local = TRUE)
+source("scripts/plotting.R", local = TRUE) 
 source("scripts/plotting_single_cell.R", local = TRUE)
 source("scripts/data_processing.R", local = TRUE)
 source("scripts/data_processing_single_cell.R", local = TRUE)

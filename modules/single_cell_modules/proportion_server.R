@@ -1,12 +1,26 @@
-proportion_server <- function(id,shared_reactives) {
+proportion_server <- function(id, shared_reactives) {
+  #' Proportion Server Module
+  #'
+  #' This function defines a Shiny module server for visualizing the proportion of cell subsets
+  #' across different groups in a single-cell dataset. It manages input selections for X-axis 
+  #' and grouping variables, processes the data for proportion calculations, and generates 
+  #' Plotly visualizations. The module also includes event handling for displaying additional
+  #' information through alerts.
+  #'
+  #' @param id The module ID.
+  #' @param shared_reactives A list of reactive objects shared across the application, including 
+  #' single-cell data (`sc1conf_data`, `sc1meta_data`).
+  #'
+  #' @return This module does not return a value; it is used for its side effects within a Shiny application.
+  
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     blurbs <- fromJSON("./www/info_blurbs.json")
     
-    
-    observe({updateSelectizeInput(session, "proportion_plot_X",
-                                  choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
-                                  selected = shared_reactives$sc1def_data()$grp1)
+    observe({
+      updateSelectizeInput(session, "proportion_plot_X",
+                           choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
+                           selected = shared_reactives$sc1def_data()$grp1)
       
       updateSelectizeInput(session, "proportion_group_by",
                            choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
@@ -35,9 +49,5 @@ proportion_server <- function(id,shared_reactives) {
     })
     
     setup_download_handler(id, output, "proportion_data", reactive({processed_data()$ggData}), "proportion_data")
-    
-    
   })
 }
-
-

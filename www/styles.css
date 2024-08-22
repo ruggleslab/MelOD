@@ -1,0 +1,61 @@
+.content_home {
+  margin-top: 20px;
+}
+
+.section-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 40px;
+}
+
+.image-inline {
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+p { 
+  font-size: 16px;
+}
+
+.dropdown-header {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.dropdown-content {
+  padding-left: 20px;
+}
+
+/* Make logo responsive */
+.responsive-logo {
+  max-width: 100%;
+  height: auto;
+}
+
+.clickable {
+  cursor: pointer;
+  color: #D76C33;
+  text-decoration: none;
+  display: block;
+  position: relative;
+  padding-left: 20px;
+}
+
+.clickable::before {
+  content: '\25B6'; /* Unicode for right-pointing triangle */
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 14px;
+  line-height: 19px;
+  transform: rotate(90deg); /* Initially rotated to point downwards */
+}
+
+.clickable.collapsed::before {
+  transform: rotate(0deg); /* Rotate to point right when collapsed */
+}
+
+.clickable:hover {
+  color: #d96121;
+  text-decoration: underline;
+}
