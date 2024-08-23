@@ -56,28 +56,40 @@ home_ui <- function(id) {
             tags$img(src = "./images/plotly.png", width = "230px", class = "image-inline"),
           ),
           tags$div(class = "dropdown-header", "Specific functionality"),
+          tags$ul(
           tags$div(
             class = "clickable collapsed", 
             `data-toggle` = "collapse", `data-target` = "#collapseInstructionsbulkrna", 
             "Bulk RNA Tab"
           ),
-          tags$div(id = "collapseInstructionsbulkrna", class = "collapse dropdown-content",
-                   tags$ul(
-                     tags$li("You can select genes directly by clicking dots on the volcano plot.")
-                   )
+          tags$div(
+            id = "collapseInstructionsbulkrna", 
+            class = "collapse dropdown-content",
+            tags$ul(
+              tags$li("The PCA box provides key dataset information about the study sample. Additionally, if available, a metadata box offers insights into patient mortality."),
+              tags$li("You can select genes directly by clicking on the dots within the volcano plot.")
+            )
           ),
           tags$div(
             class = "clickable collapsed", 
-            `data-toggle` = "collapse", `data-target` = "#collapseInstructionssinglecell", 
-            "Single Cell tab"
+            `data-toggle` = "collapse", 
+            `data-target` = "#collapseInstructionssinglecell", 
+            "Single Cell Tab"
           ),
-          tags$div(id = "collapseInstructionssinglecell", class = "collapse dropdown-content",
-                   tags$ul(
-                     tags$li("This section is inspired by ShinyCell"),
-                     tags$li("Cell datable is linked to the cell information axis."),
-                     tags$li("Same for the gene datable.")
-                   )
+          tags$div(
+            id = "collapseInstructionssinglecell", 
+            class = "collapse dropdown-content",
+            tags$ul(
+              tags$li(
+                "This section draws inspiration from the ShinyCell R package.", 
+                tags$a(href = 'https://github.com/SGDDNB/ShinyCell', "Explore the ShinyCell GitHub Repository")
+              ),
+              tags$li("The cell datatable is linked to the cell information plot (axes)."),
+              tags$li("Similarly, the co-expressed gene datatable is controlled by the co-expressed plot box."),
+              tags$li("For the heatmap/bubble plot, two methods are available for gene selection: individual selection or submitting a list of genes.")
+            )
           )
+          ) 
       )
     )),
     column(5, box(
@@ -103,24 +115,24 @@ home_ui <- function(id) {
             tags$li(
               class = "clickable collapsed", 
               `data-toggle` = "collapse", `data-target` = "#collapsedatabulk", 
-              "Bulk RNA-Seq data (currently supported)."
+              "Bulk RNA-Seq data."
             ),
             tags$div(id = "collapsedatabulk", class = "collapse dropdown-content",
                      tags$ul(
-                       tags$li("Kunz"),
-                       tags$li("Gide"),
-                       tags$li("Badal"),
-                       tags$li("Fisher"),
+                       tags$li("Kunz et al. 2018: RNA-seq analysis identifies different transcriptomic types and developmental trajectories of primary melanomas"),
+                       tags$li("Gide et al. 2019: Distinct Immune Signatures Define Response to Anti-PD-1 Monotherapy and Anti-PD-1/Anti-CTLA-4 Combined Therapy"),
+                       tags$li("Badal et al. 2018: Transcriptional dissection of melanoma identifies a high-risk subtype underlying TP53 family genes and epigenome deregulation"),
+                       tags$li("Fisher et al. 2019: Molecular Profiling Reveals Unique Immune and Metabolic Features of Melanoma Brain Metastases"),
                      )
             ),
             tags$li(
               class = "clickable collapsed", 
               `data-toggle` = "collapse", `data-target` = "#collapsedatasingle", 
-              "Single-cell RNA-Seq data (currently supported).",
+              "Single-cell RNA-Seq data.",
             ),
             tags$div(id = "collapsedatasingle", class = "collapse dropdown-content",
                      tags$ul(
-                       tags$li("Qi Sun et. al : A novel mouse model demonstrates that oncogenic melanocyte stem cells engender melanoma resembling human disease"),
+                       tags$li("Qi Sun et al. 2019: A novel mouse model demonstrates that oncogenic melanocyte stem cells engender melanoma resembling human disease"),
                      )
             ),
             tags$li("Proteomics data (coming soon)."),
