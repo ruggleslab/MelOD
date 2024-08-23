@@ -15,6 +15,7 @@ violin_server <- function(id, shared_reactives) {
     })
     
     plot_data <- reactive({
+      req(debounced_display_genes())
       plot_violin(
         processed_data()$merged_data, 
         processed_data()$gene_of_interest, 

@@ -11,8 +11,13 @@ home_ui <- function(id) {
     # Link to the external CSS file
     tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")),
     
-    # Project Overview Box
-    column(7, box(
+    fluidRow(column(4, box(
+      title = HTML(paste("Logo")),
+      status = "info", solidHeader = TRUE,
+      width = 12, 
+      tags$img(src = "./images/melod_large_logo.png", class = "responsive-logo"))          
+    ),
+    column(8, box(
       title = HTML(paste("Project Overview")),
       status = "warning", solidHeader = TRUE,
       width = 12,
@@ -31,17 +36,10 @@ home_ui <- function(id) {
             "So go ahead, explore the different tabs, load your favorite datasets, and discover the stories hidden within the data. MelOD is here to make your research experience not only productive but also enjoyable!"
           )
       )
-    )),
-    
-    column(4, box(
-      title = HTML(paste("Logo")),
-      status = "info", solidHeader = TRUE,
-      width = 12, 
-      tags$img(src = "./images/melod_large_logo.png", class = "responsive-logo"))          
-    ),
-    
+    ))),
+
     # App Utilization Box
-    box(
+    column(7, box(
       title = HTML(paste("App Utilization")),
       status = "primary", solidHeader = TRUE,
       width = 12,
@@ -81,6 +79,12 @@ home_ui <- function(id) {
                    )
           )
       )
+    )),
+    column(5, box(
+      title = HTML(paste("Method workflow (Temporary Version)")),
+      status = "info", solidHeader = TRUE,
+      width = 12, 
+      tags$img(src = "./images/flowcharts.png", class = "responsive-logo"))          
     ),
     
     # Dropdown Bullet Points Box

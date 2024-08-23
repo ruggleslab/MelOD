@@ -27,6 +27,7 @@ correlation_server <- function(id, shared_reactives) {
     })
     
     plot_data <- reactive({
+      req(gene_of_interest())
       plot_gene_correlations(processed_data(), gene_of_interest())
     })
     
