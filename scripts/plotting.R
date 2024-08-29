@@ -10,10 +10,10 @@ plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "condition
   #' @param color_by Optional parameter to color dots by "condition" or "name"
   #' 
   #' @return A plotly object representing the PCA plot
-  
-  unique_conditions <- unique(pca_data_frame$condition)
-  condition_title <- paste("PCA plot of", paste(unique_conditions, collapse = " vs "))
-  
+  # 
+  # unique_conditions <- unique(pca_data_frame$condition)
+  # condition_title <- paste("PCA plot of", paste(unique_conditions, collapse = " vs "))
+  # 
   text_labels <- paste("Name:", pca_data_frame$name, 
                        "<br>Condition:", pca_data_frame$condition, 
                        "<br>Size Factor:", round(pca_data_frame$size_factor, 3))
@@ -45,11 +45,8 @@ plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "condition
                   line = list(color = "black", width = 1))    
   ) %>%
     layout(
-      title = condition_title,
       xaxis = list(title = "PC1", zeroline = FALSE),
-      yaxis = list(title = "PC2", zeroline = FALSE),
-      margin = list(t = 100)
-    )
+      yaxis = list(title = "PC2", zeroline = FALSE))
   
   return(pca_plot)
 }
@@ -82,10 +79,8 @@ plot_variance <- function(vs_data) {
                   line = list(color = 'rgba(50, 171, 96, 1.0)', width = 1.5))
   ) %>%
     layout(
-      title = "Variance Explained by Principal Components",
       xaxis = list(title = "Principal Components"),
-      yaxis = list(title = "Variance Explained", tickformat = ".2%"),
-      margin = list(t = 100)
+      yaxis = list(title = "Variance Explained", tickformat = ".2%")
     )
   
   return(variance_plot)
@@ -214,12 +209,13 @@ plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
   }
   
   unique_conditions <- unique(deseq2_data$condition)
-  condition_title <- paste("Volcano plot of DESeq2 results of", paste(unique_conditions, collapse=" vs "))
-  
-  volcano_plot <- layout(volcano_plot, title = condition_title,
+  # condition_title <- paste("Volcano plot of DESeq2 results of", paste(unique_conditions, collapse=" vs "))
+  # 
+  volcano_plot <- layout(volcano_plot,
                          xaxis = list(title = "Log2 Fold Change"),
                          yaxis = list(title = "-log10 Adjusted p-value"),
-                         margin = list(t = 100))
+                         margin = list(t = 50)
+  )
   volcano_plot <- volcano_plot %>%  
     config(modeBarButtonsToAdd = c('drawline', 
                                    'drawopenpath', 
@@ -257,12 +253,12 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
   conditions_found <- sort(unique(merged_data$condition), method = "radix", na.last = NA)
   custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
   
-  condition_title <- paste(" in ", paste(conditions_found, collapse=" vs "))
-  plot_title <- if (length(gene_of_interest) == 1) {
-    paste("Expressions for", gene_of_interest, condition_title)
-  } else {
-    paste("Expressions for multiple genes", condition_title)
-  }
+  # condition_title <- paste(" in ", paste(conditions_found, collapse=" vs "))
+  # plot_title <- if (length(gene_of_interest) == 1) {
+  #   paste("Expressions for", gene_of_interest, condition_title)
+  # } else {
+  #   paste("Expressions for multiple genes", condition_title)
+  # }
   
   if (choice_shape == "violin") {
     plot_type <- "violin"
@@ -275,12 +271,12 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
                     meanline = list(visible = TRUE),
                     bandwidth = 0.9,
                     text = ~paste("Gene ID:", gene_id)) %>%
-      layout(title = plot_title,
+      layout(
              yaxis = list(title = "Log-normalized Expression"),
              xaxis = list(title = "Gene - Condition",
                           titlefont = list(size = 14),
-                          tickfont = list(family = "Arial", size = 10, color = "black")),
-             margin = list(t = 100),
+                          tickfont = list(family = "Arial", size = 12, color = "black")),
+             margin = list(t = 50),
              zeroline = FALSE,
              violingap = 0.2,
              violingroupgap = 0.1,
@@ -295,12 +291,12 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
                     box = list(visible = TRUE, fillcolor = colors_chosen_darker, line = list(width = 1, color = colors_chosen_darker)),
                     meanline = list(visible = TRUE),
                     text = ~paste("Gene ID:", gene_id)) %>%
-      layout(title = plot_title,
+      layout(
              yaxis = list(title = "Log-normalized Expression"),
              xaxis = list(title = "Gene - Condition",
                           titlefont = list(size = 14),
-                          tickfont = list(family = "Arial", size = 10, color = "black")),
-             margin = list(t = 100),
+                          tickfont = list(family = "Arial", size = 12, color = "black")),
+             margin = list(t = 50),
              zeroline = FALSE,
              boxmode = "group")
   }
@@ -386,8 +382,7 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_
     heatmap_plot$x$data[[8]]$colorbar$len <- 0.3
     heatmap_plot$x$data[[8]]$colorbar$thickness <- 15
     
-    heatmap_plot <- heatmap_plot %>%
-      layout(title = "Heatmap of Gene Expression", margin = list(t = 100), height = 470)
+
     heatmap_plot <- heatmap_plot %>%  
       config(modeBarButtonsToAdd = c('drawline', 
                                      'drawopenpath', 
@@ -483,12 +478,11 @@ plot_gene_correlations <- function(filtered_results, gene_of_interest) {
     
     correlation_plot <- subplot(scatter_plot, histogram, nrows = 2, shareX = TRUE, titleX = TRUE, titleY = TRUE, heights = c(0.65, 0.35))
     correlation_plot <- correlation_plot %>%
-      layout(title = paste("Correlation of ", gene_of_interest),
+      layout(
              xaxis = list(title = "Correlation Coefficient"),
              yaxis = list(title = "-log10(p-value)"),
              yaxis2 = list(title = "Count"),
              colorbar = list(size = 0.2),
-             margin = list(t = 100),
              showlegend = FALSE)
     correlation_plot <- correlation_plot %>%  
       config(modeBarButtonsToAdd = c('drawline', 

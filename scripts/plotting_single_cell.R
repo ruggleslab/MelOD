@@ -639,6 +639,7 @@ bubheat_plotly <- function(processed_data, inpPlt, inpRow, inpCol, inpScl, inpco
   ggMat <- processed_data$ggMat
   point_size_mat <- processed_data$point_size_mat
   colRange <- processed_data$colRange
+  print(ggMat)
   plot <- heatmaply(ggMat, 
                     plot_method = "plotly",
                     Rowv = if (inpRow) TRUE else FALSE, 

@@ -29,9 +29,17 @@
     "title": "Comparison Plot Information",
     "text": "This plot displays cell or gene information, both of which can be selected via input. The plot can be split by either cell information or gene information, making it easier to compare two different genes or two different cell types. The linked cell data table provides the number of cells in each category for the selected information. The input box at the top of the dashboard allows customization, such as subsetting cell types or changing axis parameters."
   },
+  "cell_datatable": {
+    "title":"Cell Datatable Information",
+     "text":"This datatable displays cell information based on the selections made in the Comparison box for cell info."
+  },
   "coexpression": {
     "title": "Coexpression Plot Information",
     "text": "The coexpression plot visualizes the expression levels of two genes selected via input. The legend indicates each gene with its own color, while a third color represents the coexpression of both genes in the same cell. By default, gene 1 is shown in red, gene 2 in blue, and the coexpression in purple. A coexpression table provides additional details, including the number of cells expressing each gene."
+  },
+  "coexpressed_datatable": {
+    "title":"Coexpressed Datatable Information",
+     "text":"This datatable displays coexpressed genes information based on the selections made in the Coexpression box"
   },
   "sc_violin": {
     "title": "Violin & BoxPlot Information",

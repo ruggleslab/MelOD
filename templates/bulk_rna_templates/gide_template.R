@@ -94,6 +94,8 @@ gide_server <- function() {
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)    
     
+    observe_helpers()
+    
     selection_result <- selection_server(dds, clinical_data, "gide")
     selection_list_server(dds, clinical_data, "gide", selection_result)
     input_server("gide", selection_result)

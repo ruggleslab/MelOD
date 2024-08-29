@@ -22,8 +22,8 @@ dashboardTemplate <- function() {
                           menuSubItem("Fischer, Davies 2019", tabName = "fischer")
                  ),
                  menuItem("Single Cell", tabName = "single",
-                          menuSubItem("Mayumi et al. 2019", tabName = "mayumi"),
-                          menuSubItem("Internal Data (KBPT)", tabName = "KBPT")
+                          menuSubItem("Qi Sun et al. 2019", tabName = "qisun")
+                          # menuSubItem("Internal Data (KBPT)", tabName = "KBPT")
                  ),
                  menuItem("Proteomic", tabName = "proteomic")
         ),
@@ -43,7 +43,7 @@ dashboardTemplate <- function() {
         tabItem(tabName = "badal", badal_ui("badal_template")),
         tabItem(tabName = "kunz", kunz_ui("kunz_template")),
         tabItem(tabName = "fischer", fischer_ui("fischer_template")),
-        tabItem(tabName = "mayumi", mayumi_ui("mayumi_template")),
+        tabItem(tabName = "qisun", qisun_ui("qisun_template")),
         tabItem(tabName = "KBPT", KBPT_ui("KBPT_template")),
         
         tabItem(tabName = "proteomic", in_development_ui("in_development_template")),

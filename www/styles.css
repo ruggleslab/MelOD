@@ -1,20 +1,13 @@
+
+/* Home Page */
+
 .content_home {
   margin-top: 20px;
-}
-
-.section-header {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 40px;
 }
 
 .image-inline {
   vertical-align: middle;
   margin-right: 10px;
-}
-
-p { 
-  font-size: 16px;
 }
 
 .dropdown-header {
@@ -26,7 +19,6 @@ p {
   padding-left: 20px;
 }
 
-/* Make logo responsive */
 .responsive-logo {
   max-width: 100%;
   height: auto;

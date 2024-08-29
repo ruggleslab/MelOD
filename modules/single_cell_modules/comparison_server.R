@@ -17,7 +17,19 @@ comparison_server <- function(id, shared_reactives) {
     
     blurbs <- fromJSON("./www/info_blurbs.json")
     
-    debounced_marker_size <- debounce(reactive({ input$marker_size }), millis = 0)
+    debounced_marker_size <- debounce(
+      reactive({
+        if (input$marker_size == HTML("<span style='font-size: 13px;'>Medium</span>")) {
+          4
+        } else if (input$marker_size == HTML("<span style='font-size: 10px;'>Small</span>")) {
+          2
+        } else if (input$marker_size == HTML("<span style='font-size: 16px;'>Big</span>")) {
+          7
+        } else {
+          4  # Default case if none of the conditions match
+        }
+      }), millis = 0
+    )
     
     observe({ 
       updateSelectizeInput(session, "gene_plot_clustered_selection", choices = names(shared_reactives$sc1gene_data()), server = TRUE)
@@ -122,6 +134,14 @@ comparison_server <- function(id, shared_reactives) {
     })
     
     setup_download_handler(id, output, "gene_plot_clustered_data", reactive({processed_data()$data1$ggData}), "gene_plot_data")
+    
+    observeEvent(input$info_cell_databale, {
+      shinyalert(
+        title = blurbs$info$cell_datatable$title, 
+        html = TRUE,
+        text = blurbs$info$cell_datatable$text
+      )
+    })
     
     output$cell_datatable <- renderDataTable({
       req(input$cell_plot_clustered_info, 

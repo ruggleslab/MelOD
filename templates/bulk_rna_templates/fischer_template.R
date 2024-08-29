@@ -59,6 +59,8 @@ fischer_server <- function() {
   update_modal_progress(0.9, text="Initializing servers...") 
   Sys.sleep(0.5)
   
+  observe_helpers()
+  
   selection_result <- selection_server(dds, clinical_data, "fischer")
   input_server("fischer", selection_result)
   volcano_server("fischer", selection_result)

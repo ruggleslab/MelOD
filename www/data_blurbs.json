@@ -17,7 +17,7 @@
         "doi": "10.1016/j.ccell.2019.01.003",
         "data_link": "https://www.ebi.ac.uk/ena/browser/view/PRJEB23709",
         "data_explanation": "73 total samples, 41 anti-PD-1 monotherapy (20 Responders, 21 Non Responders), 32 combined anti-PD-1 and anti-CTLA-4 (18 Responders, 14 Non Responders).",
-        "data_comparison": " The ground truth for the comparison was Responder vs. Non Responder."
+        "data_comparison": "Comparison Groups: Responder vs. Non Responder."
 
     },
 
@@ -29,7 +29,7 @@
         "doi": "10.1172/jci.insight.92102",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98394",
         "data_explanation": "78 total samples, 27 benign, 51 melanoma.",
-        "data_comparison": "The ground truth for the comparison was Melanoma vs. Benign."
+        "data_comparison": "Comparison Groups: Melanoma vs. Benign."
     },
 
     "kunz_info" : {
@@ -40,7 +40,7 @@
         "doi": "10.1038/s41388-018-0385-y",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE112509",
         "data_explanation": "80 total samples, 23 melanocytic nevi, 57 primary melanomas.",
-        "data_comparison": "The ground truth for the comparison was Naevi vs. Melanoma."
+        "data_comparison": "Comparison Groups: Naevi vs. Melanoma."
 
     },
 
@@ -52,18 +52,18 @@
         "doi": "10.1158/2159-8290.CD-18-1489",
         "data_link": "https://ega-archive.org/datasets/EGAD00001005046",
         "data_explanation": "135 total samples, 86 melanoma brain metastases, 49 extracranial metastases (from various locations). Samples were collected from 80 patients with some patients contributing multiple samples from different locations (both brain and extracranial).",
-        "data_comparison": " The ground truth for the comparison was Brain Metastases vs. Extracranial Metastases."
+        "data_comparison": "Comparison Groups: Brain Metastases vs. Extracranial Metastases."
 
     },
-    "mayumi_info" : {
+    "qisun_info" : {
         "title": "A novel mouse model demonstrates that oncogenic melanocyte stem cells engender melanoma resembling human disease",
-        "lead_author": "Mayumi",
+        "lead_author": "Qi Sun",
         "abstract": "Melanoma, the deadliest skin cancer, remains largely incurable at advanced stages. Currently, there is a lack of animal models that resemble human melanoma initiation and progression. Recent studies using a Tyr-CreER driven mouse model have drawn contradictory conclusions about the potential of melanocyte stem cells (McSCs) to form melanoma. Here, we employ a c-Kit-CreER-driven model that specifically targets McSCs to show that oncogenic McSCs are a bona fide source of melanoma that expand in the niche, and then establish epidermal melanomas that invade into the underlying dermis. Further, normal Wnt and Endothelin niche signals during hair anagen onset are hijacked to promote McSC malignant transformation during melanoma induction. Finally, molecular profiling reveals strong resemblance of murine McSC-derived melanoma to human melanoma in heterogeneity and gene signatures. These findings provide experimental validation of the human melanoma progression model and key insights into the transformation and heterogeneity of McSC-derived melanoma.",
         "paper_link": "https://aacrjournals.org/cancerdiscovery/article/9/5/628/42007/Molecular-Profiling-Reveals-Unique-Immune-and",
         "doi": "10.1158/2159-8290.CD-18-1489",
         "data_link": "https://ega-archive.org/datasets/EGAD00001005046",
         "data_explanation": "This analyzed dataset is used to explore differences in cell state composition for transcriptionally heterogeneous Tamoxifen induced melanoma transplant mouse model. This is an integration of the following datasets of the Tyr-CreER;BrafV600E;Pten-fl/fl;LSL-tdTomato melanoma transplantation mouse model (denoted TBPT) and control melanocyte stem cells isolated from Tyr-CreER;LSL-tdTomato mouse model (denoted TT).\n  - timept: distinguishes between 0 and 6 weeks post Tamoxifen application (tumor induction). \n- tdTom: distinguishes between melanoma (tdTom+) and stroma (tdTom-) [immune cells not included]. \n- Condition: distinguishes between transformed and non-transformed cells (transformed cells were induced with BrafV600E and Pten deletion). \n- CellType: annotation for each cell type down to subtype (this is the abbreviated version). \n- CellType_fullname: annotation for each cell type down to subtype (this is the non-abbreviated version)",
-"data_comparison": " The ground truth for the comparison was TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed)."
+"data_comparison": "Comparison Groups: TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed)."
 
     }
 }

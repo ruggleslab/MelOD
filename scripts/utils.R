@@ -34,7 +34,7 @@ add_significance_annotations <- function(merged_data, plot, padj_cut) {
           text = text_value,
           xref = "x", yref = "paper",
           showarrow = FALSE,
-          font = list(family = "Arial", size = 10)
+          font = list(family = "Arial", size = 11)
         )
       ))
       

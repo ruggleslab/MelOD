@@ -25,7 +25,7 @@ source("templates/bulk_rna_templates/bulk_rna_template.R", local = TRUE)
 
 source("templates/in_development_template.R", local = TRUE)
 source("templates/single_cell_templates/single_cell_template.R", local = TRUE)
-source("templates/single_cell_templates/mayumi_template.R", local = TRUE)
+source("templates/single_cell_templates/qisun_template.R", local = TRUE)
 source("templates/single_cell_templates/KBPT_template.R", local = TRUE)
 
 
@@ -60,8 +60,8 @@ server <- function(input, output, session) {
       gide_server()
     } else if (input$tabs == "fischer") {
       fischer_server()
-    } else if (input$tabs == "mayumi") {
-      mayumi_server()
+    } else if (input$tabs == "qisun") {
+      qisun_server()
     } else if (input$tabs == "KBPT") {
       KBPT_server()
     }

@@ -16,7 +16,19 @@ gene_coexpression_server <- function(id, shared_reactives) {
     ns <- session$ns
     blurbs <- fromJSON("./www/info_blurbs.json")
     
-    debounced_marker_size <- debounce(reactive({ input$marker_size }), millis = 0)
+    debounced_marker_size <- debounce(
+      reactive({
+        if (input$marker_size == HTML("<span style='font-size: 13px;'>Medium</span>")) {
+          4
+        } else if (input$marker_size == HTML("<span style='font-size: 10px;'>Small</span>")) {
+          2
+        } else if (input$marker_size == HTML("<span style='font-size: 16px;'>Big</span>")) {
+          7
+        } else {
+          4  # Default case if none of the conditions match
+        }
+      }), millis = 0
+    )
     
     observe({ 
       updateSelectizeInput(session, "gene_plot_coexpression_selection", choices = names(shared_reactives$sc1gene_data()), server = TRUE)
@@ -52,6 +64,14 @@ gene_coexpression_server <- function(id, shared_reactives) {
     })
     
     setup_download_handler(id, output, "coexpressed_gene_plot_clustered_data", reactive({processed_data()$ggData}), "coexpressed_gene_plot_data")
+    
+    observeEvent(input$info_coexpression_databale, {
+      shinyalert(
+        title = blurbs$info$coexpressed_datatable$title, 
+        html = TRUE,
+        text = blurbs$info$coexpressed_datatable$text
+      )
+    })
     
     output$gene_datatable_coexpression <- renderDataTable({
       req(input$gene_plot_coexpression_selection, 

@@ -59,6 +59,8 @@ kunz_server <- function() {
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
 
+    observe_helpers()
+    
     selection_result <- selection_server(dds, clinical_data, "kunz")
     input_server("kunz", selection_result)
     volcano_server("kunz", selection_result)

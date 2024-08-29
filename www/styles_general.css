@@ -1,6 +1,30 @@
 /* styles.css */
 
-/* Home Page */
+
+/* Change background color of the page */
+body {
+    background-color: #FFF5EE; /* Background color of the entire page */
+}
+
+p { 
+  font-size: 17px;
+}
+
+*{
+  font-size: 18px;
+}
+.form-control {
+    font-size: 17px;
+
+}
+.main-header .logo{
+  height: 55px;
+}
+
+.sidebar-menu .treeview-menu>li>a {
+    font-size: 16px;
+}
+
 .glyphicon {
     top: 0px; 
 }
@@ -16,22 +40,6 @@
     margin-left: 10px;
 }
 
-.home {
-    text-align: center;
-}
-
-/* Change background color of the page */
-body {
-    background-color: #FFF5EE; /* Background color of the entire page */
-}
-
-
-/* Change background color of the title */
-h2.home {
-    background-color: #4D5C6A; /* Background color of the title */
-    color: #FFF5EE; /* Text color of the title */
-    padding: 10px; /* Padding for better appearance */
-}
 
 /* Navbar */
 .navbar-default .navbar-toggle .icon-bar {

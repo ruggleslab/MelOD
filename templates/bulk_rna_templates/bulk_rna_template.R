@@ -139,9 +139,46 @@ input_ui <- function(id) {
     collapsible = TRUE,
     solidHeader = TRUE, width = 12,
     tags$h3("Parameters", style = "margin-top: 0;"),
-             numericInput(ns("slider_padj"), "padj Cutoff", 0.05, min = 0, max = 1, step = 0.01),
-             numericInput(ns("slider_log2"), "log2foldchange Cutoff", 2, step = 0.1),
-            multiInput(
+    fluidRow(column(6, numericInput(
+      ns("slider_padj"), 
+      "padj Cutoff", 
+      value = 0.05, 
+      min = 0, 
+      max = 1, 
+      step = 0.01
+    ) %>%
+      helper(
+        colour = "#FFA812", 
+        icon = "question",
+        type = "inline", 
+        size = "m", 
+        fade = TRUE,
+        title = "P-value Adjusted Cutoff",
+        content = c(
+          "This setting allows you to filter genes on the volcano plot, heatmap, and the significance annotation on the violin/box plot."
+        )
+      ))),
+    fluidRow(column(6,
+                    
+                    numericInput(
+                      ns("slider_log2"), 
+                      "Log2 Fold Change Cutoff", 
+                      value = 2, 
+                      step = 0.1
+                    ) %>%
+                      helper(
+                        colour = "#FFA812", 
+                        type = "inline", 
+                        icon = "question",
+                        size = "m", 
+                        fade = TRUE,
+                        title = "Log2 Fold Change Cutoff",
+                        content = c(
+                          "This cutoff allows you to filter genes on the volcano plot and heatmap."
+                        )
+                      ))),
+   
+    multiInput(
                 inputId = ns("selected_gene"),
                 label = "Gene(s) selection (up to 10):",
                 autocomplete = TRUE,
@@ -169,7 +206,7 @@ volcano_ui <- function(id) {
       solidHeader = TRUE,
       collapsible = TRUE,
       withSpinner(plotlyOutput(ns("volcano_plot")),type = 6, color = "#FFA812", size = 0.5),
-      br(),br(),br(),
+      br(),br()
     )
   )
 }
@@ -229,9 +266,21 @@ heatmap_ui <- function(id) {
       withSpinner(uiOutput(ns("heatmap_plot")),type = 6, color = "#FFA812", size = 0.5),
       br(),
       br(),
-      br(),
       fluidRow(
-        column(3,numericInput(ns("number"), "Number of default genes", value =10, min = 0,max=20, step = 1)),
+        column(2,numericInput(ns("number"), "Number of default genes", value =10, min = 0,max=20, step = 1)%>%
+                 helper(
+                   colour = "#FFA812",
+                   icon = "question",
+                   type = "inline",
+                   size = "m", 
+                   fade = TRUE,
+                   title = "Number of Default Genes",
+                   content = c(
+                     "This input controls the number of genes displayed by default on the heatmap. By default, genes are ordered by log2 fold change values, with 10 genes shown.",
+                     "If you select specific genes and want only those to be displayed on the heatmap, reduce the number of default genes to 0. However, ensure there are always more than 2 genes on the heatmap!"
+                   )
+                 )),
+        column(1,""),
         column(3, selectizeInput(ns("heatmap_palette"), "Heatmap Color Palette:", choices = c("Default" ="RdBu", "Green & Pink "="PiYG", "Red & Grey" = "RdGy", "Brown & Green "= "BrBG"), selected = "RdBu")),
         column(3, numericInput(ns("font_size"), "Font Size:", value = 8, min = 6, max = 20)),
         column(3, numericInput(ns("z_score_range"), "Z-score Range:",  value = 2, min = 2, max = 10, step = 1))

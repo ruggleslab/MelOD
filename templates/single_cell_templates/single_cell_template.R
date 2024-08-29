@@ -11,7 +11,7 @@ inputs_ui <- function(id) {
       column(8,
              selectInput(ns("cell_subset"), "Cell information to subset:",
                              choices = NULL) %>%
-               helper(type = "inline", size = "m", fade = TRUE,
+               helper(type = "inline", size = "m", fade = TRUE,icon = "question",
                       title = "Subseting cells",
                       content = c("You can select the type of cells you want to subset for downstream analysis."
                       )),
@@ -24,8 +24,19 @@ inputs_ui <- function(id) {
         4, selectInput(ns("cell_plot_clustered_X_axis"), "X-axis:", choices = NULL),
         selectInput(ns("cell_plot_clustered_Y_axis"), "Y-axis:", choices = NULL)
       ),
-      column(4,
-             numericInput(ns("marker_size"), "Point size:", value = 4, min = 1, max = 10)),
+      column(
+        4,
+        sliderTextInput(
+          inputId = ns("marker_size"),
+          label = "Point size:", 
+          choices = c(
+            HTML("<span style='font-size: 10px;'>Small</span>"), 
+            HTML("<span style='font-size: 13px;'>Medium</span>"), 
+            HTML("<span style='font-size: 16px;'>Big</span>")
+          ),
+          selected = HTML("<span style='font-size: 13px;'>Medium</span>")
+        )
+      )
     )
   )
 }
@@ -38,9 +49,10 @@ cell_datatable_ui <- function(id) {
     box(
       width = 12,
       solidHeader = TRUE,
-      title = "Cell DataTable", status = "info", collapsible = TRUE,
+      title = HTML(paste("Cell DataTable", actionLink(ns("info_cell_databale"), label = "", icon = icon("info-circle")))), status = "info", collapsible = TRUE,
       DT::dataTableOutput(ns("cell_datatable")),
-      selectizeInput(ns("inpsplt"), "Split continious data", choices = c("Quartile","Decile"),  selected = NULL)
+      column(2, selectizeInput(ns("inpsplt"), "Split if continious data", choices = c("Quartile","Decile"),  selected = NULL)
+)
     )
   )
 }
@@ -68,7 +80,7 @@ comparison_ui <- function(id) {
           condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Gene' || input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Cell'"),
           column(3, selectInput(ns("cell_plot_clustered_info"), "Cell information:", choices = NULL),
                  selectizeInput(ns("cell_plot_clustered_color"), "Cell Colour (Continuous data):", choices = c("White-Red", "Default" = "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "Blue-Yellow-Red")%>%
-                   helper(type = "inline", size = "m", fade = TRUE,
+                   helper(colour = "#FFA812",icon = "question", type = "inline", size = "m", fade = TRUE,
                           title = "Cell information to colour cells by",
                           content = c("Select cell information to colour cells",
                                       "- Categorical covariates have a fixed colour palette",
@@ -94,7 +106,7 @@ comparison_ui <- function(id) {
           condition = paste0("input['", ns("choice_comparison_cell_gene"), "'] == 'Cell Vs Gene' || input['", ns("choice_comparison_cell_gene"), "'] == 'Gene Vs Gene'"),
           column(3, selectizeInput(ns("gene_plot_clustered_selection"), "Gene name:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
                  selectizeInput(ns("gene_plot_clustered_color"), "Gene Colour (Continuous data):", choices = c("Default" = "White-Red", "Blue-Yellow-Red", "Yellow-Green-Purple"), selected = "White-Red")%>%
-                   helper(type = "inline", size = "m", fade = TRUE,
+                   helper(colour = "#FFA812",type = "inline", size = "m", fade = TRUE, icon = "question",
                           title = "Gene expression to colour cells by",
                           content = c("Select gene to colour cells by gene expression",
                                       paste0("- Gene expression are coloured in a ",
@@ -146,7 +158,7 @@ coexpression_gene_datatable_ui <- function(id) {
     box(
       width = 12,
       solidHeader = TRUE,
-      title = "Coexpression gene DataTable", status = "info", collapsible = TRUE,
+      title = HTML(paste("Coexpression gene DataTable", actionLink(ns("info_coexpression_databale"), label = "", icon = icon("info-circle")))), status = "info", collapsible = TRUE,
       DT::dataTableOutput(ns("gene_datatable_coexpression"))
     )
   )
@@ -241,12 +253,11 @@ bubheat_ui <- function(id) {
           choices = "Loading...")),
         column(3,
                
-          textAreaInput(ns("bubheat_selected_gene_text"), HTML("List of gene names <br /> 
-                                          (Max 50 genes, separated <br /> 
+          textAreaInput(ns("bubheat_selected_gene_text"), HTML("List of gene names (Max 50 genes, separated 
                                            by , or ; or newline):
                                           "), 
                              height = "200px") %>% 
-                 helper(type = "inline", size = "m", fade = TRUE, 
+                 helper(colour = "#FFA812",type = "inline", size = "m", fade = TRUE,icon = "question",
                         title = "List of genes to plot on bubbleplot / heatmap", 
                         content = c("Input genes to plot", 
                                     "- Maximum 50 genes (due to ploting space limitations)", 
@@ -254,8 +265,8 @@ bubheat_ui <- function(id) {
                                     "- Don't forget to click on Send list")),
           actionButton(ns("select_genes_single_cell"), "Send list", class = "btn btn-primary"),
           actionButton(ns("reset_selection_single_cell"), "Reset", class = "btn btn-primary")),
-        
-        column(2,
+        column(1,""),
+        column(1,
                selectizeInput(ns("bubheat_group_by"), "Group by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1)),
                selectizeInput(ns("bubheat_color"), "Colour:", choices = c("Default"="White-Red","Blue-Yellow-Red","Yellow-Green-Purple"),  selected = "White-Red")),
         column(2,
