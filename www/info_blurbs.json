@@ -31,7 +31,7 @@
   },
   "cell_datatable": {
     "title":"Cell Datatable Information",
-     "text":"This datatable displays cell information based on the selections made in the Comparison box for cell info."
+     "text":"This datatable displays cell information based on the selections made in the Cell & Gene info box for cell info input."
   },
   "coexpression": {
     "title": "Coexpression Plot Information",
@@ -39,11 +39,11 @@
   },
   "coexpressed_datatable": {
     "title":"Coexpressed Datatable Information",
-     "text":"This datatable displays coexpressed genes information based on the selections made in the Coexpression box"
+     "text":"This datatable displays coexpressed genes information based on the selections made in the Gene Coexpression box"
   },
   "sc_violin": {
     "title": "Violin & BoxPlot Information",
-    "text": "The violin or boxplot visualizes cell information on the X-axis in relation to either cell metadata or gene expression levels on the Y-axis."
+    "text": "The violin or boxplot visualizes cell information on the X-axis in relation to either cell metadata or gene expression levels on the Y-axis.These plots combine elements of box plots and density plots, showing the distribution, median, and interquartile range of the expression data. The width of the plot at different values indicates the density of data points.<br><br><img src='./images/violin_example.png' alt='Violin Plot Example' style='width:85%;'>."
   },
   "proportion": {
     "title": "Proportion Plot Information",

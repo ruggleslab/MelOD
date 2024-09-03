@@ -8,10 +8,10 @@ inputs_ui <- function(id) {
       title = "Inputs", status = "warning", solidHeader = TRUE,
       collapsible = TRUE, collapsed = FALSE,
       width = 12,
-      column(8,
+      column(7,
              selectInput(ns("cell_subset"), "Cell information to subset:",
                              choices = NULL) %>%
-               helper(type = "inline", size = "m", fade = TRUE,icon = "question",
+               helper(colour = "#FFA812", type = "inline", size = "m", fade = TRUE,icon = "question",
                       title = "Subseting cells",
                       content = c("You can select the type of cells you want to subset for downstream analysis."
                       )),
@@ -20,12 +20,12 @@ inputs_ui <- function(id) {
              br(),br(),
              actionButton(ns("cell_subset_all"), "Select all groups", class = "btn btn-primary"),
              actionButton(ns("cell_subset_none"), "Deselect all groups", class = "btn btn-primary")),
+      column(1,""),
       column(
         4, selectInput(ns("cell_plot_clustered_X_axis"), "X-axis:", choices = NULL),
-        selectInput(ns("cell_plot_clustered_Y_axis"), "Y-axis:", choices = NULL)
-      ),
-      column(
-        4,
+        selectInput(ns("cell_plot_clustered_Y_axis"), "Y-axis:", choices = NULL),
+     
+
         sliderTextInput(
           inputId = ns("marker_size"),
           label = "Point size:", 
@@ -35,8 +35,8 @@ inputs_ui <- function(id) {
             HTML("<span style='font-size: 16px;'>Big</span>")
           ),
           selected = HTML("<span style='font-size: 13px;'>Medium</span>")
-        )
-      )
+        ) )
+      
     )
   )
 }
@@ -48,8 +48,8 @@ cell_datatable_ui <- function(id) {
   fluidRow(
     box(
       width = 12,
-      solidHeader = TRUE,
-      title = HTML(paste("Cell DataTable", actionLink(ns("info_cell_databale"), label = "", icon = icon("info-circle")))), status = "info", collapsible = TRUE,
+      solidHeader = TRUE,collapsible = TRUE,
+      title = HTML(paste("Cell DataTable", actionLink(ns("info_cell_databale"), label = "", icon = icon("info-circle")))), status = "info", 
       DT::dataTableOutput(ns("cell_datatable")),
       column(2, selectizeInput(ns("inpsplt"), "Split if continious data", choices = c("Quartile","Decile"),  selected = NULL)
 )
@@ -63,7 +63,7 @@ comparison_ui <- function(id) {
   fluidRow(
     box(
       title = HTML(paste("Cell & Gene info", actionLink(ns("info_comparison_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
-      status = "primary", solidHeader = TRUE,
+      status = "primary", solidHeader = TRUE,collapsible = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("gene_plot_clustered"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
       
@@ -133,7 +133,7 @@ gene_coexpression_ui <- function(id) {
   fluidRow(
     box(
       title = HTML(paste("Gene Coexpression", actionLink(ns("info_coexpression_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("coexpressed_gene_plot_clustered_data"), icon = icon("save-file", lib = "glyphicon")))),
-      status = "primary", solidHeader = TRUE,
+      status = "primary", solidHeader = TRUE,collapsible = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("gene_plot_coexpression"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
@@ -157,8 +157,8 @@ coexpression_gene_datatable_ui <- function(id) {
   fluidRow(
     box(
       width = 12,
-      solidHeader = TRUE,
-      title = HTML(paste("Coexpression gene DataTable", actionLink(ns("info_coexpression_databale"), label = "", icon = icon("info-circle")))), status = "info", collapsible = TRUE,
+      solidHeader = TRUE,collapsible = TRUE,
+      title = HTML(paste("Coexpression gene DataTable", actionLink(ns("info_coexpression_databale"), label = "", icon = icon("info-circle")))), status = "info", 
       DT::dataTableOutput(ns("gene_datatable_coexpression"))
     )
   )
@@ -170,7 +170,7 @@ sc_violin_ui <- function(id) {
   fluidRow(
     box(
       title = HTML(paste("Violin & Boxplot", actionLink(ns("info_sc_violin_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("sc_violin_boxplot_data"), icon = icon("save-file", lib = "glyphicon")))),
-      status = "primary", solidHeader = TRUE,
+      status = "primary", solidHeader = TRUE,collapsible = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("sc_violin_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
@@ -217,14 +217,14 @@ proportion_ui <- function(id) {
   fluidRow(
     box(
       title = HTML(paste("Proportion plot", actionLink(ns("info_proportion_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("proportion_data"), icon = icon("save-file", lib = "glyphicon")))),
-      status = "primary", solidHeader = TRUE,
+      status = "primary", solidHeader = TRUE,collapsible = TRUE,
       width = 12,
       withSpinner(plotlyOutput(ns("proportion_plot"), height = '700px'), type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
         column(3,selectizeInput(ns("proportion_plot_X"), "Cell information to plot (X-axis):", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
-        column(3,selectizeInput(ns("proportion_group_by"), "Cell information to group / colour by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+        column(4,selectizeInput(ns("proportion_group_by"), "Cell information to group / colour by:", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
         column(3,selectizeInput(ns("proportion_type"), "Plot value", choices = c("Proportion" = "Proportion", "Cell Number" ="cell_number"), selected = "Proportion", multiple = FALSE, options = list(maxItems = 1))),
-        column(3, br(),awesomeCheckbox(
+        column(2, br(),awesomeCheckbox(
           inputId = ns("proportion_flip_axis"),
           label = "Flip axis", 
           value = FALSE,
@@ -240,7 +240,7 @@ bubheat_ui <- function(id) {
   fluidRow(
     box(
       title = HTML(paste("Heatmap & Bubble plot", actionLink(ns("info_bubheat_plot"), label = "", icon = icon("info-circle")), downloadButton(ns("bubheat_data"), icon = icon("save-file", lib = "glyphicon")))),
-      status = "primary", solidHeader = TRUE,
+      status = "primary", solidHeader = TRUE,collapsible = TRUE,
       width = 12,
       withSpinner(uiOutput(ns("bubheat_plot")), type = 6, color = "#FFA812", size = 0.5),
       fluidRow(
@@ -300,3 +300,4 @@ bubheat_ui <- function(id) {
   )
   )
 }
+

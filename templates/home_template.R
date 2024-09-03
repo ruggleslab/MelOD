@@ -35,7 +35,7 @@ home_ui <- function(id) {
       title = HTML(paste('')),
       status = "info", solidHeader = FALSE, collapsible = FALSE,
       width = 9, 
-      tags$img(src = "./images/melod_large_logo.png", class = "responsive-logo"))          
+      tags$img(src = "./images/melod_large_logo_old.png", class = "responsive-logo"))          
     )),
 
     # App Utilization Box
@@ -141,7 +141,7 @@ home_ui <- function(id) {
               div(class = ".content_home",
                   tags$p(
                     "Please take a moment to complete our survey: ",
-                    tags$a(href = "https://forms.gle/m3o8FMRt3NLPFMrC8", "Take the Survey")
+                    tags$a(href = "https://forms.gle/8GDXsiRajwXnTrMD7", "Take the Survey")
                   )
               )
             ),
