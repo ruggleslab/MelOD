@@ -32,10 +32,8 @@ home_ui <- function(id) {
       )
     )),
     column(4, box(
-      title = HTML(paste('')),
-      status = "info", solidHeader = FALSE, collapsible = FALSE,
-      width = 9, 
-      tags$img(src = "./images/melod_large_logo_old.png", class = "responsive-logo"))          
+      status = "info", solidHeader = FALSE, collapsible = FALSE, width = 12,
+      tags$img(src = "./images/melod_large_logo_old.png", class = "responsive-logo"))
     )),
 
     # App Utilization Box

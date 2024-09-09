@@ -21,7 +21,7 @@ blurb_study_ui <- function(id) {
     tags$p(Id_info$abstract),
     tags$p("Read the full paper: ", tags$a(href = Id_info$paper_link, "PubMed")),
     tags$p("DOI: ", tags$a(href = paste("https://doi.org/", Id_info$doi, sep = ""), Id_info$doi)),
-    tags$p("Data Access: ", tags$a(href = Id_info$data_link, "ENA Dataset"))
+    tags$p("Data Access: ", tags$a(href = Id_info$data_link, "Dataset"))
   )
 }
 
