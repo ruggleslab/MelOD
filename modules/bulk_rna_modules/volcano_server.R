@@ -49,6 +49,9 @@ volcano_server <- function(id, shared_reactives) {
     })
     
     setup_download_handler(id, output, "volcano_data", reactive({ processed_data()$res }), "volcano")
+    
+    output$filtered_results <- render_filtered_results_table(shared_reactives$dds_processed, input)
+    
   })
 }
 

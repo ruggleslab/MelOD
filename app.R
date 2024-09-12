@@ -28,6 +28,7 @@ source("templates/single_cell_templates/single_cell_template.R", local = TRUE)
 source("templates/single_cell_templates/qisun_template.R", local = TRUE)
 source("templates/single_cell_templates/KBPT_template.R", local = TRUE)
 
+source("templates/proteomics_templates/kleffman_template.R", local = TRUE)
 
 
 # Source scripts files
@@ -64,7 +65,9 @@ server <- function(input, output, session) {
       qisun_server()
     } else if (input$tabs == "KBPT") {
       KBPT_server()
-    }
+    } else if (input$tabs == "kleffman"){
+      kleffman_server()
+      }
   })
 }
 

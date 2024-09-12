@@ -41,8 +41,8 @@ gide_selector_ui <- function(id) {
     radioButtons(
       label = "Selection",
       inputId = ns("selection"),
-      choices = c("Combotherapy", "Monotherapy"),
-      selected = "Combotherapy",
+      choices = c("Combotherapy" = 1, "Monotherapy" =2),
+      selected = 1,
       inline = TRUE
     ),
     uiOutput(ns("debug_selection"))

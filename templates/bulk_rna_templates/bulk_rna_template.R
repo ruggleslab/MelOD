@@ -163,7 +163,7 @@ input_ui <- function(id) {
                     numericInput(
                       ns("slider_log2"), 
                       "Log2 Fold Change Cutoff", 
-                      value = 2, 
+                      value = 1, 
                       step = 0.1
                     ) %>%
                       helper(

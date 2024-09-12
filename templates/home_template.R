@@ -24,18 +24,20 @@ home_ui <- function(id) {
             "The main objective of MelOD is to <b>democratize access</b> to high-quality, interactive visualizations that can help accelerate discoveries in melanoma research. By integrating data from multiple studies, including bulk RNA-Seq, single-cell RNA-Seq, and proteomics (with more to come), MelOD allows for a comprehensive examination of the molecular landscape of melanoma."
           )),
           tags$p(
-            "In addition to offering a range of pre-built visualizations, MelOD empowers users to dive deep into their data, customize plots, and even download datasets for offline analysis. With an intuitive interface, the application streamlines the process of data exploration, making it easier than ever to generate insights and hypotheses that can drive further research."
+            "In addition to offering a range of pre-built visualizations, MelOD empowers users to dive deep into the data, customize plots, and even download datasets for offline analysis. With an intuitive interface, the application streamlines the process of data exploration, making it easier than ever to generate insights and hypotheses that can drive further research."
           ),
           tags$p(
             "So go ahead, explore the different tabs, load your favorite datasets, and discover the stories hidden within the data. MelOD is here to make your research experience not only productive but also enjoyable!"
           )
       )
     )),
-    column(4, box(
-      status = "info", solidHeader = FALSE, collapsible = FALSE, width = 12,
-      tags$img(src = "./images/melod_large_logo_old.png", class = "responsive-logo"))
+    # column(4, box(
+    #   status = "info", solidHeader = FALSE, collapsible = FALSE, width = 12,
+    #   tags$img(src = "./images/melod_large_logo_old.png", class = "responsive-logo"))
+    # )),
+    column(4, 
+      tags$img(src = "./images/melod_large_logo_old.png", class = "responsive-logo")
     )),
-
     # App Utilization Box
    box(
       title = HTML(paste("App Utilization")),
@@ -44,7 +46,7 @@ home_ui <- function(id) {
       div(class = ".content_home",
           tags$p(tags$img(src = "./images/arrow_home.png", width = "50px", class = "image-inline"),
                  "Each study is accessible via the dropdown menu on the sidebar. Studies are classified by the type of data they contain."),
-          tags$img(src = "./images/home_page_utilization.png", class = "responsive-logo"),
+          tags$img(src = "./images/home_page_utilization.png", class = "responsive-workflow"),
           tags$div(class = "dropdown-header", "Specific functionality"),
           tags$ul(
           tags$div(
@@ -87,7 +89,7 @@ home_ui <- function(id) {
      title = HTML(paste("Method workflow (Temporary Version)")),
      status = "info", solidHeader = TRUE,collapsible = TRUE,
      width = 12, 
-     tags$img(src = "./images/flowcharts.png", class = "responsive-logo"))),        
+     tags$img(src = "./images/flowcharts.png", class = "responsive-workflow"))),        
      
      column(5,   # Dropdown Bullet Points Box
             box(

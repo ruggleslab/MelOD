@@ -28,10 +28,10 @@ selection_list_server <- function(dds, clinical_data, id, shared_reactives) {
       selected_dds <- NULL
       selected_clinical_data <- NULL
       
-      if ("Combotherapy" %in% input$selection) {
+      if (input$selection == 1) {
         selected_dds <- dds[[1]]
         selected_clinical_data <- clinical_data[[1]]
-      } else if ("Monotherapy" %in% input$selection) {
+      } else if (input$selection == 2) {
         selected_dds <- dds[[2]]
         selected_clinical_data <- clinical_data[[2]]
       }
@@ -101,8 +101,21 @@ shared_server_utilities <- function(dds) {
   #' 
   #' @return A list of utilities including the processed DESeq2 dataset and filtered genes.
   
-  dds_processed <- gene_names_dds(dds)
-  res <- results(dds_processed)
+  dds_processed <- tryCatch({
+    gene_names_dds(dds)
+  }, error = function(e) {
+    dds
+  })
+
+  
+  res <- tryCatch({
+    results(dds_processed)  # Try to get results if it's a DESeq2 object
+  }, error = function(e) {
+    # If results() fails, use the dds object directly (assuming it is already in a results-like format)
+    message("Warning: 'results()' function failed. Using dds directly.")
+    dds_processed
+  })  
+  
   filtered_genes <- filter_and_order_by_padj(res)
   
   list(

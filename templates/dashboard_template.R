@@ -25,7 +25,9 @@ dashboardTemplate <- function() {
                           menuSubItem("Qi Sun et al. 2019", tabName = "qisun")
                           # menuSubItem("Internal Data (KBPT)", tabName = "KBPT")
                  ),
-                 menuItem("Proteomic", tabName = "proteomic")
+                 menuItem("Proteomic", tabName = "proteomic",
+                          menuSubItem("Kleffman et al. 2022", tabName = "kleffman")
+                          )
         ),
         menuItem("About", tabName = "about", icon = icon("info-circle"))
       )
@@ -45,8 +47,8 @@ dashboardTemplate <- function() {
         tabItem(tabName = "fischer", fischer_ui("fischer_template")),
         tabItem(tabName = "qisun", qisun_ui("qisun_template")),
         tabItem(tabName = "KBPT", KBPT_ui("KBPT_template")),
+        tabItem(tabName = "kleffman", kleffman_ui("kleffman_template")),
         
-        tabItem(tabName = "proteomic", in_development_ui("in_development_template")),
         tabItem(tabName = "about", in_development_ui("in_development_template"))
       ),
       tags$div(class = "footer",

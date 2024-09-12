@@ -53,7 +53,13 @@ process_volcano_data <- function(dds, padj_cut, log2_cut) {
   #' 
   #' @return A list containing processed data for volcano plot and dds
   
-  res <- results(dds)
+  res <- tryCatch({
+    results(dds)  # Try to get results if it's a DESeq2 object
+  }, error = function(e) {
+    # If results() fails, use the dds object directly (assuming it is already in a results-like format)
+    dds
+  })    
+  
   res$neg_log10_padj <- -log10(res$padj)
   res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut,
                     ifelse(res$log2FoldChange > 0, "Upregulated", "Downregulated"),
@@ -94,7 +100,7 @@ process_violin_data <- function(dds, display_genes) {
   
   # Merge padjust values with the merged_data
   merged_data <- left_join(merged_data, padjust_values, by = "gene_id")
-  
+  print(merged_data)
   return(list(merged_data = merged_data, gene_of_interest = gene_of_interest))
 }
 
@@ -112,7 +118,13 @@ process_heatmap_data <- function(dds, padj_cut, log2_cut, number, gene) {
   #'
   #' @return A list containing the processed data and matrix.
   
-  res <- results(dds)
+  res <- tryCatch({
+    results(dds)  # Try to get results if it's a DESeq2 object
+  }, error = function(e) {
+    # If results() fails, use the dds object directly (assuming it is already in a results-like format)
+    dds
+  })    
+  
   res.df <- as.data.frame(res)
   
   res.df.filter <- res.df[(abs(res.df$log2FoldChange) > log2_cut) & (!is.na(res.df$padj) & res.df$padj < padj_cut),]

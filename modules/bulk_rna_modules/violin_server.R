@@ -36,7 +36,6 @@ violin_server <- function(id, shared_reactives) {
       )
     })
     
-    output$filtered_results <- render_filtered_results_table(shared_reactives$dds_processed, input)
     
     setup_download_handler(id, output, "violin_data", processed_data, "violin")
   })

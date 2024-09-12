@@ -407,7 +407,13 @@ render_filtered_results_table <- function(dds_processed, input) {
   #' @return A datatable containing the filtered results
   
   DT::renderDataTable({
-    res <- results(dds_processed())
+    
+    res <- tryCatch({
+      results(dds_processed())  # Try to get results if it's a DESeq2 object
+    }, error = function(e) {
+      # If results() fails, use the dds object directly (assuming it is already in a results-like format)
+      dds_processed()
+    })    
     res <- as.data.frame(res)
     
     custom_round <- function(x, digits) {
@@ -437,8 +443,6 @@ render_filtered_results_table <- function(dds_processed, input) {
     ))
   })
 }
-
-
 
 
 plot_gene_correlations <- function(filtered_results, gene_of_interest) {

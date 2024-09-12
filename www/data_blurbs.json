@@ -62,8 +62,20 @@
         "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/pmid/31685822/",
         "doi": "10.1038/s41467-019-12733-1",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE96966",
-        "data_explanation": "This analyzed dataset is used to explore differences in cell state composition for transcriptionally heterogeneous Tamoxifen induced melanoma transplant mouse model. This is an integration of the following datasets of the Tyr-CreER;BrafV600E;Pten-fl/fl;LSL-tdTomato melanoma transplantation mouse model (denoted TBPT) and control melanocyte stem cells isolated from Tyr-CreER;LSL-tdTomato mouse model (denoted TT).\n  - timept: distinguishes between 0 and 6 weeks post Tamoxifen application (tumor induction). \n- tdTom: distinguishes between melanoma (tdTom+) and stroma (tdTom-) [immune cells not included]. \n- Condition: distinguishes between transformed and non-transformed cells (transformed cells were induced with BrafV600E and Pten deletion). \n- CellType: annotation for each cell type down to subtype (this is the abbreviated version). \n- CellType_fullname: annotation for each cell type down to subtype (this is the non-abbreviated version)",
+        "data_explanation": "This analyzed dataset is used to explore differences in cell state composition in a transcriptionally heterogeneous, Tamoxifen-induced melanoma transplant mouse model. It integrates data from two models: the Tyr-CreER;BrafV600E;Pten-fl/fl;LSL-tdTomato melanoma transplantation mouse           model (referred to as TBPT) and control melanocyte stem cells isolated from the Tyr-CreER;LSL-tdTomato mouse model (referred to as TT).\n  - timept: Specifies the time point after Tamoxifen treatment, distinguishing between 0 weeks and 6 weeks post-application (indicating tumor induction). \n- tdTom:           Differentiates between melanoma cells (tdTom+) and stromal cells (tdTom-), excluding immune cells. \n- Condition: Indicates whether cells are transformed (induced with the BrafV600E mutation and Pten deletion) or non-transformed. \n- CellType: Provides an abbreviated annotation of the cell type down           to its subtype. \n- CellType_fullname: Offers the full, non-abbreviated annotation of the cell type down to its subtype.",
 "data_comparison": "Comparison Groups: TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed)."
+
+    },
+    "kleffman_info" : {
+        "title": "Melanoma-secreted Amyloid Beta Suppresses Neuroinflammation and Promotes Brain Metastasis",
+        "lead_author": "Kevin Kleffman",
+        "abstract": "Brain metastasis is a significant cause of morbidity and mortality in multiple cancer types and represents an unmet clinical need. The mechanisms that mediate metastatic cancer growth in the brain parenchyma are largely unknown. Melanoma, which has the highest rate of brain metastasis among common cancer types, is an ideal model to study how cancer cells adapt to the brain parenchyma. Our unbiased proteomics analysis of melanoma short-term cultures revealed that proteins implicated in neurodegenerative pathologies are differentially expressed in melanoma cells explanted from brain metastases compared to those derived from extracranial metastases. We showed that melanoma cells require amyloid beta (Aβ) for growth and survival in the brain parenchyma. Melanoma-secreted Aβ activates surrounding astrocytes to a pro-metastatic, anti-inflammatory phenotype and prevents phagocytosis of melanoma by microglia. Finally, we demonstrate that pharmacological inhibition of Aβ decreases brain metastatic burden.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9069488/",
+        "doi": "10.1158/2159-8290.CD-21-1006",
+        "data_link": "https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=45f63f0e96214b5996d526067e475d97",
+        "data_explanation": "24 total samples, 12 melanoma brain metastasis-derived (BM), 12 extracranial metastasis-derived (NBM). Samples included 3 patient    -matched pairs, where the same patient contributed both BM and NBM samples. The study focused on analyzing proteins implicated in neurodegenerative diseases and their role in brain metastasis.",
+        "data_comparison": "Comparison Groups: Brain Metastases (BM) vs. Extracranial Metastases (NBM)."
+
 
     }
 }
