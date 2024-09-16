@@ -77,7 +77,8 @@
         "data_comparison": "Comparison Groups: Brain Metastases (BM) vs. Extracranial Metastases (NBM)."
 
 
-    }
+    },
+    
     "hugo_info" : {
         "title": "",
         "lead_author": "",
