@@ -40,7 +40,7 @@ kunz_server <- function() {
     update_modal_progress(0.3, text="Downloading data...")
     Sys.sleep(0.5)
     
-    kunz <- drive_download("Kunz_Deseq2.rds", overwrite = TRUE)
+    kunz <- drive_download("Kunz_benign melanocytic nevi_vs_primary melanoma_Deseq2.rds", overwrite = TRUE)
     
     update_modal_progress(0.6, text="Loading data...")
     Sys.sleep(0.5)

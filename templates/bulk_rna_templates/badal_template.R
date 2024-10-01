@@ -58,7 +58,7 @@ badal_server <- function() {
     update_modal_progress(0.3, text="Downloading data...")
     Sys.sleep(0.5)
     
-    badal <- drive_download("Badal_Deseq2.rds", overwrite = TRUE)
+    badal <- drive_download("Badal_common acquired nevus_vs_primary melanoma_Deseq2.rds", overwrite = TRUE)
     badal_dds <- readRDS(badal$local_path)
     
     update_modal_progress(0.6, text="Loading data...")

@@ -125,14 +125,13 @@ filter_and_order_by_padj <- function(results_data) {
 #' 
 #' @return Filtered and ordered data
 
-  if (!"padj" %in% names(results_data)) {
+    if (!"padj" %in% names(results_data)) {
     stop("The provided data does not have a 'padj' column.")
   }
   filtered_data <- results_data[!is.na(results_data$padj), ]
   ordered_data <- filtered_data[order(filtered_data$log2FoldChange, filtered_data$padj), ]
   return(ordered_data)
 }
-
 
 get_display_genes <- function(all_genes, selected_genes) {
 #' Get Display Genes

@@ -62,13 +62,13 @@ gide_server <- function() {
     update_modal_progress(0.3, text="Downloading combotherapy data...")
     Sys.sleep(0.5)
     
-    gide_combo <- drive_download("Gide_PreCombo_Deseq2.rds", overwrite = TRUE)
+    gide_combo <- drive_download("Gide_Combo_Non responder_vs_Responder_Deseq2.rds", overwrite = TRUE)
     gide_combo_dds <- readRDS(gide_combo$local_path)
     
     update_modal_progress(0.5, text="Downloading monotherapy data...")
     Sys.sleep(0.5)
     
-    gide_mono <- drive_download("Gide_PreMono_Deseq2.rds", overwrite = TRUE)
+    gide_mono <- drive_download("Gide_Mono_Non responder_vs_Responder_Deseq2.rds", overwrite = TRUE)
     gide_mono_dds <- readRDS(gide_mono$local_path)
     
     if (file.exists(gide_combo$local_path)) {

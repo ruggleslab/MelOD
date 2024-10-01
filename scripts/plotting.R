@@ -1,7 +1,7 @@
 source("global.R", local = TRUE)
 
 
-plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "condition") {
+plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "group") {
   #' Create PCA Plot
   #' 
   #' @description Creates a PCA plot for the given data
@@ -15,7 +15,7 @@ plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "condition
   # condition_title <- paste("PCA plot of", paste(unique_conditions, collapse = " vs "))
   # 
   text_labels <- paste("Name:", pca_data_frame$name, 
-                       "<br>Condition:", pca_data_frame$condition, 
+                       "<br>Group:", pca_data_frame$group, 
                        "<br>Size Factor:", round(pca_data_frame$size_factor, 3))
   
   custom_colors <- c("#D81B60", "#1E88E5")
@@ -26,8 +26,8 @@ plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "condition
     pca_data_frame$size_factor * 5  
   }
   
-  if (color_by == "condition") {
-    color_column <- pca_data_frame$condition
+  if (color_by == "group") {
+    color_column <- pca_data_frame$group
   } else {
     color_column <- pca_data_frame$name
     num_name <- length(unique(pca_data_frame$name))
@@ -208,7 +208,7 @@ plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
     }
   }
   
-  unique_conditions <- unique(deseq2_data$condition)
+  unique_conditions <- unique(deseq2_data$group)
   # condition_title <- paste("Volcano plot of DESeq2 results of", paste(unique_conditions, collapse=" vs "))
   # 
   volcano_plot <- layout(volcano_plot,
@@ -250,7 +250,7 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
   colors_chosen <- unlist(color_palettes[choice_color])
   colors_chosen_darker <- unlist(color_palettes_darker[choice_color])
   
-  conditions_found <- sort(unique(merged_data$condition), method = "radix", na.last = NA)
+  conditions_found <- sort(unique(merged_data$group), method = "radix", na.last = NA)
   custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
   
   # condition_title <- paste(" in ", paste(conditions_found, collapse=" vs "))
@@ -262,7 +262,7 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
   
   if (choice_shape == "violin") {
     plot_type <- "violin"
-    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
+    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(group), 
                     type = plot_type, colors = custom_colors, points = choice_dot,
                     jitter = 0.1, pointpos = 0,
                     marker = list(size = 5, line = list(width = 0)),
@@ -283,7 +283,7 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
              violinmode = "group")
   } else {
     plot_type <- "box"
-    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(condition), 
+    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(group), 
                     type = plot_type, colors = custom_colors, points = choice_dot,
                     jitter = 0.3, pointpos = 0,
                     marker = list(size = 5, line = list(width = 0)),
@@ -327,8 +327,8 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_
   #' @return A plotly object representing the heatmap.
   
   tryCatch({
-    conditions <- colData(deseq2_data)$condition
-    condition_levels <- sort(unique(colData(deseq2_data)$condition), method = "radix")
+    conditions <- colData(deseq2_data)$group
+    condition_levels <- sort(unique(colData(deseq2_data)$group), method = "radix")
     preferred_colors <- c("#D81B60", "#1E88E5")
     
     if (length(condition_levels) <= length(preferred_colors)) {
@@ -412,7 +412,7 @@ render_filtered_results_table <- function(dds_processed, input) {
       results(dds_processed())  # Try to get results if it's a DESeq2 object
     }, error = function(e) {
       # If results() fails, use the dds object directly (assuming it is already in a results-like format)
-      dds_processed()
+      rowData(dds_processed())
     })    
     res <- as.data.frame(res)
     

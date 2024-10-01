@@ -6,7 +6,6 @@ input_server <- function(id, shared_reactives) {
 #' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
 
   moduleServer(id, function(input, output, session) {
-    
     observe({
       updateMultiInput(
         session = session,

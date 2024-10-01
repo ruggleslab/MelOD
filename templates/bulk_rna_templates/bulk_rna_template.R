@@ -92,8 +92,8 @@ pca_ui <- function(id) {
                       selectInput(
                         inputId = ns("color_by"),
                         label = "Color by:",
-                        choices = c("Condition" = "condition", "Sample" = "sample"),
-                        selected = "condition"
+                        choices = c("Condition" = "group", "Sample" = "sample"),
+                        selected = "group"
                       )
                )
              )

@@ -15,30 +15,38 @@ selection_badal_server <- function(dds, clinical_data, id) {
 
 selection_list_server <- function(dds, clinical_data, id, shared_reactives) {
   #' Selection List Server
-  #' 
+  #'
   #' @description Handles selection for list input, updating the shared reactive variables based on the user's selection.
   #' @param dds A list of DESeq2 datasets for different treatment types.
   #' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
   #' @param id A unique module ID used to identify the module in the Shiny application.
   #' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
-  
+
   moduleServer(id, function(input, output, session) {
     observe({
       req(input$selection)  # Ensure that input selection is available before proceeding
-      selected_dds <- NULL
-      selected_clinical_data <- NULL
-      
-      if (input$selection == 1) {
-        selected_dds <- dds[[1]]
-        selected_clinical_data <- clinical_data[[1]]
-      } else if (input$selection == 2) {
-        selected_dds <- dds[[2]]
-        selected_clinical_data <- clinical_data[[2]]
-      }
-      
-      if (!is.null(selected_dds)) {
-        shared_reactives$selected_dds(selected_dds)  # Update the shared reactive value for dds
-        shared_reactives$selected_clinical_data(selected_clinical_data)  # Update the shared reactive value for clinical data
+
+      # Convert input$selection to numeric if it's not already
+      selection_index <- as.numeric(input$selection)
+      print(selection_index)
+      print(length(dds))
+      # Validate the selection_index to be within the bounds of the lists
+      if (!is.na(selection_index) && selection_index >= 1 && selection_index <= length(dds)) {
+        selected_dds <- dds[[selection_index]]
+        selected_clinical_data <- tryCatch({
+        clinical_data[[selection_index]]}, error = function(e){
+          clinical_data[[1]]
+          
+        })
+
+        # Update the shared reactive values
+        shared_reactives$selected_dds(selected_dds)
+        shared_reactives$selected_clinical_data(selected_clinical_data)
+      } else {
+        # Optionally handle invalid selections
+        warning("Selected index is out of bounds or not a number.")
+        shared_reactives$selected_dds(NULL)
+        shared_reactives$selected_clinical_data(NULL)
       }
     })
   })
@@ -113,11 +121,10 @@ shared_server_utilities <- function(dds) {
   }, error = function(e) {
     # If results() fails, use the dds object directly (assuming it is already in a results-like format)
     message("Warning: 'results()' function failed. Using dds directly.")
-    dds_processed
+    rowData(dds_processed)
+    
   })  
-  
   filtered_genes <- filter_and_order_by_padj(res)
-  
   list(
     dds = dds_processed,
     filtered_genes = filtered_genes,

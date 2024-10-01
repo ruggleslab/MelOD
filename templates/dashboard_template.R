@@ -19,7 +19,10 @@ dashboardTemplate <- function() {
                           menuSubItem("Gide et al. 2019", tabName = "gide"),
                           menuSubItem("Badal et al. 2018", tabName = "badal"),
                           menuSubItem("Kunz, Schartl 2018", tabName = "kunz"),
-                          menuSubItem("Fischer, Davies 2019", tabName = "fischer")
+                          menuSubItem("Fischer, Davies 2019", tabName = "fischer"),
+                          menuSubItem("Tsoi et al. 2018", tabName = "tsoi"),
+                          menuSubItem("Hugo et al. 2016", tabName = "hugo"),
+                          menuSubItem("Riaz et al. 2017", tabName = "riaz")
                  ),
                  menuItem("Single Cell", tabName = "single",
                           menuSubItem("Qi Sun et al. 2019", tabName = "qisun")
@@ -45,6 +48,9 @@ dashboardTemplate <- function() {
         tabItem(tabName = "badal", badal_ui("badal_template")),
         tabItem(tabName = "kunz", kunz_ui("kunz_template")),
         tabItem(tabName = "fischer", fischer_ui("fischer_template")),
+        tabItem(tabName = "hugo", hugo_ui("hugo_template")),
+        tabItem(tabName = "tsoi", tsoi_ui("tsoi_template")),
+        tabItem(tabName = "riaz", riaz_ui("riaz_template")),
         tabItem(tabName = "qisun", qisun_ui("qisun_template")),
         tabItem(tabName = "KBPT", KBPT_ui("KBPT_template")),
         tabItem(tabName = "kleffman", kleffman_ui("kleffman_template")),

@@ -11,13 +11,15 @@ kleffman_ui <- function(id) {
     fluidRow(column(6, blurb_data_ui("kleffman")),
              column(6, fluidRow(blurb_comparison_ui("kleffman"),
                                 kleffman_selector_ui("kleffman")))),
-
     fluidRow(
       column(4,input_ui("kleffman")),
       column(8,deseq2_table_ui("kleffman"))),
     fluidRow(
-      column(12,volcano_ui("kleffman"))),
-    
+      column(6,volcano_ui("kleffman")),
+      column(6,violin_ui("kleffman"))),
+    fluidRow(
+      column(8,heatmap_ui("kleffman")),
+      column(4, correlation_ui("kleffman")))
   )
 }
 
@@ -54,36 +56,32 @@ kleffman_server <- function() {
   Sys.sleep(0.5)
   
   tryCatch({
-    update_modal_progress(0.3, text="Downloading unpaired data...")
-    Sys.sleep(0.5)
-
-    kleffman_unpaired <- drive_download("kleffman_unpaired.rds", overwrite = TRUE)
-    kleffman_unpaired_dds <- readRDS(kleffman_unpaired$local_path)
-
-    update_modal_progress(0.5, text="Downloading paired data...")
-    Sys.sleep(0.5)
-
-    kleffman_paired <- drive_download("kleffman_paired.rds", overwrite = TRUE)
-    kleffman_paired_dds <- readRDS(kleffman_paired$local_path)
-    
-    if (file.exists(kleffman_unpaired$local_path)) {
-      file.remove(kleffman_unpaired$local_path)
-    }
-    
-    if (file.exists(kleffman_paired$local_path)) {
-      file.remove(kleffman_paired$local_path)
-    }
-    
-    update_modal_progress(0.6, text="Loading data...")
-    Sys.sleep(0.5)
-
+    # update_modal_progress(0.3, text="Downloading unpaired data...")
+    # Sys.sleep(0.5)
     # 
-    # kleffman_unpaired_dds <- "/Users/paul/Downloads/kleffman_unpaired.rds"
-    # kleffman_unpaired_rds <- readRDS("/Users/paul/Downloads/kleffman_unpaired.rds") 
+    # kleffman_unpaired <- drive_download("kleffman_unpaired.rds", overwrite = TRUE)
+    # kleffman_unpaired_dds <- readRDS(kleffman_unpaired$local_path)
     # 
+    # update_modal_progress(0.5, text="Downloading paired data...")
+    # Sys.sleep(0.5)
     # 
-    # kleffman_paired_dds <- "/Users/paul/Downloads/kleffman_paired.rds"
-    # kleffman_paired_rds <- readRDS("/Users/paul/Downloads/kleffman_paired.rds") 
+    # kleffman_paired <- drive_download("kleffman_paired.rds", overwrite = TRUE)
+    # kleffman_paired_dds <- readRDS(kleffman_paired$local_path)
+    # 
+    # if (file.exists(kleffman_unpaired$local_path)) {
+    #   file.remove(kleffman_unpaired$local_path)
+    # }
+    # 
+    # if (file.exists(kleffman_paired$local_path)) {
+    #   file.remove(kleffman_paired$local_path)
+    # }
+    # 
+    # update_modal_progress(0.6, text="Loading data...")
+    # Sys.sleep(0.5)
+
+
+    kleffman_unpaired_dds <- readRDS("/Users/paul/Documents/pro/proteomics/kleffman/kleffman_unpaired/proteomics_unpaired.rds")
+    kleffman_paired_dds <- readRDS("/Users/paul/Documents/pro/proteomics/kleffman/kleffman_paired/kleffman_paired.rds")
     
     
     dds <- list( kleffman_paired_dds,kleffman_unpaired_dds)
@@ -101,6 +99,9 @@ kleffman_server <- function() {
     selection_list_server(dds, clinical_data, "kleffman", selection_result)
     input_server("kleffman", selection_result)
     volcano_server("kleffman", selection_result)
+    violin_server("kleffman", selection_result)
+    correlation_server("kleffman", selection_result)
+    heatmap_server("kleffman", selection_result)
 
     update_modal_progress(1, text="Finalizing") 
     Sys.sleep(0.5)

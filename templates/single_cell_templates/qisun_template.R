@@ -91,6 +91,10 @@ qisun_server <- function() {
   
   observe_helpers()
   
+  
+  
+  
+  
   selection_result <- selection_server_single_cell(sc1conf, sc1def, h5_file, sc1gene, sc1meta, "qisun")
 
   

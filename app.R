@@ -21,6 +21,9 @@ source("templates/bulk_rna_templates/gide_template.R", local = TRUE)
 source("templates/bulk_rna_templates/badal_template.R", local = TRUE)
 source("templates/bulk_rna_templates/kunz_template.R", local = TRUE)
 source("templates/bulk_rna_templates/fischer_template.R", local = TRUE)
+source("templates/bulk_rna_templates/hugo_template.R", local = TRUE)
+source("templates/bulk_rna_templates/riaz_template.R", local = TRUE)
+source("templates/bulk_rna_templates/tsoi_template.R", local = TRUE)
 source("templates/bulk_rna_templates/bulk_rna_template.R", local = TRUE)
 
 source("templates/in_development_template.R", local = TRUE)
@@ -45,7 +48,7 @@ source("scripts/data_processing_single_cell.R", local = TRUE)
 library(shiny)
 library(shinydashboard)
 
-# Define UI using the sourced template
+# Define UI using the sourced template 
 ui <- dashboardTemplate()
 
 
@@ -61,6 +64,12 @@ server <- function(input, output, session) {
       gide_server()
     } else if (input$tabs == "fischer") {
       fischer_server()
+    } else if (input$tabs == "hugo"){
+      hugo_server()
+    } else if (input$tabs == "tsoi"){
+      tsoi_server()
+    } else if (input$tabs == "riaz"){
+      riaz_server()
     } else if (input$tabs == "qisun") {
       qisun_server()
     } else if (input$tabs == "KBPT") {
