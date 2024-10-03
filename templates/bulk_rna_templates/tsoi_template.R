@@ -17,7 +17,7 @@ tsoi_ui <- function(id) {
       column(6,pca_ui("tsoi")),
       column(6,metadata_ui("tsoi"))),
     fluidRow(
-      column(4,input_ui("tsoi")),
+      column(4,input_ui("tsoi", 0.05, 2)),
       column(8,deseq2_table_ui("tsoi"))),
     fluidRow(
       column(6,volcano_ui("tsoi")),
@@ -121,16 +121,13 @@ tsoi_server <- function() {
     update_modal_progress(0.8, text="Loading clinical data...")
     Sys.sleep(0.5)
     
-    clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv", sep = ";"),read.csv(file = "./data/bulk_rna/badal/clinical_data.csv", sep = ";"))
-    
-    
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
     
     observe_helpers()
     
-    selection_result <- selection_server(dds, clinical_data, "tsoi")
-    selection_list_server(dds, clinical_data, "tsoi", selection_result)
+    selection_result <- selection_server(dds, "tsoi")
+    selection_list_server(dds, "tsoi", selection_result)
     input_server("tsoi", selection_result)
     volcano_server("tsoi", selection_result)
     violin_server("tsoi", selection_result)

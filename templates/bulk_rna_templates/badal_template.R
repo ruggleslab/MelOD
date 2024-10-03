@@ -14,7 +14,7 @@ badal_ui <- function(id) {
       column(6,pca_ui("badal")),
       column(6,metadata_ui("badal"))),
     fluidRow(
-      column(4,input_ui("badal")),
+      column(4,input_ui("badal", 0.05, 2)),
       column(8,deseq2_table_ui("badal"))),
     fluidRow(
       column(6,volcano_ui("badal")),
@@ -73,13 +73,13 @@ badal_server <- function() {
     update_modal_progress(0.8, text="Loading clinical data...")
     Sys.sleep(0.5)
     
-    clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv"))
+   
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
     
     observe_helpers()
     
-    selection_result <- selection_server(dds, clinical_data, "badal")
+    selection_result <- selection_server(dds, "badal")
     input_server("badal", selection_result)
     volcano_server("badal", selection_result)
     violin_server("badal", selection_result)

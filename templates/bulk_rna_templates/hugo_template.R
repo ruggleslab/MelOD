@@ -16,7 +16,7 @@ hugo_ui <- function(id) {
       column(6,pca_ui("hugo")),
       column(6,metadata_ui("hugo"))),
     fluidRow(
-      column(4,input_ui("hugo")),
+      column(4,input_ui("hugo", 0.05, 2)),
       column(8,deseq2_table_ui("hugo"))),
     fluidRow(
       column(6,volcano_ui("hugo")),
@@ -54,14 +54,12 @@ hugo_server <- function() {
     dds <- list(hugo_dds)
     update_modal_progress(0.8, text="Loading clinical data...")
     Sys.sleep(0.5)
-    
-    clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv", sep = ";"))
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
     
     observe_helpers()
     
-    selection_result <- selection_server(dds, clinical_data, "hugo")
+    selection_result <- selection_server(dds, "hugo")
     input_server("hugo", selection_result)
     volcano_server("hugo", selection_result)
     violin_server("hugo", selection_result)

@@ -129,6 +129,20 @@ process_violin_data <- function(dds, display_genes) {
     return(list(merged_data = merged_data, gene_of_interest = gene_of_interest))
 }
 
+# Function to rescale the matrix values to a given z-score range
+rescale_matrix <- function(matrix, z_score_range) {
+  min_val <- min(matrix, na.rm = TRUE)
+  max_val <- max(matrix, na.rm = TRUE)
+  scaled_matrix <- z_score_range * ((matrix - min_val) / (max_val - min_val) * 2 - 1) # Scale to [-z_score_range, z_score_range]
+  return(scaled_matrix)
+}
+# Function to standardize the matrix and fit to a given z-score range
+scale_to_range <- function(matrix, z_score_range) {
+  matrix_scaled <- scale(matrix)  # Standardize the matrix (mean = 0, sd = 1)
+  scaled_matrix <- matrix_scaled * z_score_range  # Scale to desired z-score range
+  return(scaled_matrix)
+}
+
 
 process_heatmap_data <- function(dds, padj_cut, log2_cut, number, gene) {
   #' Process Heatmap Data

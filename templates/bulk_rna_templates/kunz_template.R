@@ -16,7 +16,7 @@ kunz_ui <- function(id) {
       column(6,pca_ui("kunz")),
       column(6,metadata_ui("kunz"))),
     fluidRow(
-      column(4,input_ui("kunz")),
+      column(4,input_ui("kunz", 0.05, 2)),
       column(8,deseq2_table_ui("kunz"))),
     fluidRow(
       column(6,volcano_ui("kunz")),
@@ -55,13 +55,12 @@ kunz_server <- function() {
     update_modal_progress(0.8, text="Loading clinical data...")
     Sys.sleep(0.5)
     
-    clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv", sep = ";"))
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
 
     observe_helpers()
     
-    selection_result <- selection_server(dds, clinical_data, "kunz")
+    selection_result <- selection_server(dds, "kunz")
     input_server("kunz", selection_result)
     volcano_server("kunz", selection_result)
     violin_server("kunz", selection_result)

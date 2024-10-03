@@ -125,7 +125,7 @@ metadata_ui <- function(id) {
 }
 
 
-input_ui <- function(id) {
+input_ui <- function(id, padj, log2) {
 #' Input UI
 #' 
 #' @description Creates the UI component for input parameters
@@ -142,7 +142,7 @@ input_ui <- function(id) {
     fluidRow(column(6, numericInput(
       ns("slider_padj"), 
       "padj Cutoff", 
-      value = 0.05, 
+      value = padj, 
       min = 0, 
       max = 1, 
       step = 0.01
@@ -163,7 +163,7 @@ input_ui <- function(id) {
                     numericInput(
                       ns("slider_log2"), 
                       "Log2 Fold Change Cutoff", 
-                      value = 1, 
+                      value = log2, 
                       step = 0.1
                     ) %>%
                       helper(

@@ -1,6 +1,29 @@
 source("global.R", local = TRUE)
 
 
+blurb_method_ui <- function(id, file = NA) {
+  #' Blurb Comparison UI
+  #' 
+  #' @description Creates the UI component for explaining the method done in the analysis (for single cell)
+  #' @param id Module ID
+  #' 
+  #' @return A Shiny UI element
+  
+  Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
+  ns <- NS(id)
+  
+  box(
+    title = "Single cell method",
+    status = "info",
+    collapsible = TRUE,
+    solidHeader = TRUE,
+    width = 12,
+    tags$p(Id_info$data_method)
+  )
+}
+
+
+
 inputs_ui <- function(id) {
   ns <- NS(id)
   fluidRow(
@@ -12,7 +35,7 @@ inputs_ui <- function(id) {
              selectInput(ns("cell_subset"), "Cell information to subset:",
                              choices = NULL) %>%
                helper(colour = "#FFA812", type = "inline", size = "m", fade = TRUE,icon = "question",
-                      title = "Subseting cells",
+                      title = "Subseting cells", easyClose = TRUE,
                       content = c("You can select the type of cells you want to subset for downstream analysis."
                       )),
              br(),

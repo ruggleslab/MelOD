@@ -16,7 +16,7 @@ riaz_ui <- function(id) {
       column(6,pca_ui("riaz")),
       column(6,metadata_ui("riaz"))),
     fluidRow(
-      column(4,input_ui("riaz")),
+      column(4,input_ui("riaz", 0.05, 2)),
       column(8,deseq2_table_ui("riaz"))),
     fluidRow(
       column(6,volcano_ui("riaz")),
@@ -40,7 +40,7 @@ riaz_server <- function() {
     update_modal_progress(0.3, text="Downloading data...")
     Sys.sleep(0.5)
     
-    riaz <- drive_download("riaz_benign melanocytic nevi_vs_primary melanoma_Deseq2.rds", overwrite = TRUE)
+    riaz <- drive_download("Riaz_Non Responders_vs_Responders_Deseq2.rds", overwrite = TRUE)
     
     update_modal_progress(0.6, text="Loading data...")
     Sys.sleep(0.5)
@@ -55,13 +55,12 @@ riaz_server <- function() {
     update_modal_progress(0.8, text="Loading clinical data...")
     Sys.sleep(0.5)
     
-    clinical_data <- list(read.csv(file = "./data/bulk_rna/badal/clinical_data.csv", sep = ";"))
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)
     
     observe_helpers()
     
-    selection_result <- selection_server(dds, clinical_data, "riaz")
+    selection_result <- selection_server(dds, "riaz")
     input_server("riaz", selection_result)
     volcano_server("riaz", selection_result)
     violin_server("riaz", selection_result)

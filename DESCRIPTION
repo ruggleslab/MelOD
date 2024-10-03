@@ -1,8 +1,8 @@
-Package: ShinySeq
+Package: MelOD
 Type: Application
-Title: ShinySeq
-Version: 0.1
-Author: Adam Walker and Paul Sastourne
+Title: MelOD
+Version: 0.3
+Author: Paul Sastourne and Adam Walker
 Description: A Shiny application for sequence analysis.
 Depends: R (>= 4.4.0)
 Imports:
@@ -43,5 +43,5 @@ Imports:
     future,
     promises,
     shinyhelper,
-    hdf5r
+    hdf5r,
     

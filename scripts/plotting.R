@@ -142,6 +142,7 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
     
     return(mortality_plot)
   }, error = function(e) {
+    print(e)
     return("No metadata available")
   })
 }
@@ -313,8 +314,90 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
   return(plot)
 }
 
-
-plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_score_range , font_size ) {
+#' 
+#' plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_score_range , font_size ) {
+#'   #' Plot Heatmap
+#'   #'
+#'   #' @param z_score_matrix Z-scored matrix.
+#'   #' @param deseq2_data Processed DESeq2 dataset.
+#'   #' @param gene Specific gene to display.
+#'   #' @param heatmap_palette Color palette for the heatmap.
+#'   #' @param z_score_range Range for the z-scores.
+#'   #' @param font_size Font size for row and column labels.
+#'   #'
+#'   #' @return A plotly object representing the heatmap.
+#' 
+#'   tryCatch({
+#'     conditions <- colData(deseq2_data)$group
+#'     condition_levels <- sort(unique(colData(deseq2_data)$group), method = "radix")
+#'     preferred_colors <- c("#D81B60", "#1E88E5")
+#' 
+#'     if (length(condition_levels) <= length(preferred_colors)) {
+#'       condition_colors <- setNames(preferred_colors[1:length(condition_levels)], condition_levels)
+#'     } else {
+#'       condition_colors <- scales::hue_pal()(length(condition_levels))
+#'       condition_colors <- setNames(condition_colors, condition_levels)
+#'     }
+#' 
+#'     conditions_df <- data.frame("Conditions" = conditions, check.names = FALSE)
+#' 
+#'     selection <- ifelse(rownames(z_score_matrix) %in% gene, "Selected genes", "None")
+#'     selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
+#' 
+#' 
+#'     heatmap_plot <- heatmaply(
+#'       z_score_matrix,
+#'       plot_method = "plotly",
+#'       midpoint=0,limits=c(-z_score_range,z_score_range),
+#'       branches_lwd = 0.01,
+#'       subplot_widths = c(0.95, 0.005, 0.045),
+#'       grid_gap = 0.5,
+#'       fontsize_row = font_size,
+#'       fontsize_col = font_size,
+#'       key.title = "Z-score",
+#'       label_names = c("Gene", "Sample", "Z-score"),
+#'       colors = rev(colorRampPalette(brewer.pal(3, heatmap_palette))(256)),
+#'       col_side_colors = conditions_df,
+#'       col_side_palette = condition_colors,
+#'       row_side_colors = selection,
+#'       row_side_palette = selection_mapping,
+#'       colorbar_thickness = 20
+#'     )
+#' 
+#'     # Access and modify the second colorbar (Z-score)
+#'     heatmap_plot$x$data[[7]]$colorbar$x <- 1.05
+#'     heatmap_plot$x$data[[7]]$colorbar$y <- 0.2
+#'     heatmap_plot$x$data[[7]]$colorbar$len <- 0.3
+#'     heatmap_plot$x$data[[7]]$colorbar$thickness <- 15
+#' 
+#'     # Access and modify the first colorbar (Conditions)
+#'     heatmap_plot$x$data[[4]]$colorbar$x <- 1.05
+#'     heatmap_plot$x$data[[4]]$colorbar$y <- 0.2
+#'     heatmap_plot$x$data[[4]]$colorbar$len <- 0.3
+#'     heatmap_plot$x$data[[4]]$colorbar$thickness <- 15
+#' 
+#'     # Access and modify the third colorbar (row_side_colors)
+#'     heatmap_plot$x$data[[8]]$colorbar$title <- "Selection"
+#'     heatmap_plot$x$data[[8]]$colorbar$x <- 1.05
+#'     heatmap_plot$x$data[[8]]$colorbar$y <- 0.8
+#'     heatmap_plot$x$data[[8]]$colorbar$len <- 0.3
+#'     heatmap_plot$x$data[[8]]$colorbar$thickness <- 15
+#' 
+#' 
+#'     heatmap_plot <- heatmap_plot %>%
+#'       config(modeBarButtonsToAdd = c('drawline',
+#'                                      'drawopenpath',
+#'                                      'drawclosedpath',
+#'                                      'drawcircle',
+#'                                      'drawrect',
+#'                                      'eraseshape'))
+#'     return(heatmap_plot)
+#'   }, error = function(e) {
+#'     return("Please set or select at least 2 genes")
+#'   })
+#' }
+#' 
+plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette, z_score_range, font_size) {
   #' Plot Heatmap
   #'
   #' @param z_score_matrix Z-scored matrix.
@@ -327,8 +410,18 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_
   #' @return A plotly object representing the heatmap.
   
   tryCatch({
+    # Clip the z-score matrix to the specified range
+    clip_matrix <- function(matrix, z_score_range) {
+      matrix[matrix > z_score_range] <- z_score_range
+      matrix[matrix < -z_score_range] <- -z_score_range
+      return(matrix)
+    }
+    
+    # Clip the matrix values before plotting
+    z_score_matrix <- clip_matrix(z_score_matrix, z_score_range)
+    
     conditions <- colData(deseq2_data)$group
-    condition_levels <- sort(unique(colData(deseq2_data)$group), method = "radix")
+    condition_levels <- sort(unique(conditions), method = "radix")
     preferred_colors <- c("#D81B60", "#1E88E5")
     
     if (length(condition_levels) <= length(preferred_colors)) {
@@ -339,15 +432,15 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_
     }
     
     conditions_df <- data.frame("Conditions" = conditions, check.names = FALSE)
-    
     selection <- ifelse(rownames(z_score_matrix) %in% gene, "Selected genes", "None")
     selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
     
-
+    # Create heatmap plot with adjusted z-score range
     heatmap_plot <- heatmaply(
       z_score_matrix,
       plot_method = "plotly",
-      limits = c(-z_score_range,z_score_range),
+      midpoint = 0,
+      limits = c(-z_score_range, z_score_range),
       branches_lwd = 0.01,
       subplot_widths = c(0.95, 0.005, 0.045),
       grid_gap = 0.5,
@@ -363,39 +456,32 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_
       colorbar_thickness = 20
     )
     
-    # Access and modify the second colorbar (Z-score)
+    # Modify colorbars
     heatmap_plot$x$data[[7]]$colorbar$x <- 1.05
     heatmap_plot$x$data[[7]]$colorbar$y <- 0.2
     heatmap_plot$x$data[[7]]$colorbar$len <- 0.3
     heatmap_plot$x$data[[7]]$colorbar$thickness <- 15
     
-    # Access and modify the first colorbar (Conditions)
     heatmap_plot$x$data[[4]]$colorbar$x <- 1.05
     heatmap_plot$x$data[[4]]$colorbar$y <- 0.2
     heatmap_plot$x$data[[4]]$colorbar$len <- 0.3
     heatmap_plot$x$data[[4]]$colorbar$thickness <- 15
     
-    # Access and modify the third colorbar (row_side_colors)
     heatmap_plot$x$data[[8]]$colorbar$title <- "Selection"
     heatmap_plot$x$data[[8]]$colorbar$x <- 1.05
     heatmap_plot$x$data[[8]]$colorbar$y <- 0.8
     heatmap_plot$x$data[[8]]$colorbar$len <- 0.3
     heatmap_plot$x$data[[8]]$colorbar$thickness <- 15
     
-
-    heatmap_plot <- heatmap_plot %>%  
-      config(modeBarButtonsToAdd = c('drawline', 
-                                     'drawopenpath', 
-                                     'drawclosedpath', 
-                                     'drawcircle', 
-                                     'drawrect', 
-                                     'eraseshape'))
+    # Add configuration for drawing tools
+    heatmap_plot <- heatmap_plot %>%
+      config(modeBarButtonsToAdd = c('drawline', 'drawopenpath', 'drawclosedpath', 'drawcircle', 'drawrect', 'eraseshape'))
+    
     return(heatmap_plot)
   }, error = function(e) {
     return("Please set or select at least 2 genes")
   })
 }
-
 
 render_filtered_results_table <- function(dds_processed, input) {
   #'Result Table

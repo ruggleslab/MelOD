@@ -4,7 +4,6 @@ pca_metadata_server <- function(id, shared_reactives) {
   #' @description Sets up the server logic for the PCA analysis and related plots.
   #' @param id Module ID
   #' @param shared_reactives  A reactiveValues object for sharing reactive variables across modules.
-  print("metadata")
   moduleServer(id, function(input, output, session) {
     blurbs <- fromJSON("./www/info_blurbs.json")
     pca_data_reactive <- reactive({

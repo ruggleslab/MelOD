@@ -24,11 +24,11 @@
     "badal_info" : {
         "title": "Transcriptional dissection of melanoma identifies a high-risk subtype underlying TP53 family genes and epigenome deregulation",
         "lead_author": "Badal, Brateil",
-        "abstract": "BACKGROUND. Melanoma is a heterogeneous malignancy. We set out to identify the molecular underpinnings of high-risk melanomas, those that are likely to progress rapidly, metastasize, and result in poor outcomes. \n METHODS. We examined transcriptome changes from benign states to early-, intermediate-, and late-stage tumors using a set of 78 treatment-naive melanocytic tumors consisting of primary melanomas of the skin and benign melanocytic lesions. We utilized a next-generation sequencing platform that enabled a comprehensive analysis of protein-coding and -noncoding RNA transcripts. \nRESULTS. Gene expression changes unequivocally discriminated between benign and malignant states, and a dual epigenetic and immune signature emerged defining this transition. To our knowledge, we discovered previously unrecognized melanoma subtypes. A high-risk primary melanoma subset was distinguished by a 122-epigenetic gene signature (“epigenetic” cluster) and TP53 family gene deregulation (TP53, TP63, and TP73). This subtype associated with poor overall survival and showed enrichment of cell cycle genes. Noncoding repetitive element transcripts (LINEs, SINEs, and ERVs) that can result in immunostimulatory signals recapitulating a state of “viral mimicry” were significantly repressed. The high-risk subtype and its poor predictive characteristics were validated in several independent cohorts. Additionally, primary melanomas distinguished by specific immune signatures (“immune” clusters) were identified. \nCONCLUSION. The TP53 family of genes and genes regulating the epigenetic machinery demonstrate strong prognostic and biological relevance during progression of early disease. Gene expression profiling of protein-coding and -noncoding RNA transcripts may be a better predictor for disease course in melanoma. This study outlines the transcriptional interplay of the cancer cell’s epigenome with the immune milieu with potential for future therapeutic targeting.",
+        "abstract": "Melanoma is a heterogeneous malignancy. We set out to identify the molecular underpinnings of high-risk melanomas, those that are likely to progress rapidly, metastasize, and result in poor outcomes. \n METHODS. We examined transcriptome changes from benign states to early-, intermediate-, and late-stage tumors using a set of 78 treatment-naive melanocytic tumors consisting of primary melanomas of the skin and benign melanocytic lesions. We utilized a next-generation sequencing platform that enabled a comprehensive analysis of protein-coding and -noncoding RNA transcripts. \nRESULTS. Gene expression changes unequivocally discriminated between benign and malignant states, and a dual epigenetic and immune signature emerged defining this transition. To our knowledge, we discovered previously unrecognized melanoma subtypes. A high-risk primary melanoma subset was distinguished by a 122-epigenetic gene signature (“epigenetic” cluster) and TP53 family gene deregulation (TP53, TP63, and TP73). This subtype associated with poor overall survival and showed enrichment of cell cycle genes. Noncoding repetitive element transcripts (LINEs, SINEs, and ERVs) that can result in immunostimulatory signals recapitulating a state of “viral mimicry” were significantly repressed. The high-risk subtype and its poor predictive characteristics were validated in several independent cohorts. Additionally, primary melanomas distinguished by specific immune signatures (“immune” clusters) were identified. \nCONCLUSION. The TP53 family of genes and genes regulating the epigenetic machinery demonstrate strong prognostic and biological relevance during progression of early disease. Gene expression profiling of protein-coding and -noncoding RNA transcripts may be a better predictor for disease course in melanoma. This study outlines the transcriptional interplay of the cancer cell’s epigenome with the immune milieu with potential for future therapeutic targeting.",
         "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5414564/",
         "doi": "10.1172/jci.insight.92102",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98394",
-        "data_explanation": "78 total samples, 27 benign, 51 melanoma.",
+        "data_explanation": "78 treatment-naive melanocytic tumors were analyzed, including 27 cases of benign nevi and 51 cases of primary melanomas at various stages (T1 to T4).",
         "data_comparison": "Comparison Groups: Melanoma vs. Benign."
     },
 
@@ -62,8 +62,10 @@
         "paper_link": "https://www.nature.com/articles/s41467-019-12733-1",
         "doi": "10.1038/s41467-019-12733-1",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE96966",
-        "data_explanation": "This analyzed dataset is used to explore differences in cell state composition in a transcriptionally heterogeneous, Tamoxifen-induced melanoma transplant mouse model. It integrates data from two models: the Tyr-CreER;BrafV600E;Pten-fl/fl;LSL-tdTomato melanoma transplantation mouse model (referred to as TBPT) and control melanocyte stem cells isolated from the Tyr-CreER;LSL-tdTomato mouse model (referred to as TT).\n  - timept: Specifies the time point after Tamoxifen treatment, distinguishing between 0 weeks and 6 weeks post-application (indicating tumor induction). \n- tdTom: Differentiates between melanoma cells (tdTom+) and stromal cells (tdTom-), excluding immune cells. \n- Condition: Indicates whether cells are transformed (induced with the BrafV600E mutation and Pten deletion) or non-transformed. \n- CellType: Provides an abbreviated annotation of the cell type down to its subtype. \n- CellType_fullname: Offers the full, non-abbreviated annotation of the cell type down to its subtype.",
-"data_comparison": "Comparison Groups: TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed)."
+        "data_explanation": "This analyzed dataset is used to explore differences in cell state composition in a transcriptionally heterogeneous, Tamoxifen-induced melanoma transplant mouse model. It integrates data from two models: the Tyr-CreER;BrafV600E;Pten-fl/fl;LSL-tdTomato melanoma transplantation mouse model (referred to as TBPT) and control melanocyte stem cells isolated from the Tyr-CreER;LSL-tdTomato mouse model (referred to as TT).\n\n  - timept: Specifies the time point after Tamoxifen treatment, distinguishing between 0 weeks and 6 weeks post-application (indicating tumor induction).\n- tdTom: Differentiates between melanoma cells (tdTom+) and stromal cells (tdTom-), excluding immune cells. \n- Condition: Indicates whether cells are transformed (induced with the BrafV600E mutation and Pten deletion) or non-transformed. \n- CellType: Provides an abbreviated annotation of the cell type down to its subtype. \n- CellType_fullname: Offers the full, non-abbreviated annotation of the cell type down to its subtype.",
+"data_comparison": "Comparison Groups: TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed).",
+"data_method": "Tumors were dissociated into single cell suspension as mentioned above. McSC suspension from 3 telogen Tyr-CreER:R26R-Tomato mice and tumor cell suspension from 3 tumors derived from transplantation of McSCs from Tyr-CreER:Braf:Pten:Tomato mice and were used to isolate Tomato+ cells by cell sorting on Sony SY3200 cell sorter. The sorted suspensions were mixed into one sample of tumor cell suspension and one sample of McSC suspension."
+
 
     },
     "kleffman_info" : {
@@ -75,22 +77,29 @@
         "data_link": "https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=45f63f0e96214b5996d526067e475d97",
         "data_explanation": "24 total samples, 12 melanoma brain metastasis-derived (BM), 12 extracranial metastasis-derived (NBM). Samples included 3 patient    -matched pairs, where the same patient contributed both BM and NBM samples. The study focused on analyzing proteins implicated in neurodegenerative diseases and their role in brain metastasis.",
         "data_comparison": "Comparison Groups: Brain Metastases (BM) vs. Extracranial Metastases (NBM)."
-
-
     },
+    "hugo_info": {
+        "title": "Genomic and Transcriptomic Features of Response to Anti-PD-1 Therapy in Metastatic Melanoma",
+        "lead_author": "Hugo, Willy",
+        "abstract": "PD-1 immune checkpoint blockade provides significant clinical benefits for melanoma patients. We analyzed the somatic mutanomes and transcriptomes of pretreatment melanoma biopsies to identify factors that may influence innate sensitivity or resistance to anti-PD-1 therapy. We find that, while overall high mutational loads associate with improved survival both in responding and non-responding patients, responding tumors are specifically enriched for mutations in the DNA repair gene BRCA2. Innately resistant tumors display a transcriptional signature (referred to as the IPRES or Innate anti-PD-1 Resistance) indicating concurrent upexpression of genes involved in the regulation of mesenchymal transition, cell adhesion, ECM remodeling, angiogenesis and wound-healing. Notably, MAPK-targeted therapy (MAPKi) induces similar signatures in melanoma, suggesting that a non-genomic form of MAPKi resistance mediates cross-resistance to anti-PD-1 therapy. Validation of the IPRES in other independent tumor cohorts defines a transcriptomic subset across distinct types of advanced cancer. These findings suggest that attenuating the biological processes that underlie IPRES may improve anti-PD-1 response in melanoma and other cancer types.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5953834/",
+        "doi": "10.1016/j.cell.2016.12.007",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE78220",
+        "data_explanation": "38 melanoma specimens and their patient-matched normal tissues were analyzed by whole exome sequencing (WES). This includes 32 pretreatment tumors and other samples.",
+        "data_comparison": "Comparison Groups: Responding tumors (complete or progressive response) vs non-responding tumors (Progressive disease ) based on anti-PD-1 therapy"
     
-    "hugo_info" : {
-        "title": "",
-        "lead_author": "",
-        "abstract": "",
-        "paper_link": "",
-        "doi": "",
-        "data_link": "",
-        "data_explanation": "",
-        "data_comparison": ""
+},
+    "riaz_info": {
+        "title": "Tumor and Microenvironment Evolution during Immunotherapy with Nivolumab",
+        "lead_author": "Riaz, Nadeem",
+        "abstract": "The mechanisms by which immune checkpoint blockade modulates tumor evolution during therapy are unclear. We assessed genomic changes in tumors from 68 patients with advanced melanoma, who progressed on ipilimumab or were ipilimumab-naive, before and after nivolumab initiation (CA209-038 study). Tumors were analyzed by whole-exome, transcriptome, and/or T-cell receptor (TCR) sequencing. In responding patients, mutation and neoantigen load were reduced from baseline, and analysis of intratumoral heterogeneity during therapy demonstrated differential clonal evolution within tumors and putative selection against neoantigenic mutations on-therapy. Transcriptome analyses before and during nivolumab therapy revealed increases in distinct immune cell subsets, activation of specific transcriptional networks, and upregulation of immune checkpoint genes that were more pronounced in patients with response. Temporal changes in intratumoral TCR repertoire revealed expansion of T-cell clones in the setting of neoantigen loss. Comprehensive genomic profiling data in this study provide insight into nivolumab mechanism of action.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5685550/",
+        "doi": "10.1016/j.cell.2017.09.028",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE907788",
+        "data_explanation": "68 patients with advanced melanoma were analyzed for genomic changes before and after nivolumab therapy, using whole-exome sequencing, transcriptome analysis, and T-cell receptor sequencing.",
+        "data_comparison": "Comparison Groups: Responding patients vs non-responding patients based on nivolumab therapy"
     },
-    
-    "tsoi_info" : {
+    "tsoi_info": {
         "title": "Multi-stage differentiation defines melanoma subtypes with differential vulnerability to drug-induced iron-dependent oxidative stress",
         "lead_author": "Tsoi, Jennifer",
         "abstract": "Malignant transformation can result in melanoma cells that resemble different stages of their embryonic development. Our gene expression analysis of human melanoma cell lines and patient tumors revealed that melanoma follows a two-dimensional differentiation trajectory that can be sub-classified into four progressive subtypes. This differentiation model is associated with subtype-specific sensitivity to iron dependent oxidative stress and cell death known as ferroptosis. Receptor tyrosine kinase mediated resistance to MAPK targeted therapies and activation of the inflammatory signaling associated with immune therapy involves transitions along this differentiation trajectory, which lead to increased sensitivity to ferroptosis. Therefore, ferroptosis-inducing drugs presents an orthogonal therapeutic approach to target the differentiation plasticity of melanoma cells to increase the efficacy of targeted and immune therapies.",
@@ -98,6 +107,6 @@
         "doi": "10.1016/j.ccell.2018.03.017",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE80829",
         "data_explanation": "53 total samples, 17 melanocytic samples, 14 neural crest like samples, 12 transitory samples, and 10 undifferentiated samples. Samples were all melanoma cell lines established from metastatic melanoma patient biopsies.",
-        "data_comparison": ""
+        "data_comparison": "Comparison Groups: Neural crest like, Transitory, Melanocytic, and Undifferentiated."
     }
 }

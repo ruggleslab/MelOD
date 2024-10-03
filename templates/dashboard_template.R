@@ -15,14 +15,14 @@ dashboardTemplate <- function() {
         id = "tabs",
         menuItem("Home", tabName = "home", icon = icon("home")),
         menuItem("Studies", tabName = "dataset", icon = icon("database"),
-                 menuItem("Bulk RNA", tabName = "bulkrna_tab",
+                 menuItem("Transcriptomic", tabName = "transcriptomic_tab",
                           menuSubItem("Gide et al. 2019", tabName = "gide"),
-                          menuSubItem("Badal et al. 2018", tabName = "badal"),
-                          menuSubItem("Kunz, Schartl 2018", tabName = "kunz"),
-                          menuSubItem("Fischer, Davies 2019", tabName = "fischer"),
+                          menuSubItem("Fischer et al. 2019", tabName = "fischer"),
+                          menuSubItem("Kunz et al. 2018", tabName = "kunz"),
                           menuSubItem("Tsoi et al. 2018", tabName = "tsoi"),
-                          menuSubItem("Hugo et al. 2016", tabName = "hugo"),
-                          menuSubItem("Riaz et al. 2017", tabName = "riaz")
+                          menuSubItem("Badal et al. 2017", tabName = "badal"),
+                          menuSubItem("Riaz et al. 2017", tabName = "riaz"),
+                          menuSubItem("Hugo et al. 2016", tabName = "hugo")
                  ),
                  menuItem("Single Cell", tabName = "single",
                           menuSubItem("Qi Sun et al. 2019", tabName = "qisun")

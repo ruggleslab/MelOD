@@ -17,11 +17,11 @@ home_ui <- function(id) {
       width = 12,
       div(class = ".content_home",
           tags$p(HTML(
-            "<b>Welcome to MelOD</b>, the Melanoma Omics Dashboard. This RShiny application is your gateway to the analysis and visualization of melanoma cancer datasets. 
+            "<b>Welcome to MelOD</b>, the Melanoma Omics Dashboard. This RShiny application serves as your gateway to analyzing and visualizing melanoma cancer datasets. 
             Designed with researchers in mind, MelOD provides a suite of powerful tools to explore, visualize, and make sense of complex data. Whether you're a seasoned bioinformatician or just starting your journey in omics, MelOD offers a user-friendly environment tailored to your needs."
           )),
           tags$p(HTML(
-            "The main objective of MelOD is to <b>democratize access</b> to high-quality, interactive visualizations that can help accelerate discoveries in melanoma research. By integrating data from multiple studies, including bulk RNA-Seq, single-cell RNA-Seq, and proteomics (with more to come), MelOD allows for a comprehensive examination of the molecular landscape of melanoma."
+            "The main objective of MelOD is to <b>provide accessible, high-quality, and interactive visualizations</b> that can help accelerate discoveries in melanoma research. By integrating data from multiple studies, including transcriptiomics, single-cell RNA-Seq, and proteomics (with more to come), MelOD allows for a comprehensive examination of the molecular landscape of melanoma."
           )),
           tags$p(
             "In addition to offering a range of pre-built visualizations, MelOD empowers users to dive deep into the data, customize plots, and even download datasets for offline analysis. With an intuitive interface, the application streamlines the process of data exploration, making it easier than ever to generate insights and hypotheses that can drive further research."
@@ -52,14 +52,16 @@ home_ui <- function(id) {
           tags$div(
             class = "clickable collapsed", 
             `data-toggle` = "collapse", `data-target` = "#collapseInstructionsbulkrna", 
-            "Bulk RNA Tab"
+            "Transcriptomic/Proteomic Tab"
           ),
           tags$div(
             id = "collapseInstructionsbulkrna", 
             class = "collapse dropdown-content",
             tags$ul(
               tags$li("The PCA box provides key dataset information about the study sample. Additionally, if available, a metadata box offers insights into patient mortality."),
-              tags$li("You can select genes directly by clicking on the dots within the volcano plot.")
+              tags$li("You can select genes directly by clicking on the dots within the volcano plot."),
+              tags$li("The threshold of the padjust value significance on the violin plot is defined by your input cutoff.")
+              
             )
           ),
           tags$div(
@@ -76,7 +78,8 @@ home_ui <- function(id) {
                 "This section draws inspiration from the ShinyCell R package.", 
                 tags$a(href = 'https://github.com/SGDDNB/ShinyCell', "Explore the ShinyCell GitHub Repository")
               ),
-              tags$li("The cell datatable is linked to the cell information plot (axes)."),
+              tags$li("The cell datatable is linked to the cell information plot (axes) input."),
+              tags$li("You can subset cells for the downstream analysis using the input box."),
               tags$li("Similarly, the co-expressed gene datatable is controlled by the co-expressed plot box."),
               tags$li("For the heatmap/bubble plot, two methods are available for gene selection: individual selection or submitting a list of genes.")
             )
@@ -85,80 +88,165 @@ home_ui <- function(id) {
       )
     ),
    fluidRow(
-     column(7,box(
-     title = HTML(paste("Method workflow (Temporary Version)")),
+     column(6,box(
+     title = HTML(paste("Method workflow")),
      status = "info", solidHeader = TRUE,collapsible = TRUE,
      width = 12, 
      tags$img(src = "./images/flowcharts.png", class = "responsive-workflow"))),        
      
-     column(5,   # Dropdown Bullet Points Box
-            box(
-              title = HTML(paste("Supplemental information")),
-              status = "primary", solidHeader = TRUE,collapsible = TRUE,
-              width = 12,
-              div(class = ".content_home",
-                  tags$div(class = "dropdown-header", "Currently Working on:"),
-                  tags$ul(
-                    tags$li("Adding the possibility to download Differential expressed gene for Single cell study.")
-                  ),
-                  
-                  tags$div(class = "dropdown-header", "What data formats are supported?"),
-                  tags$ul(
+     column(
+       6,
+       box(
+         title = HTML(paste("Supplemental Information")),
+         status = "primary",
+         solidHeader = TRUE,
+         collapsible = TRUE,
+         width = 12,
+         div(class = "content_home",
+             
+             # Section: News about Updates
+             tags$div(class = "dropdown-header", "News and Updates"),
+             tags$ul(
+               tags$li("MelOD Version 0.3 released with new features and enhanced data analysis capabilities."),
+               tags$li("Integration of Tsoi et al. 2018, Riaz et al. 2017, Hugo et al. 2016 Transcriptomics Datasets, and reanalysis of Badal et al. 2017 & Kunz et al. 2018."),
+               tags$li("Integration of Kleffman et al. 2022 Proteomics Dataset."),
+               tags$li("Integration of Qi Sun et al. 2019 Single-Cell Dataset."),
+               tags$br(),
+               tags$li("Overall, the app has undergone visual and performance optimizations, alongside new features and customization options for an improved user experience. A new survey is now available to collect feedback and suggestions for future enhancements!")
+             )
+             ),
+             
+             # Section: Currently Working on
+         tags$div(class = "dropdown-header", "Currently Working On:"),
+         tags$ul(
+           tags$li("Implementing visualization options for Differentially Expressed Genes in single-cell studies."),
+           tags$li("Enabling direct download of .rds objects containing analysis and sample information."),
+           tags$li("Trying to fetch clinical information from the current dataset for survival curves."),
+           tags$li("Processing new datasets for future integration."),
+           tags$li("Bug correction: The helper may appear when switching tabs if it was opened previously."),
+           tags$li("Enhancing features and optimizing the app for a better user experience.")
+         ),
+             # Section: What Data Formats Are Supported?
+             tags$div(class = "dropdown-header", "What Dataset are available?"),
+             tags$ul(
+               
+               ## Bulk RNA-Seq Data
+               tags$li(
+                 class = "clickable collapsed", 
+                 `data-toggle` = "collapse", 
+                 `data-target` = "#collapsedatabulk", 
+                 "Transcriptomics data."
+               ),
+               tags$div(
+                 id = "collapsedatabulk", 
+                 class = "collapse dropdown-content",
+                 tags$ul(
+                   tags$li(
+                     "Kunz et al. 2018: RNA-seq analysis identifies different transcriptomic types and developmental trajectories of primary melanomas.",
+                     tags$br(),
+                     tags$span(class = "comparison",  tags$b("Comparison Groups:"), " Naevi vs. Melanoma.")
+                   ),
+                   tags$li(
+                     "Gide et al. 2019: Distinct Immune Signatures Define Response to Anti-PD-1 Monotherapy and Anti-PD-1/Anti-CTLA-4 Combined Therapy.",
+                     tags$br(),
+                     tags$span(class = "comparison", tags$b("Comparison Groups:"), " Combination Therapy vs. Monotherapy.")
+                   ),
+                   tags$li(
+                     "Badal et al. 2017: Transcriptional dissection of melanoma identifies a high-risk subtype underlying TP53 family genes and epigenome deregulation.",
+                     tags$br(),
+                     tags$span(class = "comparison", tags$b("Comparison Groups:"), " Melanoma vs. Benign.")
+                   ),
+                   tags$li(
+                     "Fisher et al. 2019: Molecular Profiling Reveals Unique Immune and Metabolic Features of Melanoma Brain Metastases.",
+                     tags$br(),
+                     tags$span(class = "comparison", tags$b("Comparison Groups:"), " Brain Metastases vs. Extracranial Metastases.")
+                   ),
+                   tags$li(
+                     "Tsoi et al. 2018: Multi-stage differentiation defines melanoma subtypes with differential vulnerability to drug-induced iron-dependent oxidative stress.",
+                     tags$br(),
+                     tags$span(class = "comparison", tags$b("Comparison Groups:"), " Neural crest like vs Undifferentiated, Transitory vs Undifferentiated, Melanocytic vs Undifferentiated, Neural crest like vs Transitory, Neural crest like vs Melanocytic, Transitory vs Melanocytic.")
+                   ),
+                   tags$li(
+                     "Riaz et al. 2017: Tumor and Microenvironment Evolution during Immunotherapy with Nivolumab.",
+                     tags$br(),
+                     tags$span(class = "comparison", tags$b("Comparison Groups:"), "Responding vs. Non-responding")
+                   ),
+                   tags$li(
+                     "Hugo et al. 2016: Genomic and Transcriptomic Features of Response to Anti-PD-1 Therapy in Metastatic Melanoma.",
+                     tags$br(),
+                     tags$span(class = "comparison", tags$b("Comparison Groups:"), "Progressive disease vs. Complete or Partial Response.")
+                   )
+                 )
+               ),
+               
+               ## Single-cell RNA-Seq Data
+               tags$li(
+                 class = "clickable collapsed", 
+                 `data-toggle` = "collapse", 
+                 `data-target` = "#collapsedatasingle", 
+                 "Single-cell RNA-Seq data."
+               ),
+               tags$div(
+                 id = "collapsedatasingle", 
+                 class = "collapse dropdown-content",
+                 tags$ul(
+                   tags$li(
+                     "Qi Sun et al. 2019: A novel mouse model demonstrates that oncogenic melanocyte stem cells engender melanoma resembling human disease.",
+                     tags$br(),
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), " TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed).")
+                 )
+               )),
+               
+               tags$div(
                     tags$li(
                       class = "clickable collapsed", 
-                      `data-toggle` = "collapse", `data-target` = "#collapsedatabulk", 
-                      "Bulk RNA-Seq data."
+                      `data-toggle` = "collapse", `data-target` = "#collapsedataproteomic", 
+                      "Proteomics data.",
                     ),
-                    tags$div(id = "collapsedatabulk", class = "collapse dropdown-content",
+                    tags$div(id = "collapsedataproteomic", class = "collapse dropdown-content",
                              tags$ul(
-                               tags$li("Kunz et al. 2018: RNA-seq analysis identifies different transcriptomic types and developmental trajectories of primary melanomas"),
-                               tags$li("Gide et al. 2019: Distinct Immune Signatures Define Response to Anti-PD-1 Monotherapy and Anti-PD-1/Anti-CTLA-4 Combined Therapy"),
-                               tags$li("Badal et al. 2018: Transcriptional dissection of melanoma identifies a high-risk subtype underlying TP53 family genes and epigenome deregulation"),
-                               tags$li("Fisher et al. 2019: Molecular Profiling Reveals Unique Immune and Metabolic Features of Melanoma Brain Metastases"),
+                               tags$li("Kleffman et al. 2022: Melanoma-secreted Amyloid Beta Suppresses Neuroinflammation and Promotes Brain Metastasis",
+                                       tags$br(),
+                                       
+                               tags$span( class = "comparison", tags$b("Comparison Groups:"), " Brain Metastases (BM) vs. Extracranial Metastases (NBM)."
+                               )
                              )
                     ),
-                    tags$li(
-                      class = "clickable collapsed", 
-                      `data-toggle` = "collapse", `data-target` = "#collapsedatasingle", 
-                      "Single-cell RNA-Seq data.",
-                    ),
-                    tags$div(id = "collapsedatasingle", class = "collapse dropdown-content",
-                             tags$ul(
-                               tags$li("Qi Sun et al. 2019: A novel mouse model demonstrates that oncogenic melanocyte stem cells engender melanoma resembling human disease"),
-                             )
-                    ),
-                    tags$li("Proteomics data (coming soon)."),
-                    tags$li("Array-based data (coming soon).")
+                    
                   )
-              )
-            ),
+              ),
+              tags$li("Array-based data (coming soon).")),
+    
             
-            # Survey and Citation Box
-            box(
-              title = HTML(paste("We value your feedback!")),
-              status = "primary", solidHeader = FALSE,collapsible = TRUE,
-              width = 12,
-              div(class = ".content_home",
-                  tags$p(
-                    "Please take a moment to complete our survey: ",
-                    tags$a(href = "https://forms.gle/8GDXsiRajwXnTrMD7", "Take the Survey")
-                  )
-              )
-            ),
-            box(
-              title = HTML(paste("Paper")),
-              status = "primary", solidHeader = TRUE,collapsible = TRUE,
-              width = 12,
-              tags$p(
-                "For additional information on using MelOD! or to cite MelOD! in your work, please refer to the following paper: Coming soon!!"
-              )
-            )
-           
-            )
+        
+      
      
-  )
-     
-  )
+      
+       ),
+       # Survey and Citation Box
+       box(
+         title = HTML(paste("We value your feedback!")),
+         status = "primary", solidHeader = FALSE,collapsible = TRUE,
+         width = 12,
+         div(class = ".content_home",
+             tags$p(
+               "Please take a moment to complete our survey: ",
+               tags$a(href = "https://forms.gle/CgxYffiZ7NQA5VpM6", "Take the Survey")
+             )
+         )
+       ),
+       box(
+         title = HTML(paste("Paper")),
+         status = "primary", solidHeader = TRUE,collapsible = TRUE,
+         width = 12,
+         tags$p(
+           "For additional information on using MelOD! or to cite MelOD! in your work, please refer to the following paper: Coming soon!!"
+         )
+       )
+       
+       
+       )))  
+
 }
 
 home_server <- function(id) {

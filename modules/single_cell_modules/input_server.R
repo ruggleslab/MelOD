@@ -33,7 +33,7 @@ inputs_server <- function(id, shared_reactives, DEG = NA) {
       req(input$cell_subset)
       
       sub <- strsplit(shared_reactives$sc1conf_data()[UI == input$cell_subset]$fID, "\\|")[[1]]
-      checkboxGroupInput(ns("cell_subset_choices_box"), "Select which cells to show", inline = TRUE,
+      checkboxGroupInput(ns("cell_subset_choices_box"), "Select which cells to show (orange = showing, grey = hidden)", inline = TRUE,
                          choices = sub, selected = sub)
     })
     
