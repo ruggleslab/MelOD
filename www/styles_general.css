@@ -221,17 +221,27 @@ div.dt-buttons {
     background-color: #DCE1E5;
 }
 
-button[type="button"] {
+
+
+
+.btn-primary {
   appearance: none;
   -webkit-appearance: none;
   margin: 2px;
-  background-color: #5E7182; /* This is for testing purposes */
+  background-color: #8999A9; /* This is for testing purposes */
+  border-color:#8999A9 ;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 
-button[type="button"]:hover{
+.btn-primary:hover{
   background-color: #4D5C6A; /* This is for testing purposes */
   border: 1px solid #465360;
+}
+.btn-primary.active, .btn-primary:active, .open>.dropdown-toggle.btn-primary{
+  
+  background-color: #8999A9; /* This is for testing purposes */
+    border-color:#8999A9 ;
+
 }
 
 

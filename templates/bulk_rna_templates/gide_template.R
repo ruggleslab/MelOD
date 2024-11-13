@@ -8,9 +8,12 @@ gide_ui <- function(id) {
   
   fluidPage(
     fluidRow(blurb_study_ui("gide")),
-    fluidRow(column(6, blurb_data_ui("gide")),
-             column(6, fluidRow(blurb_comparison_ui("gide"),
-                                gide_selector_ui("gide")))),
+    fluidRow(
+      column(6,blurb_data_ui("gide")),
+      column(6,blurb_method_ui("gide"))),
+    fluidRow( 
+      column(6,blurb_comparison_ui("gide")) ,
+      column(6,gide_selector_ui("gide"))),
     fluidRow(
       column(6,pca_ui("gide")),
       column(6,metadata_ui("gide"))),

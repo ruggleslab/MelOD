@@ -47,31 +47,31 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
 
 process_volcano_data <- function(dds, padj_cut, log2_cut) {
   #' Process data for volcano plot
-  #' @param dds Processed DESeq2 dataset
+  #' @param dds Processed DESeq2 dataset or .rds (proteomic).
   #' @param padj_cut Adjusted p-value cutoff
   #' @param log2_cut Log2 fold change cutoff
-  #' 
+  #'
   #' @return A list containing processed data for volcano plot and dds
-  
+
   res <- tryCatch({
     results(dds)  # Try to get results if it's a DESeq2 object
   }, error = function(e) {
     # If results() fails, use the dds object directly (assuming it is already in a results-like format)
     rowData(dds)
-  })    
-  
+  })
+
   res$neg_log10_padj <- -log10(res$padj)
   res$sig <- ifelse(res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut,
                     ifelse(res$log2FoldChange > 0, "Upregulated", "Downregulated"),
                     "Not Significant")
-  
+
   return(list(res = res, dds = dds))
 }
 
 
 process_violin_data <- function(dds, display_genes) {
-  #' Process data for violin plot
-  #' @param dds Processed DESeq2 dataset
+  #' Process data for violin plot, 2 way using Deseq2 object in the first part, otherwise a formatted .rds object in the error part.
+  #' @param dds Processed DESeq2 dataset or .rds (proteomic)
   #' @param display_genes Genes to display
   #' 
   #' @return Processed data for violin plot
@@ -103,9 +103,6 @@ process_violin_data <- function(dds, display_genes) {
       merged_data
       
     }, error = function(e){
-      
-      
-      
       expr_data_filtered <- assay(dds, "logcounts")[rownames(assay(dds, "logcounts")) %in% gene_of_interest, , drop = FALSE]
       protein_metadata_filtered <- rowData(dds)[rownames(rowData(dds)) %in% gene_of_interest, , drop = FALSE]
       sample_metadata <- colData(dds)
@@ -129,18 +126,20 @@ process_violin_data <- function(dds, display_genes) {
     return(list(merged_data = merged_data, gene_of_interest = gene_of_interest))
 }
 
-# Function to rescale the matrix values to a given z-score range
-rescale_matrix <- function(matrix, z_score_range) {
-  min_val <- min(matrix, na.rm = TRUE)
-  max_val <- max(matrix, na.rm = TRUE)
-  scaled_matrix <- z_score_range * ((matrix - min_val) / (max_val - min_val) * 2 - 1) # Scale to [-z_score_range, z_score_range]
-  return(scaled_matrix)
-}
-# Function to standardize the matrix and fit to a given z-score range
-scale_to_range <- function(matrix, z_score_range) {
-  matrix_scaled <- scale(matrix)  # Standardize the matrix (mean = 0, sd = 1)
-  scaled_matrix <- matrix_scaled * z_score_range  # Scale to desired z-score range
-  return(scaled_matrix)
+
+is_valid_gene <- function(gene, valid_genes) {
+  #' is_valid_gene
+  #'
+  #' This function check if a gene is presnet in the list of genes present in the Seurat object. Used in bubheat_server.
+  #'
+  #' @param gene Gene name to look for.
+  #' @param valid_genes List of genes present in the Seurat object from reactive sc1gene_data.
+  #'
+  #' @return A Boolean if gene is present in the list of valid genes
+  
+  gene <- trimws(gene) # Trim whitespace from the gene name
+  
+  return(gene %in% names(valid_genes))
 }
 
 
@@ -218,12 +217,10 @@ process_gene_correlations <- function(dds, display_genes, gene_of_interest, thre
   counts_matrix <- t(counts_matrix)
   data_dt <- as.data.table(counts_matrix)
 
-  
   if (!(gene_of_interest %in% colnames(data_dt))) {
     stop(paste("Gene", gene_of_interest, "not found in the data."))
   }
   
-
   # Filter out genes with zero variance
   zero_variance_genes <- apply(data_dt, 2, function(x) sd(x) == 0)
   data_dt <- data_dt[, !zero_variance_genes, with = FALSE]

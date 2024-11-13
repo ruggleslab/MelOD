@@ -11,7 +11,9 @@ hugo_ui <- function(id) {
       blurb_study_ui("hugo")),
     fluidRow(
       column(6, blurb_data_ui("hugo")),
-      column(6, blurb_comparison_ui("hugo"))),
+      column(6, blurb_method_ui("hugo"))),
+    fluidRow( 
+      column(6,blurb_comparison_ui("hugo"))),
     fluidRow(
       column(6,pca_ui("hugo")),
       column(6,metadata_ui("hugo"))),

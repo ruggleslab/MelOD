@@ -30,5 +30,15 @@ input_server <- function(id, shared_reactives) {
     output$gene_display <- renderTable({
       display_genes()
     })
+    
+    output[[paste0(id, "_download")]] <- downloadHandler(
+      filename = function() {
+        paste0("processed_data_", id, ".rds")
+      },
+      content = function(file) {
+        saveRDS(shared_reactives$selected_dds(), file)
+      }
+    )
+    
   })
 }

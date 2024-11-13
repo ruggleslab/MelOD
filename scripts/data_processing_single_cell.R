@@ -205,7 +205,8 @@ process_proportion_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL
 }
 
 
-process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL, inpsub2 = NULL, h5file, inpGene, inpScl) {
+process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL,
+                                 inpsub2 = NULL, h5file, inpGene, inpScl) {
   #' Process bubble heatmap data for visualization
   #'
   #' @param inpConf Data frame with configuration settings.
@@ -218,53 +219,91 @@ process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL, 
   #' @param inpGene Data frame with gene information.
   #' @param inpScl Logical indicating if scaling should be applied.
   #'
-  #' @return A list containing ggMat, point_size_mat, and colRange.
-  
+  #' @return A list containing ggMat, point_size_mat, and colRange, or an error message.
+
   if (is.null(inpsub1)) {
     inpsub1 <- inpConf$UI[1]
   }
+
+  sampleID <- inpMeta$sampleID
+  sub <- inpMeta[[inpConf[UI == inpsub1]$ID]]
+  grpBy <- inpMeta[[inpConf[UI == inpGrp]$ID]]
+
+  gene_data_list <- lapply(inp, function(iGene) {
+    # Attempt to read gene values; assign NA if it fails
+    gene_val <- tryCatch({
+      h5file[["grp"]][["data"]]$read(args = list(inpGene[iGene], quote(expr = )))
+    }, error = function(e) {
+      rep(NA, length(sampleID))
+    })
+
+    # Create a data.table for the current gene
+    data.table(
+      sampleID = sampleID,
+      sub = sub,
+      grpBy = grpBy,
+      geneName = iGene,
+      val = gene_val
+    )
+  })
+
   
-  h5data <- h5file[["grp"]][["data"]]
-  ggData <- data.table()
-  
-  for (iGene in inp) {
-    tmp <- inpMeta[, c("sampleID", inpConf[UI == inpsub1]$ID), with = FALSE]
-    colnames(tmp) <- c("sampleID", "sub")
-    tmp$grpBy <- inpMeta[[inpConf[UI == inpGrp]$ID]]
-    tmp$geneName <- iGene
-    tmp$val <- h5data$read(args = list(inpGene[iGene], quote(expr = )))
-    ggData <- rbindlist(list(ggData, tmp))
-  }
-  
-  if (length(inpsub2) != 0 & length(inpsub2) != nlevels(factor(ggData$sub))) {
+  # Combine all gene data into one data.table
+  ggData <- rbindlist(gene_data_list)
+
+  # Filter based on inpsub2 if provided
+  if (!is.null(inpsub2) && length(inpsub2) > 0 &&
+      length(inpsub2) != length(unique(ggData$sub))) {
+    if (!all(inpsub2 %in% ggData$sub)) {
+      return("Some elements of inpsub2 are not present in ggData$sub.")
+    }
     ggData <- ggData[sub %in% inpsub2]
+    if (length(unique(ggData$geneName)) < 2) {
+      return("Fewer than 2 genes present, unable to plot!")
+    }
   }
-  
-  if (uniqueN(ggData$grpBy) <= 1) {
-    return("Only 1 group present, unable to plot!")
+
+  # Remove rows with NA values in 'val'
+  ggData <- ggData[!is.na(val)]
+  if (nrow(ggData) == 0 || length(unique(ggData$grpBy)) <= 1 ||
+      length(unique(ggData$geneName)) < 2) {
+    return("Insufficient data to plot!")
   }
-  if (uniqueN(ggData$geneName) < 2) {
-    return("Fewer than 2 genes present, unable to plot!")
+
+  # Adjust 'val' and aggregate data
+  ggData[, val := expm1(val)]
+  ggData <- ggData[, .(
+    val = mean(val, na.rm = TRUE),
+    prop = mean(val > 0, na.rm = TRUE)
+  ), by = .(geneName, grpBy)]
+  ggData[, val := log1p(val)]
+
+  # Remove any NA values after transformation
+  ggData <- ggData[!is.na(val)]
+  if (nrow(ggData) == 0 || length(unique(ggData$grpBy)) <= 1 ||
+      length(unique(ggData$geneName)) < 2) {
+    return("Insufficient data to plot!")
   }
-  
-  ggData$val <- expm1(ggData$val)
-  ggData <- ggData[, .(val = mean(val), prop = sum(val > 0) / length(sampleID)), by = c("geneName", "grpBy")]
-  ggData$val <- log1p(ggData$val)
-  
-  colRange <- range(ggData$val)
+
+  # Determine color range
+  colRange <- range(ggData$val, na.rm = TRUE)
+
+  # Scale 'val' if requested
   if (inpScl) {
-    ggData[, val := scale(val), by = "geneName"]
-    colRange <- c(-max(abs(range(ggData$val))), max(abs(range(ggData$val))))
+    ggData[, val := scale(val), by = geneName]
+    colRange <- c(-max(abs(ggData$val), na.rm = TRUE), max(abs(ggData$val), na.rm = TRUE))
   }
-  
-  ggMat <- dcast.data.table(ggData, geneName ~ grpBy, value.var = "val")
-  tmp <- ggMat$geneName
-  ggMat <- as.matrix(ggMat[, -1])
-  rownames(ggMat) <- tmp
-  
-  point_size_mat <- dcast.data.table(ggData, geneName ~ grpBy, value.var = "prop")
-  point_size_mat <- as.matrix(point_size_mat[, -1])
-  rownames(point_size_mat) <- tmp
-  
-  list(ggMat = ggMat, point_size_mat = point_size_mat, colRange = colRange)
+
+  # Reshape data into matrices for plotting
+  ggMat <- dcast(ggData, geneName ~ grpBy, value.var = "val")
+  point_size_mat <- dcast(ggData, geneName ~ grpBy, value.var = "prop")
+
+  # Convert data.tables to matrices and set row names
+  ggMat_mat <- as.matrix(ggMat[, -1, with = FALSE])
+  rownames(ggMat_mat) <- ggMat$geneName
+  point_size_mat_mat <- as.matrix(point_size_mat[, -1, with = FALSE])
+  rownames(point_size_mat_mat) <- point_size_mat$geneName
+
+  # Return the results
+  list(ggMat = ggMat_mat, point_size_mat = point_size_mat_mat, colRange = colRange)
 }

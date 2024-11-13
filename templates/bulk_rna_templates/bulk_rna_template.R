@@ -6,25 +6,35 @@ blurbs_info <- fromJSON(blurbs)
 
 
 blurb_study_ui <- function(id) {
-#' Blurb Study UI
-#' 
-#' @description Creates the UI component for displaying the study overview
-#' @param id Module ID
-#' 
-#' @return A Shiny UI element
+  #' Blurb Study UI
+  #'
+  #' @description Creates the UI component for displaying the study overview
+  #' @param id Module ID
+  #'
+  #' @return A Shiny UI element
   
   Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
+  ns <- NS(id)
+  
   box(
     title = "Study Overview", status = "info", solidHeader = TRUE, width = 12, collapsible = TRUE,
-    tags$h2(Id_info$title),
-    tags$h3("Lead Author: ", Id_info$lead_author),
-    tags$p(Id_info$abstract),
-    tags$p("Read the full paper: ", tags$a(href = Id_info$paper_link, "PubMed")),
-    tags$p("DOI: ", tags$a(href = paste("https://doi.org/", Id_info$doi, sep = ""), Id_info$doi)),
-    tags$p("Data Access: ", tags$a(href = Id_info$data_link, "Dataset"))
+    fluidRow(
+        tags$h2(Id_info$title),
+        tags$h3("Lead Author: ", Id_info$lead_author),
+        tags$p(Id_info$abstract),
+        column(
+          width = 8,
+        tags$p("Read the full paper: ", tags$a(href = Id_info$paper_link, "PubMed")),
+        tags$p("DOI: ", tags$a(href = paste("https://doi.org/", Id_info$doi, sep = ""), Id_info$doi)),
+        tags$p("Study Data Access: ", tags$a(href = Id_info$data_link, "Dataset")),
+        tags$p(
+          "Processed Data: ",
+          downloadButton(outputId = ns(paste0(id, "_download")), label = "Download")
+        )
+      )
+    )
   )
 }
-
 
 blurb_data_ui <- function(id) {
   #' Blurb Data UI
@@ -39,14 +49,14 @@ blurb_data_ui <- function(id) {
   box(
     title = "Data used in analysis", status = "info",
     collapsible = TRUE,
-    solidHeader = TRUE, width = 12,
+    solidHeader = TRUE, width = 12,    
     tags$p(HTML(gsub("\n", "<br>", Id_info$data_explanation)))
   )
 }
 
 
 
-blurb_comparison_ui <- function(id, file = NA) {
+blurb_comparison_ui <- function(id) {
   #' Blurb Comparison UI
   #' 
   #' @description Creates the UI component for explaining the comparison done in the analysis
@@ -61,6 +71,28 @@ blurb_comparison_ui <- function(id, file = NA) {
     status = "warning",
     background = "orange", width = 12,
     tags$p(Id_info$data_comparison)
+  )
+}
+
+
+blurb_method_ui <- function(id) {
+  #' Blurb Comparison UI
+  #' 
+  #' @description Creates the UI component for explaining the method done in the analysis
+  #' @param id Module ID
+  #' 
+  #' @return A Shiny UI element
+  
+  Id_info <- blurbs_info[[paste(id, "info", sep = "_")]]
+  ns <- NS(id)
+  
+  box(
+    title = "Method",
+    status = "info",
+    collapsible = TRUE,
+    solidHeader = TRUE,
+    width = 12,
+    tags$p(Id_info$data_method)
   )
 }
 
@@ -118,8 +150,8 @@ metadata_ui <- function(id) {
     title = HTML(paste("Metadata", actionLink(ns("info_metadata_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('metadata_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),    
     id = "tabset1",
     width = 12,
-    tabPanel("Mortality by condition", withSpinner(uiOutput(ns("mortality_by_condition")),type = 6, color = "#FFA812", size = 0.5)),
-    tabPanel("Mortality by gene", withSpinner(uiOutput(ns("mortality_by_gene") ,type = 6, color = "#FFA812", size = 0.5)),
+    tabPanel("Survival curves by condition", withSpinner(uiOutput(ns("mortality_by_condition")),type = 6, color = "#FFA812", size = 0.5)),
+    tabPanel("Survival curves by gene", withSpinner(uiOutput(ns("mortality_by_gene") ,type = 6, color = "#FFA812", size = 0.5)),
                       selectizeInput(ns("gene_mortality"), "Gene", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
   )
 }

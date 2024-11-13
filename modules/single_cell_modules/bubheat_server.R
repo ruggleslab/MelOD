@@ -21,36 +21,84 @@ bubheat_server <- function(id, shared_reactives) {
                            choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
                            selected = shared_reactives$sc1def_data()$grp1)
       
-      updateSelectizeInput(session, "bubheat_group_by",
-                           choices = shared_reactives$sc1conf_data()[grp == TRUE]$UI,
-                           selected = shared_reactives$sc1def_data()$grp1)
-      
-      updateMultiInput(
+      updatePickerInput(
         session = session,
         inputId = "bubheat_selected_gene",
         choices = names(shared_reactives$sc1gene_data()),
-        selected = names(shared_reactives$sc1gene_data())[1:5])
+        selected = NULL,
+        options = list(
+          title = "Search for a gene...",
+          `live-search` = TRUE,
+          size = 5,
+          style = "btn-primary")
+      )
+      
+      
+      
+      initial_genes <- names(shared_reactives$sc1gene_data())[1:5]
+      updateTextAreaInput(session, "bubheat_selected_gene_text", value = paste(initial_genes, collapse = "\n"))
+      
     })
     
     observeEvent(input$info_bubheat_plot, {
       shinyalert(
-        title = blurbs$info$bubheat$title, 
+        title = blurbs$info$bubheat$title,
         html = TRUE,
         text = blurbs$info$bubheat$text
       )
     })
     
-    selected_genes <- eventReactive(input$select_genes_single_cell, {
+    
+    observeEvent(input$bubheat_selected_gene, {
+      if(nzchar(input$bubheat_selected_gene)) {
+        current_value <- input$bubheat_selected_gene_text
+        new_gene <- input$bubheat_selected_gene
+        updated_value <- paste(current_value, new_gene, sep = "\n")
+        updateTextAreaInput(session, "bubheat_selected_gene_text", value = updated_value)
+      }
+      updateTextInput(session, "bubheat_selected_gene", value = "")
+    }, ignoreInit = TRUE)
+    
+    
+    
+    
+    selected_genes <- reactive({
       gene_text <- input$bubheat_selected_gene_text
       genes <- unlist(strsplit(gene_text, "[,;\n]"))
       genes <- trimws(genes)
       genes <- genes[genes != ""]
       
-      if (length(genes) > 50) {
-        genes <- genes[1:50]
+      # Initialize vectors for valid and invalid genes
+      valid_genes <- c()
+      invalid_genes <- c()
+      
+      # Clear previous feedback
+      hideFeedback("bubheat_selected_gene_text")
+      
+      # Validate genes and accumulate invalid genes
+      for (gene in genes) {
+        if (is_valid_gene(gene, shared_reactives$sc1gene_data())) {
+          valid_genes <- c(valid_genes, gene)  # Append valid gene
+        } else {
+          invalid_genes <- c(invalid_genes, gene)  # Collect invalid genes
+        }
       }
       
-      genes <- sapply(genes, function(gene) {
+      # Show feedback warning if there are invalid genes
+      if (length(invalid_genes) > 0) {
+        invalid_message <- paste("Gene(s) not found:", paste(invalid_genes, collapse = ", "))
+        showFeedbackWarning("bubheat_selected_gene_text", invalid_message)
+      } else {
+        hideFeedback("bubheat_selected_gene_text")  # Clear feedback if all genes are valid
+      }
+      
+      # Limit the number of valid genes to 50
+      if (length(valid_genes) > 50) {
+        valid_genes <- valid_genes[1:50]
+      }
+      
+      # Format the valid genes for output
+      formatted_genes <- sapply(valid_genes, function(gene) {
         if (nchar(gene) == 1) {
           formatted_gene <- tolower(gene)
         } else if (nchar(gene) > 0) {
@@ -58,40 +106,23 @@ bubheat_server <- function(id, shared_reactives) {
           rest_chars <- substr(gene, 2, nchar(gene))
           formatted_gene <- paste0(toupper(first_char), tolower(rest_chars))
         } else {
-          print(gene)
           formatted_gene <- gene
         }
         formatted_gene
       })
-      genes
-    })
-    
-    observeEvent(selected_genes(), {
-      genes <- selected_genes()
-      if (length(genes) > 0) {
-        updateMultiInput(
-          session = session,
-          inputId = "bubheat_selected_gene",
-          choices = names(shared_reactives$sc1gene_data()),  # Adjust this according to your data
-          selected = genes
-        )
-      }
+      
+      formatted_genes
     })
     
     observeEvent(input$reset_selection_single_cell, {
-      updateMultiInput(
-        session = session,
-        inputId = "bubheat_selected_gene",
-        choices = names(shared_reactives$sc1gene_data()),
-        selected = names(shared_reactives$sc1gene_data())[1:5])
-      
-      updateTextAreaInput(session, "bubheat_selected_gene_text", value = "")
-    })  
+      initial_genes <- names(shared_reactives$sc1gene_data())[1:5]
+      updateTextAreaInput(session, "bubheat_selected_gene_text", value = paste(initial_genes, collapse = "\n"))
+    })
     
     processed_data <- reactive({
-      req(input$bubheat_group_by, input$bubheat_selected_gene, input$bubheat_group_by, input$cell_subset, input$cell_subset_choices_box)
+      req(input$bubheat_group_by, input$cell_subset, input$cell_subset_choices_box)
       
-      process_bubheat_data(shared_reactives$sc1conf_data(), shared_reactives$sc1meta_data(), input$bubheat_selected_gene, input$bubheat_group_by,
+      process_bubheat_data(shared_reactives$sc1conf_data(), shared_reactives$sc1meta_data(), selected_genes(), input$bubheat_group_by,
                            input$cell_subset, input$cell_subset_choices_box, shared_reactives$h5_data(), shared_reactives$sc1gene_data(), input$bubheat_scale)
     })
     
@@ -104,7 +135,6 @@ bubheat_server <- function(id, shared_reactives) {
       }
     })
     
-    setup_download_handler(id, output, "bubheat_data", reactive({processed_data()$ggMat}), "proportion_data")
-    
+    setup_download_handler(id, output, "bubheat_data", reactive({ processed_data()$ggMat }), "proportion_data")
   })
 }

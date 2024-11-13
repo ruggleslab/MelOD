@@ -1,12 +1,21 @@
 #' Check and install missing packages
 #'
 #' @description Function to check and install missing packages
-#' @param packagkes list of packages names to check
+#' @param packages list of package names to check
 check_and_install_packages <- function(packages) {
+  # Ensure BiocManager is available for Bioconductor packages
+  if (!"BiocManager" %in% rownames(installed.packages())) {
+    install.packages("BiocManager", dependencies = TRUE)
+  }
+  
   installed_packages <- rownames(installed.packages())
   for (pkg in packages) {
     if (!pkg %in% installed_packages) {
-      # install.packages(pkg, dependencies = TRUE)
+      if (pkg %in% BiocManager::available()) {
+        BiocManager::install(pkg)
+      } else {
+        install.packages(pkg, dependencies = TRUE)
+      }
     }
     library(pkg, character.only = TRUE)
   }
@@ -20,18 +29,5 @@ required_packages <- c(
   "data.table","Matrix","shinycssloaders","shinyFeedback","future","promises","shinyhelper","hdf5r"
 )
 
-
 check_and_install_packages(required_packages)
 plan(multisession)
-# Setting up the auth token location and email
-options(
-  gargle_oauth_email = "ruggleslab.shinyseq.backend@gmail.com",
-  gargle_oauth_cache = "authentication"
-)
-
-# List all of the files available to download
-drive_find()
-
-# Improve resolution of the plot
-options(shiny.plot.res = 96)
-

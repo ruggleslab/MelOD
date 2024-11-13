@@ -19,6 +19,13 @@
   padding-left: 20px;
 }
 
+.dropdown-header-notice{
+  padding-left: 20px;
+  font-weight: bold;
+  color: #8999A9;
+
+}
+
 .responsive-logo {
     max-width: 100%;
     max-height: 400px;

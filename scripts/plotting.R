@@ -10,10 +10,7 @@ plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "group") {
   #' @param color_by Optional parameter to color dots by "condition" or "name"
   #' 
   #' @return A plotly object representing the PCA plot
-  # 
-  # unique_conditions <- unique(pca_data_frame$condition)
-  # condition_title <- paste("PCA plot of", paste(unique_conditions, collapse = " vs "))
-  # 
+ 
   text_labels <- paste("Name:", pca_data_frame$name, 
                        "<br>Group:", pca_data_frame$group, 
                        "<br>Size Factor:", round(pca_data_frame$size_factor, 3))
@@ -90,17 +87,21 @@ plot_variance <- function(vs_data) {
 plot_mortality_curve <- function(clinical_data, group_col = "group") {
   #' Plot Mortality Curve
   #'
-  #' @description Generates a mortality curve plot based on clinical data, showing survival probabilities over time.
+  #' @description Generates a mortality curve plot based on clinical data, showing survival probabilities over time and statistics.
   #' @param clinical_data DataFrame containing clinical data with survival information.
   #' @param group_col Column name by which to group the data for survival analysis, defaults to "group".
-  #' 
+  #'
   #' @return A Plotly object representing the survival curves for different groups, or a string message if an error occurs.
-
+  
   tryCatch({
     survival_object <- Surv(time = clinical_data$OS.days., event = clinical_data$status)
     survival_fit <- survfit(as.formula(paste("survival_object ~", group_col)), data = clinical_data)
-    mortality_plot <- plot_ly()
     
+    # Perform log-rank test (survdiff) to assess statistical significance
+    logrank_test <- survdiff(as.formula(paste("survival_object ~", group_col)), data = clinical_data)
+    p_value <- 1 - pchisq(logrank_test$chisq, df = length(logrank_test$n) - 1)
+    
+    mortality_plot <- plot_ly()
     groups <- unique(clinical_data[[group_col]])
     colors <- c("#1E88E5", "#D81B60", "#33a02c")
     median_survivals <- list()
@@ -111,6 +112,22 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
       group_survival_object <- Surv(time = group_data$OS.days., event = group_data$status)
       group_survival_fit <- survfit(group_survival_object ~ 1)
       
+      # Create custom hover text
+      custom_text <- c(
+        paste(
+          "Time: 0",
+          "<br>Survival Probability: 1.000",
+          "<br>Number at risk: ", group_survival_fit$n.risk[1],
+          "<br>Number of events: 0"
+        ),
+        paste(
+          "Time: ", group_survival_fit$time,
+          "<br>Survival Probability: ", round(group_survival_fit$surv, 3),
+          "<br>Number at risk: ", group_survival_fit$n.risk,
+          "<br>Number of events: ", group_survival_fit$n.event
+        )
+      )
+      
       mortality_plot <- mortality_plot %>%
         add_trace(
           type = 'scatter',
@@ -118,7 +135,9 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
           x = c(0, group_survival_fit$time), 
           y = c(1, group_survival_fit$surv),
           name = group_name,
-          line = list(color = colors[i %% length(colors)])
+          line = list(color = colors[i %% length(colors)]),
+          text = custom_text,
+          hoverinfo = 'text'
         )
       
       median_survival <- summary(group_survival_fit)$table["median"]
@@ -131,10 +150,12 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
     
     median_text <- paste0(groups, ": ", unlist(median_survivals), collapse = "<br>")
     
+    # Update plot layout with p-value from log-rank test
     mortality_plot <- mortality_plot %>%
       layout(
         title = list(
-          text = paste("Survival Curve<br><sup>Median Survival: ", median_text, "</sup>")
+          text = paste("<br><sup>Median Survival: ", median_text, 
+                       "<br>P-value (Log-Rank Test): ", sprintf("%.3f", p_value), "</sup>")
         ),
         xaxis = list(title = "Days"),
         yaxis = list(title = "Survival Probability", range = c(0, 1.2))
@@ -148,7 +169,6 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
 }
 
 
-
 plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
   #' Create Volcanoplot
   #' 
@@ -159,50 +179,99 @@ plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
   #' @return A plotly object representing the volcanoplot
   
   volcano_plot <- plot_ly(source = "A")
+  
   upregulated_data <- subset(result_data, sig == "Upregulated")
-  volcano_plot <- add_trace(volcano_plot, data = upregulated_data, x = upregulated_data$log2FoldChange, y = upregulated_data$neg_log10_padj,
-                            type = 'scattergl', mode = 'markers', color = I("#D81B60"),
-                            text = paste("Gene:", rownames(upregulated_data), "<br>Log2 Fold Change:", upregulated_data$log2FoldChange,
-                                         "<br>Adjusted p-value:", upregulated_data$padj),
-                            marker = list(size = 7, line = list(color = "#82103a", width = 1)),
-                            customdata = rownames(upregulated_data),
-                            name = "Upregulated")
+  volcano_plot <- add_trace(
+    volcano_plot,
+    data = upregulated_data,
+    x = upregulated_data$log2FoldChange,
+    y = upregulated_data$neg_log10_padj,
+    type = 'scattergl',
+    mode = 'markers',
+    color = I("#D81B60"),
+    text = paste(
+      "Gene:", rownames(upregulated_data),
+      "<br>Log2 Fold Change:", round(upregulated_data$log2FoldChange, 2),
+      "<br>Adjusted p-value:", formatC(upregulated_data$padj, format = "e", digits = 2)
+    ),
+    marker = list(size = 7, line = list(color = "#82103a", width = 1)),
+    customdata = rownames(upregulated_data),
+    name = "Upregulated"
+  )
   
   downregulated_data <- subset(result_data, sig == "Downregulated")
-  volcano_plot <- add_trace(volcano_plot, data = downregulated_data, x = downregulated_data$log2FoldChange, y = downregulated_data$neg_log10_padj,
-                            type = 'scattergl', mode = 'markers', color = I("#1E88E5"),
-                            text = paste("Gene:", rownames(downregulated_data), "<br>Log2 Fold Change:", downregulated_data$log2FoldChange,
-                                         "<br>Adjusted p-value:", downregulated_data$padj),
-                            marker = list(size = 7, line = list(color = "#10528b", width = 1)),
-                            customdata = rownames(downregulated_data),
-                            name = "Downregulated")
+  volcano_plot <- add_trace(
+    volcano_plot,
+    data = downregulated_data,
+    x = downregulated_data$log2FoldChange,
+    y = downregulated_data$neg_log10_padj,
+    type = 'scattergl',
+    mode = 'markers',
+    color = I("#1E88E5"),
+    text = paste(
+      "Gene:", rownames(downregulated_data),
+      "<br>Log2 Fold Change:", round(downregulated_data$log2FoldChange, 2),
+      "<br>Adjusted p-value:", formatC(downregulated_data$padj, format = "e", digits = 2)
+    ),
+    marker = list(size = 7, line = list(color = "#10528b", width = 1)),
+    customdata = rownames(downregulated_data),
+    name = "Downregulated"
+  )
   
   non_sig_data <- subset(result_data, sig == "Not Significant")
-  volcano_plot <- add_trace(volcano_plot, data = non_sig_data, x = non_sig_data$log2FoldChange, y = non_sig_data$neg_log10_padj,
-                            type = 'scattergl', mode = 'markers', color = I("gray"),
-                            text = paste("Gene:", rownames(non_sig_data), "<br>Log2 Fold Change:", non_sig_data$log2FoldChange,
-                                         "<br>Adjusted p-value:", non_sig_data$padj),
-                            marker = list(size = 7, line = list(color = "gray", width = 1)),
-                            name = "Not Significant",
-                            customdata = rownames(non_sig_data),
-                            visible='legendonly')
+  volcano_plot <- add_trace(
+    volcano_plot,
+    data = non_sig_data,
+    x = non_sig_data$log2FoldChange,
+    y = non_sig_data$neg_log10_padj,
+    type = 'scattergl',
+    mode = 'markers',
+    color = I("gray"),
+    text = paste(
+      "Gene:", rownames(non_sig_data),
+      "<br>Log2 Fold Change:", round(non_sig_data$log2FoldChange, 2),
+      "<br>Adjusted p-value:", formatC(non_sig_data$padj, format = "e", digits = 2)
+    ),
+    marker = list(size = 7, line = list(color = "gray", width = 1)),
+    name = "Not Significant",
+    customdata = rownames(non_sig_data),
+    visible = 'legendonly'
+  )
   
   if (!is.null(gene) && length(gene) > 0) {
     highlighted_genes <- subset(result_data, rownames(result_data) %in% gene)
     if (nrow(highlighted_genes) > 0) {
-      volcano_plot <- add_trace(volcano_plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
-                                type = "scattergl", mode = "markers", color = I("orange"),
-                                text = paste("Gene:", rownames(highlighted_genes), "<br>Log2 Fold Change:", highlighted_genes$log2FoldChange,
-                                             "<br>Adjusted p-value:", highlighted_genes$padj),
-                                hoverinfo = 'text',
-                                marker = list(size = 7, line = list(color = "darkorange", width = 1)),
-                                name = "Highlighted Genes")
+      volcano_plot <- add_trace(
+        volcano_plot,
+        data = highlighted_genes,
+        x = highlighted_genes$log2FoldChange,
+        y = highlighted_genes$neg_log10_padj,
+        type = "scattergl",
+        mode = "markers",
+        color = I("orange"),
+        text = paste(
+          "Gene:", rownames(highlighted_genes),
+          "<br>Log2 Fold Change:", round(highlighted_genes$log2FoldChange, 2),
+          "<br>Adjusted p-value:", formatC(highlighted_genes$padj, format = "e", digits = 2)
+        ),
+        hoverinfo = 'text',
+        marker = list(size = 7, line = list(color = "darkorange", width = 1)),
+        name = "Highlighted Genes"
+      )
       
-      volcano_plot <- add_trace(volcano_plot, data = highlighted_genes, x = highlighted_genes$log2FoldChange, y = highlighted_genes$neg_log10_padj,
-                                type = "scattergl", mode = "text", text = rownames(highlighted_genes),
-                                textposition = "top center", textfont = list(size = 10, color = "black"),
-                                hoverinfo = 'none',
-                                showlegend = FALSE) %>%
+      volcano_plot <- add_trace(
+        volcano_plot,
+        data = highlighted_genes,
+        x = highlighted_genes$log2FoldChange,
+        y = highlighted_genes$neg_log10_padj,
+        type = "scattergl",
+        mode = "text",
+        text = rownames(highlighted_genes),
+        textposition = "top center",
+        textfont = list(size = 10, color = "black"),
+        hoverinfo = 'none',
+        showlegend = FALSE
+      ) %>%
         plotly::event_register('plotly_click')    
     } else {
       message("No genes found matching the specified list. Please check gene names.")
@@ -210,20 +279,25 @@ plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
   }
   
   unique_conditions <- unique(deseq2_data$group)
-  # condition_title <- paste("Volcano plot of DESeq2 results of", paste(unique_conditions, collapse=" vs "))
-  # 
-  volcano_plot <- layout(volcano_plot,
-                         xaxis = list(title = "Log2 Fold Change"),
-                         yaxis = list(title = "-log10 Adjusted p-value"),
-                         margin = list(t = 50)
+  condition_title <- paste(unique_conditions, collapse = " vs ")
+  
+  volcano_plot <- layout(
+    volcano_plot,
+    title = condition_title,
+    xaxis = list(title = "Log2 Fold Change"),
+    yaxis = list(title = "-log10 Adjusted p-value"),
+    margin = list(t = 50)
   )
+  
   volcano_plot <- volcano_plot %>%  
-    config(modeBarButtonsToAdd = c('drawline', 
-                                   'drawopenpath', 
-                                   'drawclosedpath', 
-                                   'drawcircle', 
-                                   'drawrect', 
-                                   'eraseshape'))
+    config(modeBarButtonsToAdd = c(
+      'drawline', 
+      'drawopenpath', 
+      'drawclosedpath', 
+      'drawcircle', 
+      'drawrect', 
+      'eraseshape'
+    ))
   
   return(volcano_plot)
 }
@@ -240,30 +314,23 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
   #' @param choice_dot Dot mode for the plot ("outliers", "all", etc.)
   #'
   #' @return A plotly object representing the plot
-  
+
   color_palettes <- list("Red & Blue" = c("#D81B60", "#1E88E5"),
                          "Green & Purple" = c("#66BB6A", "#8E24AA")
   )
-  
+
   color_palettes_darker <- list("Red & Blue" = c("#82103a", "#10528b"),
                                 "Green & Purple" = c("#58b55d", "#803c92")
   )
   colors_chosen <- unlist(color_palettes[choice_color])
   colors_chosen_darker <- unlist(color_palettes_darker[choice_color])
-  
+
   conditions_found <- sort(unique(merged_data$group), method = "radix", na.last = NA)
   custom_colors <- setNames(colors_chosen[1:length(conditions_found)], conditions_found)
-  
-  # condition_title <- paste(" in ", paste(conditions_found, collapse=" vs "))
-  # plot_title <- if (length(gene_of_interest) == 1) {
-  #   paste("Expressions for", gene_of_interest, condition_title)
-  # } else {
-  #   paste("Expressions for multiple genes", condition_title)
-  # }
-  
+
   if (choice_shape == "violin") {
     plot_type <- "violin"
-    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(group), 
+    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(group),
                     type = plot_type, colors = custom_colors, points = choice_dot,
                     jitter = 0.1, pointpos = 0,
                     marker = list(size = 5, line = list(width = 0)),
@@ -284,7 +351,7 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
              violinmode = "group")
   } else {
     plot_type <- "box"
-    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(group), 
+    plot <- plot_ly(merged_data, x = ~gene_id, y = ~expression, color = ~factor(group),
                     type = plot_type, colors = custom_colors, points = choice_dot,
                     jitter = 0.3, pointpos = 0,
                     marker = list(size = 5, line = list(width = 0)),
@@ -301,102 +368,20 @@ plot_violin <- function(merged_data, gene_of_interest, padj_cutoff, choice_shape
              zeroline = FALSE,
              boxmode = "group")
   }
-  
+
   plot <- add_significance_annotations(merged_data, plot, padj_cutoff)
-  plot <- plot %>%  
-    config(modeBarButtonsToAdd = c('drawline', 
-                                   'drawopenpath', 
-                                   'drawclosedpath', 
-                                   'drawcircle', 
-                                   'drawrect', 
+  plot <- plot %>%
+    config(modeBarButtonsToAdd = c('drawline',
+                                   'drawopenpath',
+                                   'drawclosedpath',
+                                   'drawcircle',
+                                   'drawrect',
                                    'eraseshape'))
-  
+
   return(plot)
 }
 
-#' 
-#' plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette , z_score_range , font_size ) {
-#'   #' Plot Heatmap
-#'   #'
-#'   #' @param z_score_matrix Z-scored matrix.
-#'   #' @param deseq2_data Processed DESeq2 dataset.
-#'   #' @param gene Specific gene to display.
-#'   #' @param heatmap_palette Color palette for the heatmap.
-#'   #' @param z_score_range Range for the z-scores.
-#'   #' @param font_size Font size for row and column labels.
-#'   #'
-#'   #' @return A plotly object representing the heatmap.
-#' 
-#'   tryCatch({
-#'     conditions <- colData(deseq2_data)$group
-#'     condition_levels <- sort(unique(colData(deseq2_data)$group), method = "radix")
-#'     preferred_colors <- c("#D81B60", "#1E88E5")
-#' 
-#'     if (length(condition_levels) <= length(preferred_colors)) {
-#'       condition_colors <- setNames(preferred_colors[1:length(condition_levels)], condition_levels)
-#'     } else {
-#'       condition_colors <- scales::hue_pal()(length(condition_levels))
-#'       condition_colors <- setNames(condition_colors, condition_levels)
-#'     }
-#' 
-#'     conditions_df <- data.frame("Conditions" = conditions, check.names = FALSE)
-#' 
-#'     selection <- ifelse(rownames(z_score_matrix) %in% gene, "Selected genes", "None")
-#'     selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
-#' 
-#' 
-#'     heatmap_plot <- heatmaply(
-#'       z_score_matrix,
-#'       plot_method = "plotly",
-#'       midpoint=0,limits=c(-z_score_range,z_score_range),
-#'       branches_lwd = 0.01,
-#'       subplot_widths = c(0.95, 0.005, 0.045),
-#'       grid_gap = 0.5,
-#'       fontsize_row = font_size,
-#'       fontsize_col = font_size,
-#'       key.title = "Z-score",
-#'       label_names = c("Gene", "Sample", "Z-score"),
-#'       colors = rev(colorRampPalette(brewer.pal(3, heatmap_palette))(256)),
-#'       col_side_colors = conditions_df,
-#'       col_side_palette = condition_colors,
-#'       row_side_colors = selection,
-#'       row_side_palette = selection_mapping,
-#'       colorbar_thickness = 20
-#'     )
-#' 
-#'     # Access and modify the second colorbar (Z-score)
-#'     heatmap_plot$x$data[[7]]$colorbar$x <- 1.05
-#'     heatmap_plot$x$data[[7]]$colorbar$y <- 0.2
-#'     heatmap_plot$x$data[[7]]$colorbar$len <- 0.3
-#'     heatmap_plot$x$data[[7]]$colorbar$thickness <- 15
-#' 
-#'     # Access and modify the first colorbar (Conditions)
-#'     heatmap_plot$x$data[[4]]$colorbar$x <- 1.05
-#'     heatmap_plot$x$data[[4]]$colorbar$y <- 0.2
-#'     heatmap_plot$x$data[[4]]$colorbar$len <- 0.3
-#'     heatmap_plot$x$data[[4]]$colorbar$thickness <- 15
-#' 
-#'     # Access and modify the third colorbar (row_side_colors)
-#'     heatmap_plot$x$data[[8]]$colorbar$title <- "Selection"
-#'     heatmap_plot$x$data[[8]]$colorbar$x <- 1.05
-#'     heatmap_plot$x$data[[8]]$colorbar$y <- 0.8
-#'     heatmap_plot$x$data[[8]]$colorbar$len <- 0.3
-#'     heatmap_plot$x$data[[8]]$colorbar$thickness <- 15
-#' 
-#' 
-#'     heatmap_plot <- heatmap_plot %>%
-#'       config(modeBarButtonsToAdd = c('drawline',
-#'                                      'drawopenpath',
-#'                                      'drawclosedpath',
-#'                                      'drawcircle',
-#'                                      'drawrect',
-#'                                      'eraseshape'))
-#'     return(heatmap_plot)
-#'   }, error = function(e) {
-#'     return("Please set or select at least 2 genes")
-#'   })
-#' }
-#' 
+
 plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette, z_score_range, font_size) {
   #' Plot Heatmap
   #'
@@ -420,6 +405,22 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette, z_s
     # Clip the matrix values before plotting
     z_score_matrix <- clip_matrix(z_score_matrix, z_score_range)
     
+    # Create custom hover text with Z-score rounded to two decimal places
+    genes <- rownames(z_score_matrix)
+    samples <- colnames(z_score_matrix)
+    hover_text_matrix <- outer(
+      genes,
+      samples,
+      Vectorize(function(gene, sample) {
+        z_value <- z_score_matrix[gene, sample]
+        paste(
+          "Gene:", gene,
+          "<br>Sample:", sample,
+          "<br>Z-score:", sprintf("%.2f", z_value)
+        )
+      })
+    )
+    
     conditions <- colData(deseq2_data)$group
     condition_levels <- sort(unique(conditions), method = "radix")
     preferred_colors <- c("#D81B60", "#1E88E5")
@@ -435,7 +436,7 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette, z_s
     selection <- ifelse(rownames(z_score_matrix) %in% gene, "Selected genes", "None")
     selection_mapping <- setNames(c("#ffffff00", "orange"), c("None", "Selected genes"))
     
-    # Create heatmap plot with adjusted z-score range
+    # Create heatmap plot with adjusted z-score range and custom hover text
     heatmap_plot <- heatmaply(
       z_score_matrix,
       plot_method = "plotly",
@@ -453,7 +454,8 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette, z_s
       col_side_palette = condition_colors,
       row_side_colors = selection,
       row_side_palette = selection_mapping,
-      colorbar_thickness = 20
+      colorbar_thickness = 20,
+      custom_hovertext = hover_text_matrix
     )
     
     # Modify colorbars
@@ -475,13 +477,21 @@ plot_heatmap <- function(z_score_matrix, deseq2_data, gene, heatmap_palette, z_s
     
     # Add configuration for drawing tools
     heatmap_plot <- heatmap_plot %>%
-      config(modeBarButtonsToAdd = c('drawline', 'drawopenpath', 'drawclosedpath', 'drawcircle', 'drawrect', 'eraseshape'))
+      config(modeBarButtonsToAdd = c(
+        'drawline',
+        'drawopenpath',
+        'drawclosedpath',
+        'drawcircle',
+        'drawrect',
+        'eraseshape'
+      ))
     
     return(heatmap_plot)
   }, error = function(e) {
     return("Please set or select at least 2 genes")
   })
 }
+
 
 render_filtered_results_table <- function(dds_processed, input) {
   #'Result Table

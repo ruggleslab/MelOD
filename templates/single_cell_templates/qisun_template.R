@@ -9,8 +9,8 @@ qisun_ui <- function(id) {
   fluidPage(
     fluidRow(blurb_study_ui("qisun")),
     fluidRow(column(6, blurb_data_ui("qisun")),
-             column(6, fluidRow(blurb_method_ui("qisun")),
-                    fluidRow(blurb_comparison_ui("qisun")))),
+             column(6, blurb_method_ui("qisun"),
+                    blurb_comparison_ui("qisun"))),
     fluidRow(
     column(5,inputs_ui("qisun")),
     column(7, cell_datatable_ui("qisun")),

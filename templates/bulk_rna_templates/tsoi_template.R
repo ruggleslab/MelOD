@@ -10,9 +10,11 @@ tsoi_ui <- function(id) {
     fluidRow(
       blurb_study_ui("tsoi")),
     fluidRow(
-      column(6, blurb_data_ui("tsoi")),
-      column(6, fluidRow(blurb_comparison_ui("tsoi"),
-                tsoi_selector_ui("tsoi")))),
+      column(6,blurb_data_ui("tsoi")),
+      column(6,blurb_method_ui("tsoi"))),
+    fluidRow( 
+      column(6,blurb_comparison_ui("tsoi")) ,
+      column(6,tsoi_selector_ui("tsoi"))),
     fluidRow(
       column(6,pca_ui("tsoi")),
       column(6,metadata_ui("tsoi"))),

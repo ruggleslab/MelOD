@@ -8,9 +8,12 @@ kleffman_ui <- function(id) {
   
   fluidPage(
     fluidRow(blurb_study_ui("kleffman")),
-    fluidRow(column(6, blurb_data_ui("kleffman")),
-             column(6, fluidRow(blurb_comparison_ui("kleffman"),
-                                kleffman_selector_ui("kleffman")))),
+    fluidRow(
+      column(6,blurb_data_ui("kleffman")),
+      column(6,blurb_method_ui("kleffman"))),
+    fluidRow( 
+      column(6,blurb_comparison_ui("kleffman")) ,
+      column(6,kleffman_selector_ui("kleffman"))),
     fluidRow(
       column(4,input_ui("kleffman", 2, 0.5)),
       column(8,deseq2_table_ui("kleffman"))),

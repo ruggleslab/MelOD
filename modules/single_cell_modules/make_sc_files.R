@@ -1,8 +1,10 @@
 library(Seurat)
+# devtools::install_github("SGDDNB/ShinyCell")
+library(ShinyCell)
 
 
 
-seu  = readRDS("./harmonized_seurat.rds")
+seu  = readRDS("./Rambow_PDX.rds")
 seu = UpdateSeuratObject(seu)
 
 scConf = createConfig(seu)

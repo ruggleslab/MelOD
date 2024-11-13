@@ -11,7 +11,9 @@ kunz_ui <- function(id) {
       blurb_study_ui("kunz")),
     fluidRow(
       column(6, blurb_data_ui("kunz")),
-      column(6, blurb_comparison_ui("kunz"))),
+      column(6, blurb_method_ui("kunz"))),
+    fluidRow( 
+      column(6,blurb_comparison_ui("kunz"))),
     fluidRow(
       column(6,pca_ui("kunz")),
       column(6,metadata_ui("kunz"))),

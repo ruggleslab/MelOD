@@ -14,97 +14,6 @@ selection_badal_server <- function(dds, clinical_data, id) {
 }
 
 
-#' selection_list_server <- function(dds, id, shared_reactives, clinical_data = NULL) {
-#'   #' Selection List Server
-#'   #'
-#'   #' @description Handles selection for list input, updating the shared reactive variables based on the user's selection.
-#'   #' @param dds A list of DESeq2 datasets for different treatment types.
-#'   #' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
-#'   #' @param id A unique module ID used to identify the module in the Shiny application.
-#'   #' @param shared_reactives A reactiveValues object for sharing reactive variables across modules.
-#' 
-#'   moduleServer(id, function(input, output, session) {
-#'     observe({
-#'       req(input$selection)  # Ensure that input selection is available before proceeding
-#' 
-#'       # Convert input$selection to numeric if it's not already
-#'       selection_index <- as.numeric(input$selection)
-#' 
-#'       # Validate the selection_index to be within the bounds of the lists
-#'       if (!is.na(selection_index) && selection_index >= 1 && selection_index <= length(dds)) {
-#'         selected_dds <- dds[[selection_index]]
-#'         if (!is.null(clinical_data)){ 
-#'           print("is tha goning here")
-#'           selected_clinical_data <- tryCatch({
-#'           clinical_data[[selection_index]]}, error = function(e){
-#'             clinical_data[[1]]
-#'           })}
-#'         # Update the shared reactive values
-#'         shared_reactives$selected_dds(selected_dds)
-#'         if (!is.null(clinical_data)) {
-#'           shared_reactives$selected_clinical_data(selected_clinical_data)}
-#'       } else {
-#'         # Optionally handle invalid selections
-#'         warning("Selected index is out of bounds or not a number.")
-#'         shared_reactives$selected_dds(NULL)
-#'         shared_reactives$selected_clinical_data(NULL)
-#'       }
-#'     })
-#'   })
-#' }
-#' 
-#' 
-#' selection_server <- function(dds, id, clinical_data = NULL) {
-#'   #' Selection Server
-#'   #'
-#'   #' @description Handles the overall selection logic for the application, including processing and filtering of the DESeq2 dataset based on the user's selection.
-#'   #' @param dds A list of DESeq2 datasets for different treatment types.
-#'   #' @param clinical_data A list of clinical data frames corresponding to each DESeq2 dataset.
-#'   #' @param id A unique module ID used to identify the module in the Shiny application.
-#'   #'
-#'   #' @return A list of reactive values and utilities including selected datasets, filtered results, processed datasets, and display genes.
-#' 
-#'   moduleServer(id, function(input, output, session) {
-#'     selected_dds <- reactiveVal()
-#'     selected_clinical_data <- reactiveVal()
-#'     utilities <- reactive({
-#'       req(selected_dds())
-#'       shared_server_utilities(selected_dds())
-#'     })
-#'     filtered_res <- reactive({
-#'       req(utilities())
-#'       utilities()$filtered_genes
-#'     })
-#'     dds_processed <- reactive({
-#'       req(utilities())
-#'       utilities()$dds
-#'     })
-#'     display_genes <- reactive({
-#'       req(filtered_res())
-#'       get_display_genes(filtered_res(), input$selected_gene)
-#'     })
-#' 
-#' 
-#'     observe({
-#'       if (length(dds) > 1) {
-#'         selection_list_server(dds, id, shared_reactives, clinical_data)  # Pass shared_reactives
-#'       } else {
-#'         selected_dds(dds[[1]])  # Default to the first dataset if only one is available
-#'         if (!is.null(clinical_data)){selected_clinical_data(clinical_data[[1]])}
-#'       }
-#'     })
-#'     return(list(
-#'       selected_dds = selected_dds,
-#'       selected_clinical_data = selected_clinical_data,
-#'       utilities = utilities,
-#'       filtered_res = filtered_res,
-#'       dds_processed = dds_processed,
-#'       display_genes = display_genes
-#'     ))
-#'   })
-#' }
-
-
 selection_list_server <- function(dds, id, shared_reactives,clinical_data = NULL) {
   #' Selection List Server
   #'
@@ -328,5 +237,3 @@ selection_server_single_cell <- function(sc1conf, sc1def, h5_file, sc1gene, sc1m
     ))
   })
 }
-
-

@@ -16,7 +16,7 @@ source("modules/single_cell_modules/bubheat_server.R", local = TRUE)
 
 # Source dashboard template
 source("templates/dashboard_template.R", local = TRUE)
-source("templates/home_template.R", local = TRUE) 
+source("templates/home_template.R", local = TRUE)
 source("templates/bulk_rna_templates/gide_template.R", local = TRUE)
 source("templates/bulk_rna_templates/badal_template.R", local = TRUE)
 source("templates/bulk_rna_templates/kunz_template.R", local = TRUE)
@@ -30,9 +30,14 @@ source("templates/in_development_template.R", local = TRUE)
 source("templates/single_cell_templates/single_cell_template.R", local = TRUE)
 source("templates/single_cell_templates/qisun_template.R", local = TRUE)
 source("templates/single_cell_templates/KBPT_template.R", local = TRUE)
+source("templates/single_cell_templates/biermann_template.R", local = TRUE)
+source("templates/single_cell_templates/jerby_template.R", local = TRUE)
+source("templates/single_cell_templates/pozniak_template.R", local = TRUE)
+source("templates/single_cell_templates/rambow_template.R", local = TRUE)
 
 source("templates/proteomics_templates/kleffman_template.R", local = TRUE)
 
+source("templates/gene_search_template.R", local = TRUE)
 
 # Source scripts files
 source("scripts/selection.R", local = TRUE)
@@ -43,14 +48,11 @@ source("scripts/data_processing.R", local = TRUE)
 source("scripts/data_processing_single_cell.R", local = TRUE)
 
 
-
-
 library(shiny)
 library(shinydashboard)
 
 # Define UI using the sourced template 
 ui <- dashboardTemplate()
-
 
 
 # Define server logic
@@ -74,9 +76,19 @@ server <- function(input, output, session) {
       qisun_server()
     } else if (input$tabs == "KBPT") {
       KBPT_server()
+    } else if (input$tabs == "biermann") {
+      biermann_server()
+    } else if (input$tabs == "jerby") {
+      jerby_server()
+    } else if (input$tabs == "pozniak") {
+      pozniak_server()
+    } else if (input$tabs == "rambow") {
+      rambow_server()
     } else if (input$tabs == "kleffman"){
       kleffman_server()
-      }
+    } else if (input$tabs == "gene_search"){
+      gene_search_server("gene_search_template")
+    }
   })
 }
 

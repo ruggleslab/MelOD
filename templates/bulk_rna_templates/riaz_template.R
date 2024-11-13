@@ -11,7 +11,9 @@ riaz_ui <- function(id) {
       blurb_study_ui("riaz")),
     fluidRow(
       column(6, blurb_data_ui("riaz")),
-      column(6, blurb_comparison_ui("riaz"))),
+      column(6, blurb_method_ui("riaz"))),
+    fluidRow( 
+      column(6,blurb_comparison_ui("riaz"))),
     fluidRow(
       column(6,pca_ui("riaz")),
       column(6,metadata_ui("riaz"))),

@@ -31,10 +31,6 @@ home_ui <- function(id) {
           )
       )
     )),
-    # column(4, box(
-    #   status = "info", solidHeader = FALSE, collapsible = FALSE, width = 12,
-    #   tags$img(src = "./images/melod_large_logo_old.png", class = "responsive-logo"))
-    # )),
     column(4, 
       tags$img(src = "./images/melod_large_logo_old.png", class = "responsive-logo")
     )),
@@ -81,7 +77,7 @@ home_ui <- function(id) {
               tags$li("The cell datatable is linked to the cell information plot (axes) input."),
               tags$li("You can subset cells for the downstream analysis using the input box."),
               tags$li("Similarly, the co-expressed gene datatable is controlled by the co-expressed plot box."),
-              tags$li("For the heatmap/bubble plot, two methods are available for gene selection: individual selection or submitting a list of genes.")
+              tags$li("For the heatmap/bubble plot, you can search for a gene using the search bar or submit a list of genes (currently, the list is case sensitive, so watch out!")
             )
           )
           ) 
@@ -128,6 +124,7 @@ home_ui <- function(id) {
          ),
              # Section: What Data Formats Are Supported?
              tags$div(class = "dropdown-header", "What Dataset are available?"),
+             tags$p(class = "dropdown-header-notice","Please be aware that the data has undergone reanalysis, and the results shown here may differ from the published data."),         
              tags$ul(
                
                ## Bulk RNA-Seq Data
