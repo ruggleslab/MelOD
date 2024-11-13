@@ -1,0 +1,248 @@
+/* styles.css */
+
+
+/* Change background color of the page */
+body {
+    background-color: #FFF5EE; /* Background color of the entire page */
+}
+
+p { 
+  font-size: 17px;
+}
+
+*{
+  font-size: 18px;
+}
+.form-control {
+    font-size: 17px;
+
+}
+.main-header .logo{
+  height: 55px;
+}
+
+.sidebar-menu .treeview-menu>li>a {
+    font-size: 16px;
+}
+
+.glyphicon {
+    top: 0px; 
+}
+
+.btn {
+    display: inline;
+}
+.btn-default {
+    border-color: transparent;
+}
+
+.fa-solid, .fas {
+    margin-left: 10px;
+}
+
+
+/* Navbar */
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #FFF5EE;
+    color: #FFF5EE;
+}
+
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+    background-color: #8999A9;
+}
+
+.skin-blue .main-header .navbar {
+    background-color: #4D5C6A;
+}
+
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+    background-color: #5E7182;
+}
+
+.skin-blue .main-header .logo {
+    background-color: #4D5C6A;
+    color: #FFF5EE;
+    border-bottom: 0 solid transparent;
+}
+
+.skin-blue .sidebar-menu>li.active>a, .skin-blue .sidebar-menu>li:hover>a {
+    color: #FFF5EE;
+    background: #4D5C6A;
+    border-left-color: #D76C33;
+}
+
+.skin-blue .sidebar a {
+    color: #FFF5EE;
+}
+
+/* Sidebar Subitems Background */
+.skin-blue .sidebar-menu>li>.treeview-menu {
+    background: transparent;
+}
+
+.skin-blue .main-header .logo:hover {
+    background-color: #4D5C6A;
+}
+
+.skin-blue .treeview-menu>li.active>a, .skin-blue .treeview-menu>li>a:hover {
+    color: #D76C33;
+}
+
+.skin-blue .treeview-menu>li.active>a {
+    color: #D76C33;
+}
+
+.skin-blue .treeview-menu>li>a {
+    color: #FFF5EE;
+}
+
+/* Column Classes */
+[class*="col-"] {
+    position: relative;
+    min-height: 1px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+/* Footer */
+.footer {
+    color:#8999A9;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-left: 275px;
+    padding-top: 15px;
+    width: 100%;
+    z-index: 1000; /* Ensures it stays on top of other elements */
+}
+
+/* Row Margin */
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #4D5C6A;
+    color: #FFF5EE;
+}
+
+/* Download Button on DESeq2 Table */
+.dt-buttons {
+    float: right;
+}
+
+/* Title, Info, and Download Button of tabBox */
+.nav>li {
+    display: inline-flex;
+}
+
+.nav>li>a {
+    padding: 7px 10px;
+}
+
+/* Change Orange Color Boxes */
+.bg-orange {
+    background-color: #D76C33!important;
+}
+
+/* Change Orange Color Boxes Warning */
+.box.box-solid.box-warning>.box-header {
+    color: #fff;
+    background: #D76C33;
+    background-color: #D76C33;
+}
+.box.box-solid.box-warning {
+    border: 1px solid #D76C33;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+/* Change Orange Color Boxes Info */
+.box.box-solid.box-info>.box-header {
+    color: #fff;
+    background: #8999A9;
+    background-color: #8999A9;
+}
+.box.box-solid.box-info {
+    border: 1px solid #8999A9;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+.box.box-info {
+    border-top-color: #8999A9;
+}
+
+/* Change Orange Color Boxes Primary */
+.box.box-solid.box-primary>.box-header {
+    color: #fff;
+    background: #5E7182;
+    background-color: #5E7182;
+}
+
+.box.box-solid.box-primary {
+    border: 1px solid #5E7182;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+
+
+.nav-tabs-custom{
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+
+.error-message {
+    color: #D76C33;
+    font-size: 20px;
+    text-align: center;
+    padding: 20px;
+}
+
+
+.btn.btn-default.shiny-download-link.shiny-bound-output {
+  margin-top: 6px;
+}
+
+
+/* DL button deseq2 table */
+
+div.dt-buttons {
+    padding-left: 10px;
+}
+
+/* Padding of the content page */
+
+.content {
+    padding-bottom: 200px;
+}
+
+.content-wrapper {
+    background-color: #DCE1E5;
+}
+
+
+
+
+.btn-primary {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 2px;
+  background-color: #8999A9; /* This is for testing purposes */
+  border-color:#8999A9 ;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.btn-primary:hover{
+  background-color: #4D5C6A; /* This is for testing purposes */
+  border: 1px solid #465360;
+}
+.btn-primary.active, .btn-primary:active, .open>.dropdown-toggle.btn-primary{
+  
+  background-color: #8999A9; /* This is for testing purposes */
+    border-color:#8999A9 ;
+
+}
+
+
+

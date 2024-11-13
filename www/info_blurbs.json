@@ -1,0 +1,57 @@
+{
+  "info": {
+    "heatmap": {
+      "title": "Heatmap Plot Information",
+      "text": "Heatmaps are used to visualize the expression levels of multiple genes across different samples. The color intensity represents the level of expression, with warmer colors indicating higher expression and cooler colors indicating lower expression. The heatmap allows for the identification of patterns and clusters in gene expression data. By default, the top 10 differentially expressed genes are represented. You can select your genes of interest and reduce the number of genes displayed if desired. However, always ensure that at least 2 genes are included in the heatmap."
+    },
+
+    "pca": {
+      "title": "PCA Plot Information",
+      "text": "Principal Component Analysis (PCA) is a dimensionality reduction technique used to visualize the variance in gene expression data. The PCA plot shows the distribution of samples based on the first two principal components, which capture the most variance. Each point represents a sample, and the distance between points indicates their similarity.<br><br>What size factors mean: Size factors are used in DESeq2 to normalize the count data, accounting for differences in sequencing depth and other technical biases between samples. They ensure that the comparison of gene expression levels across samples is fair and not influenced by these technical variations."
+    },
+    "volcano": {
+      "title": "Volcano Plot Information",
+      "text": "Volcano plots are used to visualize differential gene expression analysis results. The x-axis represents the log2 fold change, and the y-axis represents the -log10 adjusted p-value. Genes with significant changes in expression are highlighted, with upregulated genes on the right and downregulated genes on the left. <br><br><img src='./images/volcano_example.png' alt='Volcano Plot Example' style='width:100% ;'><br><br>You can select genes of interest directly on the plot by clicking on a single dot or by selecting and dragging a box (Box select/Lasso select) around the desired area."
+    },
+  "violin": {
+    "title": "Violin Plot Information",
+    "text": "Violin plots are used to visualize the distribution of gene expression levels across different conditions. These plots combine elements of box plots and density plots, showing the distribution, median, and interquartile range of the expression data. The width of the plot at different values indicates the density of data points..By default, the top 3 differentially expressed genes are represented. The p-values for significant differences between conditions are assessed using DESeq2 analysis, which is more powerful than a traditional mean test as it accounts for overdispersion and variance (for transcriptomics data). By default, the top 3 differentially expressed genes are represented. The threshold of the padjust value significance on the violin plot is defined by your input cutoff."
+    },
+    "correlation": {
+      "title": "Correlation Plot Information",
+      "text": "The correlation plot displays the correlation coefficients and their significance for each gene relative to the gene of interest. The scatter plot shows the correlation coefficients on the x-axis and the -log10 p-values on the y-axis, while the histogram shows the distribution of correlation coefficients."
+    },
+    "mortality_curve": {
+      "title": "Mortality Curve Information",
+      "text": "Mortality curves are used to visualize the survival rates of patients based on the status (dead or alive) and the overall survival in days. The curve can be split by the condition of the study or for a selected gene, into quartiles (Q1, Q2, or Q3) to further analyze survival rates within different expression ranges [when sample-demographic association was available]."
+    },
+  "comparison": {
+    "title": "Comparison Plot Information",
+    "text": "This plot displays cell or gene information, both of which can be selected via input. The plot can be split by either cell information or gene information, making it easier to compare two different genes or two different cell types. The linked cell data table provides the number of cells in each category for the selected information. The input box at the top of the dashboard allows customization, such as subsetting cell types or changing axis parameters."
+  },
+  "cell_datatable": {
+    "title":"Cell Datatable Information",
+     "text":"This datatable displays cell information based on the selections made in the Cell & Gene info box for cell info input."
+  },
+  "coexpression": {
+    "title": "Coexpression Plot Information",
+    "text": "The coexpression plot visualizes the expression levels of two genes selected via input. The legend indicates each gene with its own color, while a third color represents the coexpression of both genes in the same cell. By default, gene 1 is shown in red, gene 2 in blue, and the coexpression in purple. A coexpression table provides additional details, including the number of cells expressing each gene."
+  },
+  "coexpressed_datatable": {
+    "title":"Coexpressed Datatable Information",
+     "text":"This datatable displays coexpressed genes information based on the selections made in the Gene Coexpression box"
+  },
+  "sc_violin": {
+    "title": "Violin & BoxPlot Information",
+    "text": "The violin or boxplot visualizes cell information on the X-axis in relation to either cell metadata or gene expression levels on the Y-axis.These plots combine elements of box plots and density plots, showing the distribution, median, and interquartile range of the expression data. The width of the plot at different values indicates the density of data points.<br><br><img src='./images/violin_example.png' alt='Violin Plot Example' style='width:85%;'>."
+  },
+  "proportion": {
+    "title": "Proportion Plot Information",
+    "text": "The proportion plot displays the distribution of cell proportions based on user input. It can also be used to show the number of cells in each category."
+  },
+  "bubheat": {
+    "title": "Heatmap Plot Information",
+    "text": "The heatmap or bubble plot shows gene expression levels (optionally scaled by Z-score) in relation to selected cell information. Genes can be input individually (left input) or as a list (right input). For list input, gene names should be separated by spaces, newlines, commas, or semicolons. You can also choose to cluster rows and/or columns."
+  }
+  }
+}

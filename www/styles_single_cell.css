@@ -1,0 +1,97 @@
+/* Style for the label */
+.checkbox-inline {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
+    padding-left: 0px;
+}
+
+/* Style for the checkbox input */
+.checkbox-inline input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 25px;
+    height: 20px;
+    background-color: #5E7182;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    border-radius: 4px; /* Rounded corners */
+    margin: 4px;
+    position: relative;
+}
+
+/* Change color when checkbox is checked */
+.checkbox-inline input[type="checkbox"]:checked {
+    background-color: #D76C33;
+}
+
+
+/* Change color and cursor on hover */
+.checkbox-inline input[type="checkbox"]:hover {
+    background-color: #DA7844; /* Hover background color */
+    cursor: pointer; /* Cursor on hover */
+}
+
+
+
+.irs--shiny .irs-bar {
+    top: 25px;
+    height: 8px;
+    border-top: 1px solid #DA7844;
+    border-bottom: 1px solid #DA7844;
+    background: #DA7844;
+    cursor: s-resize;
+    z-index: 2;
+}
+.irs--shiny .irs-single {
+    color: #fff;
+    text-shadow: none;
+    padding: 1px 3px;
+    background-color: #DA7844;
+    border-radius: 3px;
+    font-size: 11px;
+    line-height: 1.333;
+}
+
+.bubbleplot_logo {
+  background-image: url('./images/bubbled.png');
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  margin-bottom: -6px;
+  margin-top: -4px;
+  width: 25px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}
+
+.heatmap_logo {
+  background-image: url('./images/heatmap.png');
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  margin-bottom: -6px;
+  margin-top: -4px;
+  width: 25px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}
+
+.violin_logo {
+  background-image: url('./images/violin.png');
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  margin-bottom: -6px;
+  margin-top: -4px;
+  width: 25px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}
+
+.boxplot_logo {
+  background-image: url('./images/box-plot.png');
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  margin-bottom: -6px;
+  margin-top: -4px;
+  width: 25px; /* Adjust the size as needed */
+  height: 25px; /* Adjust the size as needed */
+}

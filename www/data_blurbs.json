@@ -1,0 +1,168 @@
+{
+    "blank_study_info" : {
+        "title": "",
+        "lead_author": "",
+        "abstract": "",
+        "paper_link": "",
+        "doi": "",
+        "data_link": "",
+        "data_explanation": ""
+    },
+    
+    "gide_info": {
+        "title": "Distinct Immune Signatures Define Response to Anti-PD-1 Monotherapy and Anti-PD-1/Anti-CTLA-4 Combined Therapy",
+        "lead_author": "Gide, Tuba N.",
+        "abstract": "Cancer immunotherapies provide survival benefits in responding patients, but many patients fail to respond. Identifying the biology of treatment response and resistance are a priority to optimize drug selection and improve patient outcomes. We performed transcriptomic and immune profiling on 158 tumor biopsies from melanoma patients treated with anti-PD-1 monotherapy (n = 63) or combined anti-PD-1 and anti-CTLA-4 (n = 57). These data identified activated T cell signatures and T cell populations in responders to both treatments. Further mass cytometry analysis identified an EOMES+CD69+CD45RO+ effector memory T cell phenotype that was significantly more abundant in responders to combined immunotherapy compared with non-responders (n = 18). The gene expression profile of this population was associated with longer progression-free survival in patients treated with single agent and greater tumor shrinkage in both treatments.",
+        "paper_link": "https://pubmed.ncbi.nlm.nih.gov/30753825/",
+        "doi": "10.1016/j.ccell.2019.01.003",
+        "data_link": "https://www.ebi.ac.uk/ena/browser/view/PRJEB23709",
+        "data_explanation": "73 total samples, 41 anti-PD-1 monotherapy (20 Responders, 21 Non Responders), 32 combined anti-PD-1 and anti-CTLA-4 (18 Responders, 14 Non Responders).",
+        "data_comparison": "Comparison Groups: Responder vs. Non Responder.",
+        "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
+
+    },
+
+    "badal_info" : {
+        "title": "Transcriptional dissection of melanoma identifies a high-risk subtype underlying TP53 family genes and epigenome deregulation",
+        "lead_author": "Badal, Brateil",
+        "abstract": "Melanoma is a heterogeneous malignancy. We set out to identify the molecular underpinnings of high-risk melanomas, those that are likely to progress rapidly, metastasize, and result in poor outcomes. \n METHODS. We examined transcriptome changes from benign states to early-, intermediate-, and late-stage tumors using a set of 78 treatment-naive melanocytic tumors consisting of primary melanomas of the skin and benign melanocytic lesions. We utilized a next-generation sequencing platform that enabled a comprehensive analysis of protein-coding and -noncoding RNA transcripts. \nRESULTS. Gene expression changes unequivocally discriminated between benign and malignant states, and a dual epigenetic and immune signature emerged defining this transition. To our knowledge, we discovered previously unrecognized melanoma subtypes. A high-risk primary melanoma subset was distinguished by a 122-epigenetic gene signature (“epigenetic” cluster) and TP53 family gene deregulation (TP53, TP63, and TP73). This subtype associated with poor overall survival and showed enrichment of cell cycle genes. Noncoding repetitive element transcripts (LINEs, SINEs, and ERVs) that can result in immunostimulatory signals recapitulating a state of “viral mimicry” were significantly repressed. The high-risk subtype and its poor predictive characteristics were validated in several independent cohorts. Additionally, primary melanomas distinguished by specific immune signatures (“immune” clusters) were identified. \nCONCLUSION. The TP53 family of genes and genes regulating the epigenetic machinery demonstrate strong prognostic and biological relevance during progression of early disease. Gene expression profiling of protein-coding and -noncoding RNA transcripts may be a better predictor for disease course in melanoma. This study outlines the transcriptional interplay of the cancer cell’s epigenome with the immune milieu with potential for future therapeutic targeting.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5414564/",
+        "doi": "10.1172/jci.insight.92102",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98394",
+        "data_explanation": "78 treatment-naive melanocytic tumors were analyzed, including 27 cases of benign nevi and 51 cases of primary melanomas at various stages (T1 to T4).",
+        "data_comparison": "Comparison Groups: Melanoma vs. Benign.",
+        "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
+    },
+
+    "kunz_info" : {
+        "title": "RNA-seq analysis identifies different transcriptomic types and developmental trajectories of primary melanomas",
+        "lead_author": "Kunz, Manfred",
+        "abstract": "Recent studies revealed trajectories of mutational events in early melanomagenesis, but the accompanying changes in gene expression are far less understood. Therefore, we performed a comprehensive RNA-seq analysis of laser-microdissected melanocytic nevi (n=23) and primary melanoma samples (n=57) and characterized the molecular mechanisms of early melanoma development. Using self-organizing maps, unsupervised clustering, and analysis of pseudotime (PT) dynamics to identify evolutionary trajectories, we describe here two transcriptomic types of melanocytic nevi (N1 and N2) and primary melanomas (M1 and M2). N1/M1 lesions are characterized by pigmentation-type and MITF gene signatures, and a high prevalence of NRAS mutations in M1 melanomas. N2/M2 lesions are characterized by inflammatory-type and AXL gene signatures with an equal distribution of wild-type and mutated BRAF and low prevalence of NRAS mutations in M2 melanomas. Interestingly, N1 nevi and M1 melanomas and N2 nevi and M2 melanomas, respectively, cluster together, but there is no clustering in a stage-dependent manner. Transcriptional signatures of M1 melanomas harbor signatures of BRAF/MEK inhibitor resistance and M2 melanomas harbor signatures of anti-PD-1 antibody treatment resistance. Pseudotime dynamics of nevus and melanoma samples are suggestive for a switch-like immune-escape mechanism in melanoma development with downregulation of immune genes paralleled by an increasing expression of a cell cycle signature in late-stage melanomas. Taken together, the transcriptome analysis identifies gene signatures and mechanisms underlying development of melanoma in early and late stages with relevance for diagnostics and therapy.",
+        "paper_link": "https://www.nature.com/articles/s41388-018-0385-y",
+        "doi": "10.1038/s41388-018-0385-y",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE112509",
+        "data_explanation": "80 total samples, 23 melanocytic nevi, 57 primary melanomas.",
+        "data_comparison": "Comparison Groups: Naevi vs. Melanoma.",
+        "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
+
+    },
+
+    "fischer_info" : {
+        "title": "Molecular Profiling Reveals Unique Immune and Metabolic Features of Melanoma Brain Metastases",
+        "lead_author": "Fischer, Grant M.",
+        "abstract": "There is a critical need to improve our understanding of the pathogenesis of melanoma brain metastases (MBM). Thus, we performed RNA sequencing on 88 resected MBMs and 42 patient-matched extracranial metastases; tumors with sufficient tissue also underwent whole-exome sequencing, T-cell receptor sequencing, and IHC. MBMs demonstrated heterogeneity of immune infiltrates that correlated with prior radiation and post-craniotomy survival. Comparison with patient-matched extracranial metastases identified significant immunosuppression and enrichment of oxidative phosphorylation (OXPHOS) in MBMs. Gene-expression analysis of intracranial and subcutaneous xenografts, and a spontaneous MBM model, confirmed increased OXPHOS gene expression in MBMs, which was also detected by direct metabolite profiling and [U-13C]-glucose tracing in vivo. IACS-010759, an OXPHOS inhibitor currently in early-phase clinical trials, improved survival of mice bearing MAPK inhibitor–resistant intracranial melanoma xenografts and inhibited MBM formation in the spontaneous MBM model. The results provide new insights into the pathogenesis and therapeutic resistance of MBMs. \nSignificance: \nImproving our understanding of the pathogenesis of MBMs will facilitate the rational development and prioritization of new therapeutic strategies. This study reports the most comprehensive molecular profiling of patient-matched MBMs and extracranial metastases to date. The data provide new insights into MBM biology and therapeutic resistance.",
+        "paper_link": "https://aacrjournals.org/cancerdiscovery/article/9/5/628/42007/Molecular-Profiling-Reveals-Unique-Immune-and",
+        "doi": "10.1158/2159-8290.CD-18-1489",
+        "data_link": "https://ega-archive.org/datasets/EGAD00001005046",
+        "data_explanation": "135 total samples, 86 melanoma brain metastases, 49 extracranial metastases (from various locations). Samples were collected from 80 patients with some patients contributing multiple samples from different locations (both brain and extracranial).",
+        "data_comparison": "Comparison Groups: Brain Metastases vs. Extracranial Metastases.",
+        "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
+    },
+    
+    "qisun_info" : {
+        "title": "A novel mouse model demonstrates that oncogenic melanocyte stem cells engender melanoma resembling human disease",
+        "lead_author": "Qi Sun",
+        "abstract": "Melanoma, the deadliest skin cancer, remains largely incurable at advanced stages. Currently, there is a lack of animal models that resemble human melanoma initiation and progression. Recent studies using a Tyr-CreER driven mouse model have drawn contradictory conclusions about the potential of melanocyte stem cells (McSCs) to form melanoma. Here, we employ a c-Kit-CreER-driven model that specifically targets McSCs to show that oncogenic McSCs are a bona fide source of melanoma that expand in the niche, and then establish epidermal melanomas that invade into the underlying dermis. Further, normal Wnt and Endothelin niche signals during hair anagen onset are hijacked to promote McSC malignant transformation during melanoma induction. Finally, molecular profiling reveals strong resemblance of murine McSC-derived melanoma to human melanoma in heterogeneity and gene signatures. These findings provide experimental validation of the human melanoma progression model and key insights into the transformation and heterogeneity of McSC-derived melanoma.",
+        "paper_link": "https://www.nature.com/articles/s41467-019-12733-1",
+        "doi": "10.1038/s41467-019-12733-1",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE96966",
+        "data_explanation": "This analyzed dataset is used to explore differences in cell state composition in a transcriptionally heterogeneous, Tamoxifen-induced melanoma transplant mouse model. It integrates data from two models: the Tyr-CreER;BrafV600E;Pten-fl/fl;LSL-tdTomato melanoma transplantation mouse model (referred to as TBPT) and control melanocyte stem cells isolated from the Tyr-CreER;LSL-tdTomato mouse model (referred to as TT).\n\n  - timept: Specifies the time point after Tamoxifen treatment, distinguishing between 0 weeks and 6 weeks post-application (indicating tumor induction).\n- tdTom: Differentiates between melanoma cells (tdTom+) and stromal cells (tdTom-), excluding immune cells. \n- Condition: Indicates whether cells are transformed (induced with the BrafV600E mutation and Pten deletion) or non-transformed. \n- CellType: Provides an abbreviated annotation of the cell type down to its subtype. \n- CellType_fullname: Offers the full, non-abbreviated annotation of the cell type down to its subtype.",
+"data_comparison": "Comparison Groups: TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed).",
+"data_method": "Tumors were dissociated into single cell suspension as mentioned above. McSC suspension from 3 telogen Tyr-CreER:R26R-Tomato mice and tumor cell suspension from 3 tumors derived from transplantation of McSCs from Tyr-CreER:Braf:Pten:Tomato mice and were used to isolate Tomato+ cells by cell sorting on Sony SY3200 cell sorter. The sorted suspensions were mixed into one sample of tumor cell suspension and one sample of McSC suspension."
+    },
+    
+    "biermann_info": {
+        "title": "Dissecting the treatment-naïve ecosystem of human melanoma brain metastasis",
+        "lead_author": "Jana Biermann",
+        "abstract": "Melanoma brain metastasis (MBM) frequently occurs in patients with advanced melanoma, yet understanding of its underlying biology remains limited. This study performs single-cell/nucleus RNA-seq on 22 treatment-naïve MBM and 10 extracranial melanoma metastases (ECM), along with spatial single-cell transcriptomics and T cell receptor (TCR)-seq. Findings highlight MBM-specific features like higher chromosomal instability, adoption of a neuronal-like cell state, and spatially variable metabolic pathways. Integrated spatial analysis shows tumor-immune evasion, distinct geography of immune cell differentiation, and enrichment of dysfunctional macrophages and TOX+CD8+ T cells. This work is a foundational resource for MBM biology and therapeutic discovery.",
+        "paper_link": "https://doi.org/10.1016/j.cell.2022.06.032",
+        "doi": "10.1016/j.cell.2022.06.032",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE185386",
+        "data_explanation": "The dataset includes single-cell transcriptomes from 22 MBM and 10 ECM samples, enabling exploration of cell type composition and tumor microenvironment differences in treatment-naïve MBM. Key data fields include:\n- `tissue_site`: Indicates MBM or ECM location.\n- `cell_type`: Detailed annotations of immune and non-immune cell types and malignant states.\n- `marker_genes`: Genes differentially expressed across MBM and ECM.\n- `TCR_clone`: Data on T cell clonotypes and clonal expansion in MBM/ECM.\n\nThe study additionally incorporates SlideSeqV2 spatial transcriptomics data for spatial analysis of immune cell positioning and tumor-specific gene expression.",
+        "data_comparison": "Comparison groups: MBM (brain metastasis samples) versus ECM (extracranial metastasis samples).",
+        "data_method": "Single-cell and single-nucleus RNA sequencing were performed on freshly resected MBM/ECM samples using 10x Genomics and SlideSeqV2 for spatial transcriptomics. TCR-seq was conducted to identify clonal expansions of T cells, and scRNA-seq was used to compare freshly processed (scRNA-seq) and frozen (snRNA-seq) MBM specimens."
+    },
+    
+    "jerby_info": {
+        "title": "A Cancer Cell Program Promotes T Cell Exclusion and Resistance to Checkpoint Blockade",
+        "lead_author": "Livnat Jerby-Arnon",
+        "abstract": "Immune checkpoint inhibitors (ICIs) can provide long-lasting responses in some melanoma patients, though many do not benefit due to underlying resistance mechanisms. This study uses single-cell RNA sequencing (scRNA-seq) from 33 melanoma tumors and computational analysis to identify a cancer cell program associated with T cell exclusion and ICI resistance. The program, expressed prior to immunotherapy, marks tumors with low T cell infiltration ('cold' niches) and predicts anti-PD-1 therapy responses. Inhibition of CDK4/6 represses the program, induces cellular senescence, and enhances the efficacy of ICIs in melanoma models. Findings highlight ICI-resistant cell states and suggest new therapeutic strategies for overcoming resistance.",
+        "paper_link": "https://doi.org/10.1016/j.cell.2018.09.006",
+        "doi": "10.1016/j.cell.2018.09.006",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE108383",
+        "data_explanation": "This dataset includes scRNA-seq profiles from 33 melanoma tumors, with detailed annotations of cell types and states, including malignant and non-malignant cells. Key fields include:\n- `cell_type`: Annotations identifying T cells, B cells, macrophages, and malignant cells.\n- `immune_exclusion_score`: Reflects a cancer cell program linked to T cell exclusion and ICI resistance.\n- `treatment_status`: Distinguishes pre-ICI, on-ICI, and post-ICI samples.\n\nAdditionally, bulk RNA-seq profiles from The Cancer Genome Atlas (TCGA) dataset were used for T cell infiltration inference and validation of immune exclusion signatures.",
+        "data_comparison": "Comparison groups: Pre-ICI versus post-ICI resistant melanoma samples, focusing on T cell-infiltrated (hot) vs. T cell-excluded (cold) niches.",
+        "data_method": "Single-cell RNA sequencing of melanoma tumor samples was performed to assess T cell exclusion-related gene expression in malignant cells. Bulk RNA-seq from TCGA was used to correlate malignant cell programs with T cell infiltration. Experimental CDK4/6 inhibition in melanoma models assessed the impact on the identified immune resistance program."
+    },
+    
+    "pozniak_info": {
+        "title": "A TCF4/BRD4-dependent regulatory network confers cross-resistance to targeted and immune checkpoint therapy in melanoma",
+        "lead_author": "Joanna Pozniak",
+        "abstract": "Primary resistance to immune checkpoint blockade (ICB) limits therapeutic success in melanoma, with additional resistance developing after targeted therapy relapse. Using single-cell RNA-sequencing (scRNA-seq) from a longitudinal cohort of ICB-treated melanoma patients, this study identifies cell-intrinsic resistance mechanisms, including a TCF4-driven mesenchymal (MES) program that correlates with ICB non-response. Six melanoma transcriptional metaprograms were defined: Melanocytic (MEL), Mesenchymal-like (MES), Neural Crest-like, Antigen Presentation, and two stress-response states (hypoxia and p53). Spatial multi-omics revealed geographic clustering of melanoma states within the tumor microenvironment. Inhibition of TCF4 in MES cells using a BRD4 inhibitor increases immunogenicity and sensitizes melanoma to therapy, presenting a promising therapeutic approach.",
+        "paper_link": "https://doi.org/10.1101/2022.08.11.502598",
+        "doi": "10.1101/2022.08.11.502598",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE185386",
+        "data_explanation": "The dataset includes scRNA-seq profiles from melanoma patients treated with anti-PD-1-based therapy, with matched pre-treatment and early on-treatment biopsies. Key data fields include:\n- `timepoint`: Pre-treatment (BT) and early on-treatment (OT) sample identifiers.\n- `cell_type`: Annotations for melanoma cells, immune cells, and fibroblasts.\n- `state`: Functional annotation of melanoma states (e.g., Melanocytic, Mesenchymal-like, Antigen Presentation).\n\nSpatial transcriptomics data were also generated to analyze the geographic distribution of cell states within the tumor microenvironment.",
+        "data_comparison": "Comparison groups: Pre-treatment versus early on-treatment biopsies from responders and non-responders to anti-PD-1 therapy.",
+        "data_method": "Single-cell RNA sequencing of treatment-naïve melanoma samples was used to define transcriptional metaprograms and track cellular evolution during ICB. Spatial transcriptomics using the 10X Genomics Visium platform provided insight into the spatial organization of melanoma cell states. TCF4 inhibition in MES cells was assessed using a BRD4 inhibitor, both genetically and pharmacologically, to evaluate its impact on therapy sensitivity."
+    },
+    
+    "rambow_info": {
+        "title": "Toward Minimal Residual Disease-Directed Therapy in Melanoma",
+        "lead_author": "Florian Rambow",
+        "abstract": "Minimal residual disease (MRD) in melanoma consists of drug-tolerant cancer cells that survive initial therapies, often leading to relapse. This study uses single-cell RNA sequencing to analyze drug-tolerant cell states in MRD, identifying distinct subpopulations of cells with varying transcriptional programs, including a neural crest stem cell (NCSC) state driven by RXR signaling. An RXR antagonist disrupts NCSC accumulation and delays resistance, suggesting the therapeutic potential of targeting MRD. Findings reveal that transcriptional reprogramming within MRD can be exploited to limit cellular heterogeneity, potentially mitigating therapy resistance.",
+        "paper_link": "https://doi.org/10.1016/j.cell.2018.06.025",
+        "doi": "10.1016/j.cell.2018.06.025",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE116060",
+        "data_explanation": "The dataset includes single-cell RNA-seq data from BRAF mutant melanoma patient-derived xenografts (PDX) treated with RAF/MEK inhibitors. Key fields:\n- `timepoint`: Phases of treatment (T0: untreated, Phase 1: early response, Phase 2: MRD, Phase 3: resistance).\n- `cell_type`: Annotations of melanoma cell states (e.g., NCSC, invasive, starved, pigmented).\n- `treatment`: Specifies if cells are drug-tolerant or resistant.\n\nData analysis focused on identifying transcriptional programs of MRD and assessing the spatial organization of drug-tolerant states within the tumor microenvironment.",
+        "data_comparison": "Comparison groups: Pre-treatment (T0) versus MRD phases and treatment phases (e.g., Phase 2: MRD vs. Phase 3: drug resistance).",
+        "data_method": "Single-cell RNA-seq was used to define MRD cell states within BRAF mutant melanoma PDX models under RAF/MEK inhibition. Additional spatial mapping with immunostaining provided insights into the geographic distribution of MRD cell states, highlighting distinct clusters of NCSC, SMC, and pigmented cells. RXR inhibition was tested for its impact on NCSC-driven resistance."
+    },
+    
+    "kleffman_info" : {
+        "title": "Melanoma-secreted Amyloid Beta Suppresses Neuroinflammation and Promotes Brain Metastasis",
+        "lead_author": "Kevin Kleffman",
+        "abstract": "Brain metastasis is a significant cause of morbidity and mortality in multiple cancer types and represents an unmet clinical need. The mechanisms that mediate metastatic cancer growth in the brain parenchyma are largely unknown. Melanoma, which has the highest rate of brain metastasis among common cancer types, is an ideal model to study how cancer cells adapt to the brain parenchyma. Our unbiased proteomics analysis of melanoma short-term cultures revealed that proteins implicated in neurodegenerative pathologies are differentially expressed in melanoma cells explanted from brain metastases compared to those derived from extracranial metastases. We showed that melanoma cells require amyloid beta (Aβ) for growth and survival in the brain parenchyma. Melanoma-secreted Aβ activates surrounding astrocytes to a pro-metastatic, anti-inflammatory phenotype and prevents phagocytosis of melanoma by microglia. Finally, we demonstrate that pharmacological inhibition of Aβ decreases brain metastatic burden.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9069488/",
+        "doi": "10.1158/2159-8290.CD-21-1006",
+        "data_link": "https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=45f63f0e96214b5996d526067e475d97",
+        "data_explanation": "24 total samples, 12 melanoma brain metastasis-derived (BM), 12 extracranial metastasis-derived (NBM). Samples included 3 patient    -matched pairs, where the same patient contributed both BM and NBM samples. The study focused on analyzing proteins implicated in neurodegenerative diseases and their role in brain metastasis.",
+        "data_comparison": "Comparison Groups: Brain Metastases (BM) vs. Extracranial Metastases (NBM).",
+        "data_method" : "Protein levels were median-centered and log₂ normalized. Differential expression was determined using Welch’s t-test for unpaired samples and a paired t-test for the three sample pairs."
+    },
+    "hugo_info": {
+        "title": "Genomic and Transcriptomic Features of Response to Anti-PD-1 Therapy in Metastatic Melanoma",
+        "lead_author": "Hugo, Willy",
+        "abstract": "PD-1 immune checkpoint blockade provides significant clinical benefits for melanoma patients. We analyzed the somatic mutanomes and transcriptomes of pretreatment melanoma biopsies to identify factors that may influence innate sensitivity or resistance to anti-PD-1 therapy. We find that, while overall high mutational loads associate with improved survival both in responding and non-responding patients, responding tumors are specifically enriched for mutations in the DNA repair gene BRCA2. Innately resistant tumors display a transcriptional signature (referred to as the IPRES or Innate anti-PD-1 Resistance) indicating concurrent upexpression of genes involved in the regulation of mesenchymal transition, cell adhesion, ECM remodeling, angiogenesis and wound-healing. Notably, MAPK-targeted therapy (MAPKi) induces similar signatures in melanoma, suggesting that a non-genomic form of MAPKi resistance mediates cross-resistance to anti-PD-1 therapy. Validation of the IPRES in other independent tumor cohorts defines a transcriptomic subset across distinct types of advanced cancer. These findings suggest that attenuating the biological processes that underlie IPRES may improve anti-PD-1 response in melanoma and other cancer types.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5953834/",
+        "doi": "10.1016/j.cell.2016.12.007",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE78220",
+        "data_explanation": "38 melanoma specimens and their patient-matched normal tissues were analyzed by whole exome sequencing (WES). This includes 32 pretreatment tumors and other samples.",
+        "data_comparison": "Comparison Groups: Responding tumors (complete or progressive response) vs non-responding tumors (Progressive disease ) based on anti-PD-1 therapy",
+        "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
+    
+},
+    "riaz_info": {
+        "title": "Tumor and Microenvironment Evolution during Immunotherapy with Nivolumab",
+        "lead_author": "Riaz, Nadeem",
+        "abstract": "The mechanisms by which immune checkpoint blockade modulates tumor evolution during therapy are unclear. We assessed genomic changes in tumors from 68 patients with advanced melanoma, who progressed on ipilimumab or were ipilimumab-naive, before and after nivolumab initiation (CA209-038 study). Tumors were analyzed by whole-exome, transcriptome, and/or T-cell receptor (TCR) sequencing. In responding patients, mutation and neoantigen load were reduced from baseline, and analysis of intratumoral heterogeneity during therapy demonstrated differential clonal evolution within tumors and putative selection against neoantigenic mutations on-therapy. Transcriptome analyses before and during nivolumab therapy revealed increases in distinct immune cell subsets, activation of specific transcriptional networks, and upregulation of immune checkpoint genes that were more pronounced in patients with response. Temporal changes in intratumoral TCR repertoire revealed expansion of T-cell clones in the setting of neoantigen loss. Comprehensive genomic profiling data in this study provide insight into nivolumab mechanism of action.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5685550/",
+        "doi": "10.1016/j.cell.2017.09.028",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE91061",
+        "data_explanation": "68 patients with advanced melanoma were analyzed for genomic changes before and after nivolumab therapy, using whole-exome sequencing and transcriptome analysis; T-cell receptor sequencing was not included in this analysis.",       
+        "data_comparison": "Comparison Groups: Responding patients vs non-responding patients based on nivolumab therapy",
+        "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
+    },
+    "tsoi_info": {
+        "title": "Multi-stage differentiation defines melanoma subtypes with differential vulnerability to drug-induced iron-dependent oxidative stress",
+        "lead_author": "Tsoi, Jennifer",
+        "abstract": "Malignant transformation can result in melanoma cells that resemble different stages of their embryonic development. Our gene expression analysis of human melanoma cell lines and patient tumors revealed that melanoma follows a two-dimensional differentiation trajectory that can be sub-classified into four progressive subtypes. This differentiation model is associated with subtype-specific sensitivity to iron dependent oxidative stress and cell death known as ferroptosis. Receptor tyrosine kinase mediated resistance to MAPK targeted therapies and activation of the inflammatory signaling associated with immune therapy involves transitions along this differentiation trajectory, which lead to increased sensitivity to ferroptosis. Therefore, ferroptosis-inducing drugs presents an orthogonal therapeutic approach to target the differentiation plasticity of melanoma cells to increase the efficacy of targeted and immune therapies.",
+        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5953834/",
+        "doi": "10.1016/j.ccell.2018.03.017",
+        "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE80829",
+        "data_explanation": "53 total samples, 17 melanocytic samples, 14 neural crest like samples, 12 transitory samples, and 10 undifferentiated samples. Samples were all melanoma cell lines established from metastatic melanoma patient biopsies.",
+        "data_comparison": "Comparison Groups: Neural crest like, Transitory, Melanocytic, and Undifferentiated.",
+        "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
+
+    }
+}
