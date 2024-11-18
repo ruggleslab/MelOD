@@ -640,7 +640,6 @@ bubheat_plotly <- function(processed_data, inpPlt, inpRow, inpCol, inpScl, inpco
   #' @return A Plotly bubble heatmap or heatmap object
 
   ggMat <- processed_data$ggMat
-  print(ggMat)
   point_size_mat <- processed_data$point_size_mat
   colRange <- processed_data$colRange
 

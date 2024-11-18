@@ -205,6 +205,21 @@ process_proportion_data <- function(inpConf, inpMeta, inp1, inp2, inpsub1 = NULL
 }
 
 
+is_valid_gene <- function(gene, valid_genes) {
+  #' is_valid_gene
+  #'
+  #' This function check if a gene is presnet in the list of genes present in the Seurat object. Used in bubheat_server.
+  #'
+  #' @param gene Gene name to look for.
+  #' @param valid_genes List of genes present in the Seurat object from reactive sc1gene_data.
+  #'
+  #' @return A Boolean if gene is present in the list of valid genes
+  
+  gene <- trimws(gene) # Trim whitespace from the gene name
+  
+  return(gene %in% names(valid_genes))
+}
+
 process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL,
                                  inpsub2 = NULL, h5file, inpGene, inpScl) {
   #' Process bubble heatmap data for visualization
@@ -229,9 +244,11 @@ process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL,
   sub <- inpMeta[[inpConf[UI == inpsub1]$ID]]
   grpBy <- inpMeta[[inpConf[UI == inpGrp]$ID]]
 
-  gene_data_list <- lapply(inp, function(iGene) {
+  gene_data_list <- lapply(as.vector(inp), function(iGene) {
     # Attempt to read gene values; assign NA if it fails
+    iGene <- toupper(iGene)
     gene_val <- tryCatch({
+      
       h5file[["grp"]][["data"]]$read(args = list(inpGene[iGene], quote(expr = )))
     }, error = function(e) {
       rep(NA, length(sampleID))
@@ -247,7 +264,6 @@ process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL,
     )
   })
 
-  
   # Combine all gene data into one data.table
   ggData <- rbindlist(gene_data_list)
 
@@ -270,14 +286,34 @@ process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL,
     return("Insufficient data to plot!")
   }
 
+  
   # Adjust 'val' and aggregate data
+  
+  # ggData[, val := expm1(val)]
+  # ggData <- ggData[, .(
+  #   val = mean(val, na.rm = TRUE),
+  #   prop = mean(val > 0, na.rm = TRUE)
+  # ), by = .(geneName, grpBy)]
+  # ggData[, val := log1p(val)]
+  
+  
+  # Step 1: Prevent overflow in expm1 and cap value
+  ggData[, val := ifelse(val > 700, 700, val)]
   ggData[, val := expm1(val)]
+  
+  # Step 2: Exclude Inf when calculating mean
   ggData <- ggData[, .(
-    val = mean(val, na.rm = TRUE),
+    val = mean(val[!is.infinite(val)], na.rm = TRUE),
     prop = mean(val > 0, na.rm = TRUE)
   ), by = .(geneName, grpBy)]
+  
+  # Step 3: Prevent issues with log1p
+  ggData[, val := pmax(val, 0)]  # Replace negative values with 0
+  ggData[, val := ifelse(val > 1e6, 1e6, val)]  # Cap excessively large values
   ggData[, val := log1p(val)]
-
+  
+  
+  
   # Remove any NA values after transformation
   ggData <- ggData[!is.na(val)]
   if (nrow(ggData) == 0 || length(unique(ggData$grpBy)) <= 1 ||
@@ -285,19 +321,18 @@ process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL,
     return("Insufficient data to plot!")
   }
 
+
   # Determine color range
   colRange <- range(ggData$val, na.rm = TRUE)
-
   # Scale 'val' if requested
   if (inpScl) {
     ggData[, val := scale(val), by = geneName]
     colRange <- c(-max(abs(ggData$val), na.rm = TRUE), max(abs(ggData$val), na.rm = TRUE))
   }
-
   # Reshape data into matrices for plotting
   ggMat <- dcast(ggData, geneName ~ grpBy, value.var = "val")
   point_size_mat <- dcast(ggData, geneName ~ grpBy, value.var = "prop")
-
+  
   # Convert data.tables to matrices and set row names
   ggMat_mat <- as.matrix(ggMat[, -1, with = FALSE])
   rownames(ggMat_mat) <- ggMat$geneName

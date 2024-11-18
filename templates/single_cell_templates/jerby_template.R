@@ -61,8 +61,6 @@ jerby_server <- function() {
     
     h5_file_path_jerby_file <- H5File$new(h5_file_path_jerby_file, mode = "r")
     
-    
-    
     if (file.exists(sc1conf_jerby$local_path)) {
       file.remove(sc1conf_jerby$local_path)
     }

@@ -4,7 +4,7 @@ library(ShinyCell)
 
 
 
-seu  = readRDS("./Rambow_PDX.rds")
+seu  = readRDS("./Jerby_final.rds")
 seu = UpdateSeuratObject(seu)
 
 scConf = createConfig(seu)

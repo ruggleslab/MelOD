@@ -57,6 +57,11 @@ ui <- dashboardTemplate()
 
 # Define server logic
 server <- function(input, output, session) {
+  
+  # Clear all variables and run garbage collection
+  rm(list = ls(envir = .GlobalEnv), envir = .GlobalEnv)  # Clear global variables
+  gc()  # Force garbage collection to free memory
+  
   observeEvent(input$tabs, {
     if (input$tabs == "kunz") {
       kunz_server()

@@ -49,7 +49,7 @@ qisun_server <- function() {
     update_modal_progress(0.5, text="Gene expression files..")
 
     h5_file_path_TBPT <- drive_download("TBPT/sc1gexpr.h5", overwrite = TRUE)
-
+    
     update_modal_progress(0.6, text="Loading data...")
     Sys.sleep(0.5)
 
@@ -58,10 +58,9 @@ qisun_server <- function() {
     sc1gene_TBPT_file <- readRDS(sc1gene_TBPT$local_path)
     sc1meta_TBPT_file <- readRDS(sc1meta_TBPT$local_path)
     h5_file_path_TBPT_file <- h5_file_path_TBPT$local_path
-
+    
     h5_file_path_TBPT_file <- H5File$new(h5_file_path_TBPT_file, mode = "r")
     
-   
     
     if (file.exists(sc1conf_TBPT$local_path)) {
       file.remove(sc1conf_TBPT$local_path)

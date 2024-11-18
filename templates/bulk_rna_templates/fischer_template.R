@@ -11,7 +11,7 @@ fischer_ui <- function(id) {
         blurb_study_ui("fischer")),
       fluidRow(
         column(6, blurb_data_ui("fischer")),
-        column(6, blurb_method_ui("fischer"))),
+        column(6, blurb_method_ui("fischer",TRUE))),
       fluidRow( 
         column(6,blurb_comparison_ui("fischer"))),
       fluidRow(

@@ -149,23 +149,50 @@ get_display_genes <- function(all_genes, selected_genes) {
   }
 }
 
-
 setup_download_handler <- function(id, output, name, data_reactive, filename_prefix) {
-#' Download Handlers
-#' 
-#' @description Sets up the download handlers for exporting data in the server part
-
+  #' Download Handlers
+  #' 
+  #' @description Sets up the download handlers for exporting data in the server part, 
+  #'              supporting lists of CSV files (zipped) or a single CSV/RDS file.
+  
   output[[name]] <- downloadHandler(
     filename = function() {
-      paste(id,"_", filename_prefix, "_", Sys.Date(), '.csv', sep = '')
+      if (is.list(data_reactive)) {
+        paste0(id, "_", filename_prefix, "_", Sys.Date(), ".zip")
+      } else {
+        paste0(id, "_", filename_prefix, "_", Sys.Date(), ifelse(is.data.frame(data_reactive()), ".csv", ".rds"))
+      }
     },
     content = function(file) {
-      req(data_reactive())
-      data <- data_reactive()
-      write.csv(data, file)
+      req(data_reactive)
+      
+      if (is.list(data_reactive)) {
+        # Create a unique temporary subdirectory to store files for this download
+        temp_dir <- file.path(tempdir(), paste0("download_", id, "_", Sys.Date()))
+        dir.create(temp_dir, showWarnings = FALSE)
+        
+        # Loop over each reactive item in the list and save as CSV
+        for (name in names(data_reactive)) {
+          data <- data_reactive[[name]]()
+          filename <- paste0(filename_prefix, "_", name, ".csv")
+          write.csv(data, file.path(temp_dir, filename))
+        }
+        
+        # Create a zip file with all CSVs in the temporary directory
+        zip::zipr(zipfile = file, files = dir(temp_dir, full.names = TRUE))
+        
+        # Clean up: Remove the temporary directory
+        unlink(temp_dir, recursive = TRUE)
+        
+      } else {
+        # Single file download: Save directly as CSV or RDS
+        data <- data_reactive()
+        if (is.data.frame(data)) {
+          write.csv(data, file)
+        } else {
+          saveRDS(data, file)
+        }
+      }
     }
   )
 }
-
-
-

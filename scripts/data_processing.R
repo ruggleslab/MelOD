@@ -127,22 +127,6 @@ process_violin_data <- function(dds, display_genes) {
 }
 
 
-is_valid_gene <- function(gene, valid_genes) {
-  #' is_valid_gene
-  #'
-  #' This function check if a gene is presnet in the list of genes present in the Seurat object. Used in bubheat_server.
-  #'
-  #' @param gene Gene name to look for.
-  #' @param valid_genes List of genes present in the Seurat object from reactive sc1gene_data.
-  #'
-  #' @return A Boolean if gene is present in the list of valid genes
-  
-  gene <- trimws(gene) # Trim whitespace from the gene name
-  
-  return(gene %in% names(valid_genes))
-}
-
-
 process_heatmap_data <- function(dds, padj_cut, log2_cut, number, gene) {
   #' Process Heatmap Data
   #'

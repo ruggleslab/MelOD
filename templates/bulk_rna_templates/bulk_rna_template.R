@@ -26,11 +26,7 @@ blurb_study_ui <- function(id) {
           width = 8,
         tags$p("Read the full paper: ", tags$a(href = Id_info$paper_link, "PubMed")),
         tags$p("DOI: ", tags$a(href = paste("https://doi.org/", Id_info$doi, sep = ""), Id_info$doi)),
-        tags$p("Study Data Access: ", tags$a(href = Id_info$data_link, "Dataset")),
-        tags$p(
-          "Processed Data: ",
-          downloadButton(outputId = ns(paste0(id, "_download")), label = "Download")
-        )
+        tags$p("Study Data Access: ", tags$a(href = Id_info$data_link, "Dataset"))
       )
     )
   )
@@ -75,11 +71,12 @@ blurb_comparison_ui <- function(id) {
 }
 
 
-blurb_method_ui <- function(id) {
+blurb_method_ui <- function(id, include_processed_data = FALSE) {
   #' Blurb Comparison UI
   #' 
   #' @description Creates the UI component for explaining the method done in the analysis
   #' @param id Module ID
+  #' @param include_processed_data Logical. Whether to include the "Processed Data" paragraph.
   #' 
   #' @return A Shiny UI element
   
@@ -92,7 +89,13 @@ blurb_method_ui <- function(id) {
     collapsible = TRUE,
     solidHeader = TRUE,
     width = 12,
-    tags$p(Id_info$data_method)
+    tags$p(Id_info$data_method),
+    if (include_processed_data) {
+      tags$p(
+        "Processed Data: ",
+        downloadButton(outputId = ns(paste0(id, "_download")), label = "Download")
+      )
+    }
   )
 }
 

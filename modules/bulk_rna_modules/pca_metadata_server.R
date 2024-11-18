@@ -61,8 +61,16 @@ pca_metadata_server <- function(id, shared_reactives) {
       updateSelectizeInput(session, "gene_mortality", choices = rownames(shared_reactives$filtered_res()), server = TRUE, selected = NULL)
     })
     
-    setup_download_handler(id, output, "metadata_data", reactive({ shared_reactives$selected_clinical_data() }), "metadata")
-    
+    setup_download_handler(
+      id = id,
+      output = output,
+      name = "metadata_data",
+      data_reactive = list(
+        mortality_by_condition.csv = reactive({ plot_mortality_curve_generic(shared_reactives$selected_clinical_data(), "condition") }),
+        mortality_by_gene.csv = reactive({ plot_mortality_curve_generic(shared_reactives$selected_clinical_data(), "group", shared_reactives$dds_processed(), input$gene_mortality) })
+      ),
+      filename_prefix = "mortality"
+    )
     observeEvent(input$info_metadata_plot, {
       shinyalert(title = blurbs$info$mortality_curve$title, html = TRUE, text = blurbs$info$mortality_curve$text)
     })
