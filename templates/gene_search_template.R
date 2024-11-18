@@ -241,15 +241,48 @@ gene_search_server <- function(id) {
           filter(gene_name %in% input$selected_gene)
       })
       
+      
+      
       output$results_table <- DT::renderDataTable({
         data <- search_results()
+        
+        # Round and format numeric columns for better display
         data$log2FoldChange <- round(as.numeric(data$log2FoldChange), 2)
-        data$padj <- round(as.numeric(data$padj), 1)
-        data$pvalue <- round(as.numeric(data$pvalue), 1)
+        data$padj <- formatC(as.numeric(data$padj), format = "e", digits = 2)
+        data$pvalue <- formatC(as.numeric(data$pvalue), format = "e", digits = 2) 
         data$lfcSE <- round(as.numeric(data$lfcSE), 1)
         data$stat <- round(as.numeric(data$stat), 1)
-        data
-      }, options = list(pageLength = 10, autoWidth = TRUE))
+        
+        # Render the table
+        datatable <- DT::datatable(
+          data,
+          options = list(pageLength = 10, autoWidth = TRUE),
+          rownames = data$study
+        )
+        
+        # Use input$slider_padj and input$slider_log2 for dynamic thresholds
+        padj_cutoff <- input$slider_padj
+        log2_cutoff <- input$slider_log2
+        
+        datatable %>%
+          DT::formatStyle(
+            'padj', # Column to format
+            backgroundColor = DT::styleInterval(
+              c(padj_cutoff), # Single cutoff for two colors
+              c('lightgreen','lightpink') # Colors based on threshold
+            ),
+            fontWeight = 'bold' # Bold the values
+          ) %>%
+          DT::formatStyle(
+            'log2FoldChange',
+            color = DT::styleInterval(
+              c(-log2_cutoff, log2_cutoff), # Two cutoffs for three colors
+              c('#D81B60', 'black', '#1E88E5') # Red for low, black for middle, blue for high
+            ),
+            fontWeight = 'bold'
+          )
+      })
+      
       
     }, error = function(e) {
       showNotification("An error occurred during the process.", type = "error")
