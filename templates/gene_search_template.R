@@ -6,9 +6,9 @@ gene_search_ui <- function(id) {
     fluidRow(
       box(
         title = "Information", status = "info", solidHeader = TRUE, width = 12,
-        tags$p("This page allows you to search and filter genes based on specific parameters. 
-               You can adjust the p-value and log2 fold change cutoffs to filter genes on the volcano plot, 
-               select specific genes, and choose studies of interest."),
+        tags$p("This page is designed specifically for transcriptomic studies. It allows you to search and filter genes based on specific parameters. 
+       You can adjust the p-value and log2 fold change cutoffs to filter genes on the volcano plot, 
+       select specific genes, and choose studies of interest."),
         tags$p("For more detailed insights on individual studies, please visit the 'Studies' page in the sidebar.")
       )
     ),
@@ -19,7 +19,7 @@ gene_search_ui <- function(id) {
         solidHeader = TRUE, width = 12,
         tags$h3("Parameters", style = "margin-top: 0;"),
         fluidRow(
-          column(6, numericInput(
+          column(4, numericInput(
             ns("slider_padj"), 
             "padj Cutoff", 
             value = 0.05, 
@@ -37,10 +37,9 @@ gene_search_ui <- function(id) {
               content = c(
                 "This setting allows you to filter genes on the volcano plot."
               )
-            ))
-        ),
-        fluidRow(
-          column(6, numericInput(
+            )),
+          column(1,),
+          column(5, numericInput(
             ns("slider_log2"), 
             "Log2 Fold Change Cutoff", 
             value = 1, 
@@ -94,22 +93,24 @@ gene_search_ui <- function(id) {
 
 process_volcano_data_gene_search <- function(res, padj_cut, log2_cut, selected_genes) {
   res <- as.data.frame(res)
-  res$padj[res$padj == 0 | is.na(res$padj)] <- .Machine$double.xmin
   res$neg_log10_padj <- -log10(res$padj)
   res$log2FoldChange <- round(res$log2FoldChange, 1)
-  res$padj <- round(res$padj, 1)
   res$neg_log10_padj <- round(res$neg_log10_padj, 1)
-  
   res$sig <- ifelse(
-    res$padj < padj_cut & abs(res$log2FoldChange) >= log2_cut,
+    res$padj < padj_cut  & abs(res$log2FoldChange) >= log2_cut,
     ifelse(res$log2FoldChange > 0, "Upregulated", "Downregulated"),
     "Not Significant"
   )
+  
   return(res)
 }
 
+
+
 gene_search_server <- function(id) {
   moduleServer(id, function(input, output, session) {
+    blurbs <- fromJSON("./www/info_blurbs.json")
+    
     ns <- session$ns
     useShinyjs()
     
@@ -130,30 +131,11 @@ gene_search_server <- function(id) {
       update_modal_progress(1, text="Finalizing") 
       Sys.sleep(0.5)
       
-      observe({
-        gene_names <- summary_gene_study_rds %>%
-          pull(gene_name) %>%
-          unique()
-        
-        updateMultiInput(
-          session = session,
-          inputId = "selected_gene",
-          choices = gene_names,
-          selected = NULL
-        )
-      })
       
-      observeEvent(input$reset_selection, {
-        gene_names <- summary_gene_study_rds %>%
+      gene_names <- reactive({
+        summary_gene_study_rds %>%
           pull(gene_name) %>%
           unique()
-        
-        updateMultiInput(
-          session = session,
-          inputId = "selected_gene",
-          choices = gene_names,
-          selected = NULL
-        )
       })
       
       available_studies <- reactive({
@@ -163,14 +145,54 @@ gene_search_server <- function(id) {
           unique()
       })
       
+      
+      # Update gene selection and studies based on inputs
       observe({
-        studies <- available_studies()
+        updateMultiInput(
+          session = session,
+          inputId = "selected_gene",
+          choices = gene_names(),
+          selected = NULL
+        )
+      })
+      
+      observeEvent(input$reset_selection, {
+        updateMultiInput(
+          session = session,
+          inputId = "selected_gene",
+          choices = gene_names(),
+          selected = NULL
+        )
+      })
+      
+      observe({
         updateCheckboxGroupInput(
           session = session,
           inputId = "selected_studies",
-          choices = studies
+          choices = available_studies(),
+          selected = NULL
         )
       })
+      
+      
+      
+      
+      processed_data <- reactiveValues()
+      
+      observe({
+        lapply(input$selected_studies, function(study) {
+          study_data <- summary_gene_study_rds %>% filter(analysis_id == study)
+          processed_data[[study]] <- process_volcano_data_gene_search(
+            res = study_data,
+            padj_cut = input$slider_padj,
+            log2_cut = input$slider_log2,
+            selected_genes = input$selected_gene
+          )
+        })
+      })
+      
+      
+      
       
       output$volcano_plots <- renderUI({
         studies <- input$selected_studies
@@ -180,13 +202,13 @@ gene_search_server <- function(id) {
         
         plot_ui_list <- lapply(studies, function(study) {
           box(
-            title = paste("Volcano Plot -", study),
+            title = HTML(paste("Volcano Plot -", study, 
+                               actionLink(ns("info_volcano_plot"), label = "", icon = icon("info-circle")),
+                               downloadButton(ns(paste0('download_volcano_data_', study)), label = "", icon = icon("save-file", lib = "glyphicon")))),
             status = "primary",
             solidHeader = TRUE,
             width = 6,
-            plotlyOutput(ns(paste0("volcano_plot_", study))),
-            actionButton(ns(paste0("info_volcano_plot_", study)), "Info", icon = icon("info-circle")),
-            downloadButton(ns(paste0("download_volcano_data_", study)), "Download Data")
+            plotlyOutput(ns(paste0("volcano_plot_", study)))
           )
         })
         do.call(tagList, plot_ui_list)
@@ -195,47 +217,22 @@ gene_search_server <- function(id) {
       observe({
         lapply(input$selected_studies, function(study) {
           plot_output_id <- paste0("volcano_plot_", study)
-          info_button_id <- paste0("info_volcano_plot_", study)
           download_button_id <- paste0("download_volcano_data_", study)
           
+          # Render Plotly Plot
           output[[plot_output_id]] <- renderPlotly({
             study_data <- summary_gene_study_rds %>% filter(analysis_id == study)
-            processed <- process_volcano_data_gene_search(
-              res = study_data,
-              padj_cut = input$slider_padj,
-              log2_cut = input$slider_log2,
-              selected_genes = input$selected_gene
-            )
+            processed <- processed_data[[study]]
+            
             plot_volcano(result_data = processed, deseq2_data = study_data, gene = input$selected_gene)
           })
+          study_data <- summary_gene_study_rds %>% filter(analysis_id == study)
+          processed <- processed_data[[study]]
           
-          observeEvent(input[[info_button_id]], {
-            showModal(modalDialog(
-              title = paste("Volcano Plot Information -", study),
-              "The volcano plot displays the differential expression results for this study.",
-              easyClose = TRUE,
-              footer = NULL
-            ))
-          })
+          setup_download_handler(plot_output_id, output, download_button_id, reactive({processed}), "volcano")
           
-          output[[download_button_id]] <- downloadHandler(
-            filename = function() paste0("volcano_data_", study, ".csv"),
-            content = function(file) {
-              study_data <- summary_gene_study_rds %>% filter(analysis_id == study)
-              filtered_data <- study_data %>% 
-                filter(padj <= input$slider_padj, abs(log2FoldChange) >= input$slider_log2)
-              processed <- process_volcano_data_gene_search(
-                res = filtered_data,
-                padj_cut = input$slider_padj,
-                log2_cut = input$slider_log2,
-                selected_genes = input$selected_gene
-              )
-              write.csv(processed, file, row.names = TRUE)
-            }
-          )
         })
       })
-      
       search_results <- reactive({
         summary_gene_study_rds %>%
           filter(gene_name %in% input$selected_gene)
@@ -282,6 +279,16 @@ gene_search_server <- function(id) {
             fontWeight = 'bold'
           )
       })
+      
+      observeEvent(input$info_volcano_plot, {
+        shinyalert(
+          title = blurbs$info$volcano$title, 
+          html = TRUE,
+          text = blurbs$info$volcano$text
+        )
+      })
+      
+      
       
       
     }, error = function(e) {
