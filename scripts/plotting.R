@@ -531,15 +531,35 @@ render_filtered_results_table <- function(dds_processed, input) {
       res <- res[order(-abs(res$log2FoldChange)), ]
     }
     
+    # Apply dynamic cutoffs
+    padj_cutoff <- input$slider_padj
+    log2_cutoff <- input$slider_log2
+    
+    # Render the datatable with conditional formatting
     DT::datatable(res, extensions = 'Buttons', options = list(
       dom = 'lrBtip',
       buttons = c('copy', 'csv', 'excel'),
       pageLength = 10,
       scrollX = TRUE
-    ))
+    )) %>%
+      DT::formatStyle(
+        'padj', # Column to format
+        backgroundColor = DT::styleInterval(
+          c(padj_cutoff), # Single cutoff for two colors
+          c('lightgreen', 'lightpink') # Colors based on threshold
+        ),
+        fontWeight = 'bold' # Bold the values
+      ) %>%
+      DT::formatStyle(
+        'log2FoldChange',
+        color = DT::styleInterval(
+          c(-log2_cutoff, log2_cutoff), # Two cutoffs for three colors
+          c('#D81B60', 'black', '#1E88E5') # Red for low, black for middle, blue for high
+        ),
+        fontWeight = 'bold'
+      )
   })
 }
-
 
 plot_gene_correlations <- function(filtered_results, gene_of_interest) {
   #' Plot gene correlations
