@@ -60,8 +60,6 @@ bubheat_server <- function(id, shared_reactives) {
     }, ignoreInit = TRUE)
     
     
-    
-    
     selected_genes <- reactive({
       gene_text <- input$bubheat_selected_gene_text
       genes <- unlist(strsplit(gene_text, "[,;\n]"))
@@ -97,22 +95,32 @@ bubheat_server <- function(id, shared_reactives) {
         valid_genes <- valid_genes[1:50]
       }
       
-      # Format the valid genes for output
-      formatted_genes <- sapply(valid_genes, function(gene) {
-        if (nchar(gene) == 1) {
-          formatted_gene <- tolower(gene)
-        } else if (nchar(gene) > 0) {
-          first_char <- substr(gene, 1, 1)
-          rest_chars <- substr(gene, 2, nchar(gene))
-          formatted_gene <- paste0(toupper(first_char), tolower(rest_chars))
-        } else {
-          formatted_gene <- gene
-        }
-        formatted_gene
-      })
-      
-      formatted_genes
+    #   # Format the valid genes for output
+    #   formatted_genes <- sapply(valid_genes, function(gene) {
+    #     if (nchar(gene) == 1) {
+    #       formatted_gene <- tolower(gene)
+    #     } else if (nchar(gene) > 0) {
+    #       first_char <- substr(gene, 1, 1)
+    #       rest_chars <- substr(gene, 2, nchar(gene))
+    #       formatted_gene <- paste0(toupper(first_char), tolower(rest_chars))
+    #     } else {
+    #       formatted_gene <- gene
+    #     }
+    #     formatted_gene
+    #   })
+    #   formatted_genes
+    #   print(formatted_genes)
+    # })
+    
+    # Format the valid genes for output
+    formatted_genes <- sapply(valid_genes, function(gene) {
+        formatted_gene <- gene
     })
+    formatted_genes
+  })
+  
+  
+    
     
     observeEvent(input$reset_selection_single_cell, {
       initial_genes <- names(shared_reactives$sc1gene_data())[1:5]

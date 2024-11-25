@@ -246,9 +246,9 @@ process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL,
 
   gene_data_list <- lapply(as.vector(inp), function(iGene) {
     # Attempt to read gene values; assign NA if it fails
-    iGene <- toupper(iGene)
+
     gene_val <- tryCatch({
-      
+      # iGene <-  toupper(iGene)
       h5file[["grp"]][["data"]]$read(args = list(inpGene[iGene], quote(expr = )))
     }, error = function(e) {
       rep(NA, length(sampleID))
@@ -266,7 +266,6 @@ process_bubheat_data <- function(inpConf, inpMeta, inp, inpGrp, inpsub1 = NULL,
 
   # Combine all gene data into one data.table
   ggData <- rbindlist(gene_data_list)
-
   # Filter based on inpsub2 if provided
   if (!is.null(inpsub2) && length(inpsub2) > 0 &&
       length(inpsub2) != length(unique(ggData$sub))) {

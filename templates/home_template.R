@@ -79,6 +79,22 @@ home_ui <- function(id) {
               tags$li("Similarly, the co-expressed gene datatable is controlled by the co-expressed plot box."),
               tags$li("For the heatmap/bubble plot, you can search for a gene using the search bar or submit a list of genes (currently, the list is case sensitive, so watch out!")
             )
+          ),
+          tags$div(
+            class = "clickable collapsed", 
+            `data-toggle` = "collapse", 
+            `data-target` = "#collapseInstructionsgenesearch", 
+            "Gene search Tab"
+          ),
+          tags$div(
+            id = "collapseInstructionsgenesearch", 
+            class = "collapse dropdown-content",
+            tags$ul(
+              tags$li("This page is designed specifically for transcriptomic studies."),
+              tags$li("It allows you to search and filter genes based on specific parameters. 
+                        You can adjust the p-value and log2 fold change cutoffs to filter genes on the volcano plot, 
+                        select specific genes, and choose studies of interest.")
+            )
           )
           ) 
       )
@@ -103,23 +119,19 @@ home_ui <- function(id) {
              # Section: News about Updates
              tags$div(class = "dropdown-header", "News and Updates"),
              tags$ul(
-               tags$li("MelOD Version 0.3 released with new features and enhanced data analysis capabilities."),
-               tags$li("Integration of Tsoi et al. 2018, Riaz et al. 2017, Hugo et al. 2016 Transcriptomics Datasets, and reanalysis of Badal et al. 2017 & Kunz et al. 2018."),
-               tags$li("Integration of Kleffman et al. 2022 Proteomics Dataset."),
-               tags$li("Integration of Qi Sun et al. 2019 Single-Cell Dataset."),
-               tags$br(),
-               tags$li("Overall, the app has undergone visual and performance optimizations, alongside new features and customization options for an improved user experience. A new survey is now available to collect feedback and suggestions for future enhancements!")
+               tags$li("MelOD Version 0.4 released with new features and enhanced data analysis capabilities."),
+               tags$li("Integration of Biermann & Izar, 2022. | Jerby-Arnon & Regev, 2018. | Pozniak et al., 2022. | Rambow et al., 2018."),
+               tags$li("Added a gene search feature for transcriptomics datasets."),
+               tags$li("Other new features include survival curve statistics, a box explanation of the methods used, and a download button for processed and raw data."),
+               tags$br()
              )
              ),
              
              # Section: Currently Working on
          tags$div(class = "dropdown-header", "Currently Working On:"),
          tags$ul(
-           tags$li("Implementing visualization options for Differentially Expressed Genes in single-cell studies."),
-           tags$li("Enabling direct download of .rds objects containing analysis and sample information."),
+           tags$li("Processing new datasets for future integration (Tirosh et al., 2016 | Sade-Feldman et al., 2018 | Li et al., 2022 | Zhang et al., 2018.)"),
            tags$li("Trying to fetch clinical information from the current dataset for survival curves."),
-           tags$li("Processing new datasets for future integration."),
-           tags$li("Bug correction: The helper may appear when switching tabs if it was opened previously."),
            tags$li("Enhancing features and optimizing the app for a better user experience.")
          ),
              # Section: What Data Formats Are Supported?
@@ -191,6 +203,25 @@ home_ui <- function(id) {
                      "Qi Sun et al. 2019: A novel mouse model demonstrates that oncogenic melanocyte stem cells engender melanoma resembling human disease.",
                      tags$br(),
                    tags$span(class = "comparison", tags$b("Comparison Groups:"), " TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed).")
+                 ),
+                 tags$li(
+                   "Biermann et Izar, 2022: Dissecting the treatment-naive ecosystem of human melanoma brain metastasis.",
+                   tags$br(),
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "TBD.")
+                 ),
+                 tags$li(
+                   "Jerby-Arnon & Regev, 2018: A Cancer Cell Program Promotes T Cell Exclusion and Resistance to Checkpoint Blockade.",
+                   tags$br(),
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "TBD.")
+                 ),
+                 tags$li(
+                   "Pozniak et al., 2022: A TCF4/BRD4-dependent regulatory network confers cross-resistance to targeted and immune checkpoint therapy in melanoma.",
+                   tags$br(),
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "TBD.")
+                 ),tags$li(
+                   "Rambow et al., 2018: Toward Minimal Residual Disease-Directed Therapy in Melanoma.",
+                   tags$br(),
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "TBD.")
                  )
                )),
                
