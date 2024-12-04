@@ -64,7 +64,6 @@ gide_server <- function() {
   tryCatch({
     update_modal_progress(0.3, text="Downloading combotherapy data...")
     Sys.sleep(0.5)
-    
     gide_combo <- drive_download("Gide_Mono_Non responder_vs_Responder_Deseq2.rds", overwrite = TRUE)
     gide_combo_dds <- readRDS(gide_combo$local_path)
     

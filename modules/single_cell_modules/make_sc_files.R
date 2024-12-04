@@ -1,6 +1,6 @@
-library(Seurat)
+# library(Seurat)
 # devtools::install_github("SGDDNB/ShinyCell")
-library(ShinyCell)
+# library(ShinyCell)
 
 
 
