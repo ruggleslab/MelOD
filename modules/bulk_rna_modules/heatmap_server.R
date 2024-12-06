@@ -62,8 +62,7 @@ heatmap_server <- function(id, shared_reactives) {
     observe({
       updateSelectizeInput(session, "selected_gene", choices = rownames(shared_reactives$filtered_res()), server = TRUE, selected = NULL)
     })
-    
-    setup_download_handler(id, output, "heatmap_data", reactive({ processed_data()$matrix }), "heatmap")
+    setup_download_handler(id, output, "heatmap_data", reactive({ as.data.frame(processed_data()$matrix )}), "heatmap")
   })
 }
 

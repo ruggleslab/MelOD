@@ -187,6 +187,7 @@ setup_download_handler <- function(id, output, name, data_reactive, filename_pre
       } else {
         # Single file download: Save directly as CSV or RDS
         data <- data_reactive()
+        print(data)
         if (is.data.frame(data)) {
           write.csv(data, file)
         } else {

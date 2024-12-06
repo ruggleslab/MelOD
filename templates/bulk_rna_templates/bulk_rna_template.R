@@ -92,7 +92,7 @@ blurb_method_ui <- function(id, include_processed_data = FALSE) {
     tags$p(Id_info$data_method),
     if (include_processed_data) {
       tags$p(
-        "Processed Data: ",
+        "Processed Data (Please allow time for the data to load):",
         downloadButton(outputId = ns(paste0(id, "_download")), label = "Download")
       )
     }

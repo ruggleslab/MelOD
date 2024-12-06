@@ -37,6 +37,12 @@ violin_server <- function(id, shared_reactives) {
     })
     
     
-    setup_download_handler(id, output, "violin_data", processed_data, "violin")
-  })
+    setup_download_handler(
+      id, 
+      output, 
+      "violin_data", 
+      reactive(processed_data()$merged_data), 
+      "violin"
+    )
+    })
 }

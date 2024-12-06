@@ -5,7 +5,7 @@ account: ruggleslab
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12906104
-bundleId: 9457182
+bundleId: 9475395
 url: https://ruggleslab.shinyapps.io/MelOD/
 version: 1
 asMultiple: FALSE
