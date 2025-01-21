@@ -39,7 +39,6 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
   } else {
     clinical_data$group <- clinical_data[[group_by]]
   }
-  
   clinical_data$status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
   return(clinical_data)
 }

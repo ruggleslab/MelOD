@@ -36,6 +36,8 @@ source("templates/single_cell_templates/pozniak_template.R", local = TRUE)
 source("templates/single_cell_templates/rambow_template.R", local = TRUE)
 
 source("templates/proteomics_templates/kleffman_template.R", local = TRUE)
+source("templates/proteomics_templates/MM500_template.R", local = TRUE)
+
 
 source("templates/gene_search_template.R", local = TRUE)
 
@@ -92,6 +94,8 @@ server <- function(input, output, session) {
       rambow_server()
     } else if (input$tabs == "kleffman"){
       kleffman_server()
+    } else if (input$tabs == "MM500"){
+      MM500_server()
     } else if (input$tabs == "gene_search"){
       gene_search_server("gene_search_template")
     }

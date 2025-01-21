@@ -6,6 +6,8 @@ pca_metadata_server <- function(id, shared_reactives) {
   #' @param shared_reactives  A reactiveValues object for sharing reactive variables across modules.
   moduleServer(id, function(input, output, session) {
     blurbs <- fromJSON("./www/info_blurbs.json")
+  
+    
     pca_data_reactive <- reactive({
       req(shared_reactives$selected_dds())
       process_pca_data(shared_reactives$selected_dds())

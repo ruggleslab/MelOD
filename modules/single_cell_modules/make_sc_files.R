@@ -1,12 +1,12 @@
-# library(Seurat)
+library(Seurat)
 # devtools::install_github("SGDDNB/ShinyCell")
-# library(ShinyCell)
+library(ShinyCell)
 
 
 
-seu  = readRDS("./Jerby_final.rds")
+seu  = readRDS("./seurat_obj.rds")
 seu = UpdateSeuratObject(seu)
-
+seu <- JoinLayers(seu)
 scConf = createConfig(seu)
 
 makeShinyFiles(seu, scConf, gex.assay = "RNA", gex.slot = "data",

@@ -34,7 +34,8 @@ dashboardTemplate <- function() {
                           
                  ),
                  menuItem("Proteomic", tabName = "proteomic",
-                          menuSubItem("Kleffman et al. 2022", tabName = "kleffman")
+                          menuSubItem("Kleffman et al. 2022", tabName = "kleffman"),
+                          menuSubItem("MM500", tabName = "MM500")
                           )
         ),
         menuItem("Gene search", tabName = "gene_search", icon = icon("magnifying-glass")),
@@ -73,6 +74,8 @@ dashboardTemplate <- function() {
         tabItem(tabName = "KBPT", KBPT_ui("KBPT_template")),
         
         tabItem(tabName = "kleffman", kleffman_ui("kleffman_template")),
+        tabItem(tabName = "MM500", MM500_ui("MM500_template")),
+        
         
         tabItem(tabName = "gene_search", gene_search_ui("gene_search_template")),
         
