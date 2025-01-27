@@ -14,6 +14,7 @@ MM500_ui <- function(id) {
     fluidRow( 
       column(6,blurb_comparison_ui("MM500")) ,
       column(6,MM500_selector_ui("MM500"))),
+    fluidRow(metadata_ui("MM500")),
     fluidRow(
       column(4,input_ui("MM500", 0.5, 0.5)),
       column(8,deseq2_table_ui("MM500"))),
@@ -41,7 +42,7 @@ MM500_selector_ui <- function(id) {
     radioButtons(
       label = "Selection",
       inputId = ns("selection"),
-      choices = c("Segundo" = 1, "Cuarto" = 2, "Cero"= 3),
+      choices = c("Segundo" = 1, "Cuarto" = 3, "Cero"= 2),
       selected = 2,
       inline = TRUE
     ),
@@ -77,14 +78,25 @@ MM500_server <- function() {
     MM500_cero <- drive_download("cero_ttest_summarized_experiment.rds", overwrite = TRUE)
     MM500_cero_dds <- readRDS(MM500_cero$local_path)
     
+    update_modal_progress(0.8, text="Loading clinical data...")
+    Sys.sleep(0.5)
     
+    
+    MM500_segundo_metadata <- drive_download("segundo_clinical_data.csv", overwrite = TRUE)
+    MM500_cero_metadata <- drive_download("cero_clinical_data.csv", overwrite = TRUE)
+    
+    clinical_data <- list(
+      read.csv(MM500_segundo_metadata$local_path, sep = ','),
+      read.csv(MM500_cero_metadata$local_path, sep = ',')
+    )
   
     # List of all downloaded file paths
     downloaded_files <- list(
       MM500_segundo$local_path,
       MM500_cuarto$local_path,
-      MM500_cero$local_path
-      
+      MM500_cero$local_path,
+      MM500_segundo_metadata$local_path,
+      MM500_cero_metadata$local_path
     )
     
     # Remove downloaded files if they exist
@@ -94,25 +106,24 @@ MM500_server <- function() {
       }
     }
     
+
     
-    update_modal_progress(0.6, text="Loading data...")
-    Sys.sleep(0.5)
-    
-    dds <- list(MM500_segundo_dds,MM500_cuarto_dds, MM500_cero_dds)
+    dds <- list(MM500_segundo_dds,MM500_cero_dds,MM500_cuarto_dds)
  
     update_modal_progress(0.9, text="Initializing servers...")
     Sys.sleep(0.5)    
     
     observe_helpers()
     
-    selection_result <- selection_server(dds, "MM500")
-    selection_list_server(dds, "MM500", selection_result)
+    selection_result <- selection_server(dds, "MM500",clinical_data)
+    selection_list_server(dds, "MM500", selection_result, clinical_data)
     input_server("MM500", selection_result)
     volcano_server("MM500", selection_result)
     violin_server("MM500", selection_result)
     correlation_server("MM500", selection_result)
     heatmap_server("MM500", selection_result)
-
+    pca_metadata_server("MM500", selection_result)
+    
     
     update_modal_progress(1, text="Finalizing") 
     Sys.sleep(0.5)

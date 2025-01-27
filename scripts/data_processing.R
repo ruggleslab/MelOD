@@ -16,7 +16,6 @@ process_pca_data <- function(dds) {
   return(list(pca_data = pca_data, vsdata = vsdata))
 }
 
-
 process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_data = NULL, gene = NULL) {
   #' Process Clinical Data
   #'
@@ -28,18 +27,69 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
   #' 
   #' @return A DataFrame of clinical data based on the selected view. If both `deseq2_data` and `gene` are provided, it returns the quartiles of patient expression for the specified gene; otherwise, it returns the default DataFrame grouped by the `group_by` parameter.
   
+  # Check for missing values in critical columns
+  if (any(is.na(clinical_data$Last.Followup.Status))) {
+    warning("Missing values found in 'Last.Followup.Status'. Rows with missing values will be removed.")
+    clinical_data <- clinical_data[!is.na(clinical_data$Last.Followup.Status), ]
+  }
+  
+  if (any(is.na(clinical_data$OS_DAYS))) {
+    warning("Missing values found in 'OS_DAYS'. Rows with missing values will be removed.")
+    clinical_data <- clinical_data[!is.na(clinical_data$OS_DAYS), ]
+  }
+  
   if (!is.null(gene) && !is.null(deseq2_data)) {
-    gene_expression <- as.numeric(assay(deseq2_data)[gene, ])
-    if (!all(clinical_data$X %in% colnames(deseq2_data))) {
-      stop("Some patient IDs in the clinical data do not match the DESeq2 data")
+    # Check if the gene exists in the DESeq2 data
+    if (!gene %in% rownames(deseq2_data)) {
+      stop(paste("Gene", gene, "not found in the DESeq2 data."))
     }
+    
+    # Check for mismatched patient IDs between clinical data and DESeq2 data
+    mismatched_ids <- clinical_data$X[!clinical_data$X %in% colnames(deseq2_data)]
+    if (length(mismatched_ids) > 0) {
+      warning(paste("Some patient IDs in the clinical data do not match the DESeq2 data. Removing", length(mismatched_ids), "rows with mismatched IDs:", paste(mismatched_ids, collapse = ", ")))
+      clinical_data <- clinical_data[clinical_data$X %in% colnames(deseq2_data), ]
+    }
+    
+    # Extract gene expression and match to clinical data
+    gene_expression <- as.numeric(assay(deseq2_data)[gene, ])
     gene_expression <- gene_expression[match(clinical_data$X, colnames(deseq2_data))]
+    
+    # Handle missing values in gene expression
+    if (any(is.na(gene_expression))) {
+      warning("Missing values found in gene expression data. Rows with missing values will be removed.")
+      clinical_data <- clinical_data[!is.na(gene_expression), ]
+      gene_expression <- gene_expression[!is.na(gene_expression)]
+    }
+    
+    # Add jitter to gene expression to avoid ties
     gene_expression <- jitter(gene_expression, factor = 0.1)
-    clinical_data$group <- cut(gene_expression, breaks = quantile(gene_expression, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE), include.lowest = TRUE, labels = c("Q1", "Q2", "Q3"))
+    
+    # Create quartile groups for gene expression
+    clinical_data$group <- cut(
+      gene_expression,
+      breaks = quantile(gene_expression, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
+      include.lowest = TRUE,
+      labels = c("Q1", "Q2", "Q3")
+    )
   } else {
+    # Handle missing values in the grouping column
+    if (any(is.na(clinical_data[[group_by]]))) {
+      warning(paste("Missing values found in", group_by, ". Rows with missing values will be removed."))
+      clinical_data <- clinical_data[!is.na(clinical_data[[group_by]]), ]
+    }
     clinical_data$group <- clinical_data[[group_by]]
   }
+  
+  # Create status column (0 = Alive, 1 = Death)
   clinical_data$status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
+  
+  # Handle missing values in the status column
+  if (any(is.na(clinical_data$status))) {
+    warning("Missing values found in 'Last.Followup.Status'. Rows with missing values will be removed.")
+    clinical_data <- clinical_data[!is.na(clinical_data$status), ]
+  }
+  
   return(clinical_data)
 }
 

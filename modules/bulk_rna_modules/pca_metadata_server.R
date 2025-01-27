@@ -37,6 +37,7 @@ pca_metadata_server <- function(id, shared_reactives) {
       tryCatch({
         process_clinical_data(clinical_data, group_by = group_by, deseq2_data = deseq2_data, gene = gene)
       }, error = function(e) {
+        print(e)
         return("No metadata available")
       })
     }
