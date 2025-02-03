@@ -22,12 +22,12 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
   #' @description Processes clinical data from a study and returns a dataframe for plotting survival curves.
   #' @param clinical_data DataFrame containing normalized clinical data.
   #' @param group_by Column name by which to group the data, defaults to "condition".
-  #' @param deseq2_data Gene expression matrix from DESeq2 results (only for the "by gene" view).
-  #' @param gene Gene name to filter the gene expression matrix (only for the "by gene" view).
+  #' @param deseq2_data Gene expression matrix from DESeq2 results (only used for the "by gene" view).
+  #' @param gene Gene name to filter the gene expression matrix (only used for the "by gene" view).
   #' 
-  #' @return A DataFrame of clinical data based on the selected view. If both `deseq2_data` and `gene` are provided, it returns the quartiles of patient expression for the specified gene; otherwise, it returns the default DataFrame grouped by the `group_by` parameter.
+  #' @return A DataFrame of clinical data based on the selected view. If both `deseq2_data` and `gene` are provided, it returns the clinical data with an added "group" column indicating "Low" or "High" gene expression (split at the median). Otherwise, it returns the default DataFrame grouped by the `group_by` parameter.
   
-  # Check for missing values in critical columns
+  # Remove rows with missing critical data
   if (any(is.na(clinical_data$Last.Followup.Status))) {
     warning("Missing values found in 'Last.Followup.Status'. Rows with missing values will be removed.")
     clinical_data <- clinical_data[!is.na(clinical_data$Last.Followup.Status), ]
@@ -53,7 +53,7 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
       clinical_data <- clinical_data[clinical_data$X %in% colnames(deseq2_data), ]
     }
     
-    # Extract gene expression and match to clinical data
+    # Extract gene expression and align with clinical data
     gene_expression <- as.numeric(assay(deseq2_data)[gene, ])
     gene_expression <- gene_expression[match(clinical_data$X, colnames(deseq2_data))]
     
@@ -64,18 +64,15 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
       gene_expression <- gene_expression[!is.na(gene_expression)]
     }
     
-    # Add jitter to gene expression to avoid ties
+    # (Optional) Add jitter to avoid ties – not essential for a median split but can be kept if desired
     gene_expression <- jitter(gene_expression, factor = 0.1)
     
-    # Create quartile groups for gene expression
-    clinical_data$group <- cut(
-      gene_expression,
-      breaks = quantile(gene_expression, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE),
-      include.lowest = TRUE,
-      labels = c("Q1", "Q2", "Q3", "Q4")
-    )
+    # Split patients into "Low" and "High" groups based on the median of gene expression
+    med_val <- median(gene_expression, na.rm = TRUE)
+    clinical_data$group <- factor(ifelse(gene_expression > med_val, "High", "Low"), levels = c("Low", "High"))
+    
   } else {
-    # Handle missing values in the grouping column
+    # If no gene-specific view is provided, use the designated grouping column.
     if (any(is.na(clinical_data[[group_by]]))) {
       warning(paste("Missing values found in", group_by, ". Rows with missing values will be removed."))
       clinical_data <- clinical_data[!is.na(clinical_data[[group_by]]), ]
@@ -86,7 +83,7 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
   # Create status column (0 = Alive, 1 = Death)
   clinical_data$status <- ifelse(grepl("Alive", clinical_data$Last.Followup.Status), 0, 1)
   
-  # Handle missing values in the status column
+  # Remove rows with missing status values if any remain
   if (any(is.na(clinical_data$status))) {
     warning("Missing values found in 'Last.Followup.Status'. Rows with missing values will be removed.")
     clinical_data <- clinical_data[!is.na(clinical_data$status), ]

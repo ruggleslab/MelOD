@@ -87,41 +87,70 @@ plot_variance <- function(vs_data) {
 plot_mortality_curve <- function(clinical_data, group_col = "group") {
   #' Plot Mortality Curve
   #'
-  #' @description Generates a mortality curve plot based on clinical data, showing survival probabilities over time and statistics.
+  #' @description Generates a mortality curve plot based on clinical data, showing survival probabilities over time,
+  #'              the incertitude (confidence interval) zone, and statistical summaries.
   #' @param clinical_data DataFrame containing clinical data with survival information.
   #' @param group_col Column name by which to group the data for survival analysis, defaults to "group".
   #'
   #' @return A Plotly object representing the survival curves for different groups, or a string message if an error occurs.
   
   tryCatch({
-    # Create the survival object from the clinical data.
+    # Create the overall survival object.
     survival_object <- Surv(time = clinical_data$OS.days., event = clinical_data$status)
     survival_fit <- survfit(as.formula(paste("survival_object ~", group_col)), data = clinical_data)
     
-    # Perform log-rank test (survdiff) to assess statistical significance.
+    # Perform log-rank test to compare groups.
     logrank_test <- survdiff(as.formula(paste("survival_object ~", group_col)), data = clinical_data)
     p_value <- 1 - pchisq(logrank_test$chisq, df = length(logrank_test$n) - 1)
     
-    # Determine if the grouping variable represents quartiles.
-    if (all(unique(clinical_data[[group_col]]) %in% c("Q1", "Q2", "Q3", "Q4"))) {
-      # Convert to a factor with fixed levels to control ordering in the legend.
-      clinical_data[[group_col]] <- factor(clinical_data[[group_col]], levels = c("Q1", "Q2", "Q3", "Q4"))
+    # Determine the groups and assign a fixed color mapping.
+    # If the groups are "Low" and "High", force that order and use a dedicated mapping.
+    groups_raw <- unique(clinical_data[[group_col]])
+    if (all(groups_raw %in% c("Low", "High"))) {
+      clinical_data[[group_col]] <- factor(clinical_data[[group_col]], levels = c("Low", "High"))
       groups <- levels(clinical_data[[group_col]])
-      # Named color vector ensures that each quartile always has the same color.
-      quartile_colors <- c("Q1" = "#1E88E5", "Q2" = "#D81B60", "Q3" = "#D76C33", "Q4" = "#8999A9")
+      group_color_map <- c("Low" = "#1E88E5", "High" = "#D81B60")
     } else {
-      groups <- unique(clinical_data[[group_col]])
-      colors <- c("#1E88E5", "#D81B60", "#D76C33", "#8999A9")
+      # For any other groups, sort them alphabetically so that the mapping is consistent.
+      groups <- sort(unique(clinical_data[[group_col]]))
+      # Define a default palette (expand or adjust colors as needed).
+      default_palette <- c("#1E88E5", "#D81B60")
+      # Map each group to a color. (If there are more groups than colors, colors will recycle.)
+      group_color_map <- setNames(default_palette[seq_along(groups)], groups)
     }
     
     mortality_plot <- plot_ly()
     median_survivals <- list()
     
+    # Loop over each group to add the incertitude zone (confidence interval) and survival curve.
     for (i in seq_along(groups)) {
       group_name <- groups[i]
       group_data <- clinical_data[clinical_data[[group_col]] == group_name, ]
       group_survival_object <- Surv(time = group_data$OS.days., event = group_data$status)
       group_survival_fit <- survfit(group_survival_object ~ 1)
+      
+      # Retrieve fixed color for this group.
+      group_color <- group_color_map[group_name]
+      
+      # Add the incertitude (confidence interval) zone if available.
+      if (!is.null(group_survival_fit$lower) && !is.null(group_survival_fit$upper)) {
+        # Build polygon coordinates.
+        x_poly <- c(0, group_survival_fit$time, rev(group_survival_fit$time), 0)
+        y_poly <- c(1, group_survival_fit$lower, rev(group_survival_fit$upper), 1)
+        
+        mortality_plot <- mortality_plot %>%
+          add_trace(
+            type = 'scatter',
+            mode = 'lines',
+            x = x_poly,
+            y = y_poly,
+            fill = 'toself',
+            fillcolor = paste0(group_color, "33"),  # "33" adds ~20% opacity.
+            line = list(color = 'transparent'),
+            showlegend = FALSE,
+            hoverinfo = 'none'
+          )
+      }
       
       # Create custom hover text.
       custom_text <- c(
@@ -139,13 +168,7 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
         )
       )
       
-      # Choose the trace color: use the quartile_colors mapping if available; otherwise use the default palette.
-      if (exists("quartile_colors")) {
-        group_color <- quartile_colors[group_name]
-      } else {
-        group_color <- colors[((i - 1) %% length(colors)) + 1]
-      }
-      
+      # Add the survival curve (with markers) on top of the incertitude zone.
       mortality_plot <- mortality_plot %>%
         add_trace(
           type = 'scatter',
@@ -154,12 +177,12 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
           y = c(1, group_survival_fit$surv),
           name = group_name,
           line = list(color = group_color),
-          marker = list(color = group_color),  # Set marker (dot) color to be the same as the line
+          marker = list(color = group_color),  # Markers use the same color as the line.
           text = custom_text,
           hoverinfo = 'text'
         )
       
-      # Capture the median survival for this group.
+      # Retrieve the median survival for this group.
       median_survival <- summary(group_survival_fit)$table["median"]
       if (is.na(median_survival)) {
         median_survivals[[group_name]] <- "Not Reached"
@@ -170,11 +193,11 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
     
     median_text <- paste0(groups, ": ", unlist(median_survivals), collapse = "<br>")
     
-    # Update the layout with the p-value and median survival information.
+    # Update the layout with titles and p-value information.
     mortality_plot <- mortality_plot %>%
       layout(
         title = list(
-          text = paste("<br><sup>Median Survival: ", median_text, 
+          text = paste("<br><sup>Median Survival: ", median_text,
                        "<br>P-value (Log-Rank Test): ", sprintf("%.3f", p_value), "</sup>")
         ),
         xaxis = list(title = "Days"),

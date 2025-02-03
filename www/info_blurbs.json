@@ -23,7 +23,7 @@
     },
     "mortality_curve": {
       "title": "Mortality Curve Information",
-      "text": "Mortality curves are used to visualize the survival rates of patients based on the status (dead or alive) and the overall survival in days. The curve can be split by the condition of the study or for a selected gene, into quartiles (Q1, Q2, or Q3) to further analyze survival rates within different expression ranges [when sample-demographic association was available]."
+      "text": "Mortality curves are used to visualize the survival rates of patients based on the status (dead or alive) and the overall survival in days. The curve can be split by the condition of the study or for a selected gene, into high or low expression (split at the median). [when sample-demographic association was available]."
     },
   "comparison": {
     "title": "Comparison Plot Information",
