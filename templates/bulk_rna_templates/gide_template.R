@@ -64,13 +64,13 @@ gide_server <- function() {
   tryCatch({
     update_modal_progress(0.3, text="Downloading combotherapy data...")
     Sys.sleep(0.5)
-    gide_combo <- drive_download("Gide_Mono_Non responder_vs_Responder_Deseq2.rds", overwrite = TRUE)
+    gide_combo <- drive_download("Gide_Combo_Non responder_vs_Responder_Deseq2.rds", overwrite = TRUE)
     gide_combo_dds <- readRDS(gide_combo$local_path)
     
     update_modal_progress(0.5, text="Downloading monotherapy data...")
     Sys.sleep(0.5)
     
-    gide_mono <- drive_download("Gide_Combo_Non responder_vs_Responder_Deseq2.rds", overwrite = TRUE)
+    gide_mono <- drive_download("Gide_Mono_Non responder_vs_Responder_Deseq2.rds", overwrite = TRUE)
     gide_mono_dds <- readRDS(gide_mono$local_path)
     
    
@@ -83,8 +83,8 @@ gide_server <- function() {
     Sys.sleep(0.5)
 
     
-    gide_mono_metadata <- drive_download("Gide_demographics_combotherapy.csv", overwrite = TRUE)
-    gide_combo_metadata <- drive_download("Gide_demographics_monotherapy.csv", overwrite = TRUE)
+    gide_combo_metadata <- drive_download("Gide_demographics_combotherapy.csv", overwrite = TRUE)
+    gide_mono_metadata <- drive_download("Gide_demographics_monotherapy.csv", overwrite = TRUE)
     
     clinical_data <- list(
     read.csv(gide_combo_metadata$local_path, sep = ','),

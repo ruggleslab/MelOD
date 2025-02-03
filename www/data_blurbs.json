@@ -67,8 +67,8 @@
         "doi": "10.1038/s41467-019-12733-1",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE96966",
         "data_explanation": "This analyzed dataset is used to explore differences in cell state composition in a transcriptionally heterogeneous, Tamoxifen-induced melanoma transplant mouse model. It integrates data from two models: the Tyr-CreER;BrafV600E;Pten-fl/fl;LSL-tdTomato melanoma transplantation mouse model (referred to as TBPT) and control melanocyte stem cells isolated from the Tyr-CreER;LSL-tdTomato mouse model (referred to as TT).\n\n  - timept: Specifies the time point after Tamoxifen treatment, distinguishing between 0 weeks and 6 weeks post-application (indicating tumor induction).\n- tdTom: Differentiates between melanoma cells (tdTom+) and stromal cells (tdTom-), excluding immune cells. \n- Condition: Indicates whether cells are transformed (induced with the BrafV600E mutation and Pten deletion) or non-transformed. \n- CellType: Provides an abbreviated annotation of the cell type down to its subtype. \n- CellType_fullname: Offers the full, non-abbreviated annotation of the cell type down to its subtype.",
-"data_comparison": "Comparison Groups: TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed).",
-"data_method": "Tumors were dissociated into single cell suspension as mentioned above. McSC suspension from 3 telogen Tyr-CreER:R26R-Tomato mice and tumor cell suspension from 3 tumors derived from transplantation of McSCs from Tyr-CreER:Braf:Pten:Tomato mice and were used to isolate Tomato+ cells by cell sorting on Sony SY3200 cell sorter. The sorted suspensions were mixed into one sample of tumor cell suspension and one sample of McSC suspension."
+        "data_comparison": "Comparison Groups: TBPT.6wk.mel (tdTom+ melanoma) vs. TT (tdTom+ melanocyte stem cells - untransformed).",
+        "data_method": "Tumors were dissociated into single cell suspension as mentioned above. McSC suspension from 3 telogen Tyr-CreER:R26R-Tomato mice and tumor cell suspension from 3 tumors derived from transplantation of McSCs from Tyr-CreER:Braf:Pten:Tomato mice and were used to isolate Tomato+ cells by cell sorting on Sony SY3200 cell sorter. The sorted suspensions were mixed into one sample of tumor cell suspension and one sample of McSC suspension."
     },
     
     "biermann_info": {
@@ -130,17 +130,19 @@
         "data_comparison": "Comparison Groups: Brain Metastases (BM) vs. Extracranial Metastases (NBM).",
         "data_method" : "Protein levels were median-centered and log₂ normalized. Differential expression was determined using Welch’s t-test for unpaired samples and a paired t-test for the three sample pairs."
     },
-"MM500_info": {
-    "title": "The Human Melanoma Proteome Atlas: Mapping Protein Expression in Malignant Melanoma",
-    "lead_author": "Lazaro Hiram Betancourt",
-    "abstract": "This study maps protein levels in over 500 malignant melanoma (MM) tumor samples, encompassing 294 tumors analyzed across 5 datasets. It provides detailed proteogenomic insights into melanoma biology, focusing on protein expression, mutational status, and tumor characteristics across subtypes and metastases. The findings enhance understanding of melanoma development, progression, and BRAF mutations.",
-    "paper_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8299047/",
-    "doi": "https://doi.org/10.1002/ctm2.451",
-    "data_link": "https://github.com/4ronB/MEL-PLOT/tree/main",
-    "data_explanation": "Three key datasets focus on metastasis versus primary tumors:\n\n1. Cero: 90 FFPE samples from 77 patients (38 men, 39 women; 2005–2020), including primary, lymph node, and cutaneous metastases.\n2. Segundo: Fresh frozen samples from 137 metastatic melanoma patients (65% male; avg. age 62.3; 1975–2011) with lymph node, subcutaneous, cutaneous, and visceral origins, focusing on BRAF/NRAS mutations.\n3. Cuarto: 77 surgically resected samples from 47 patients, categorized as non-tumor (NT), tumor microenvironment (TM), primary tumor (PT), local recurrences (LR), and metastases (CM, LN, DM). Clinical Data available for Segundo and Cero datasets.",
-    "data_comparison": "Metastases vs. Primary Tumors.",
-    "data_method": "Different mass spectrometry-based approaches were used across datasets, including Data Dependent Acquisition (DDA) with TMT quantification and Data Independent Acquisition (DIA) with label-free quantification, alongside appropriate normalization techniques."
-},
+    
+    "MM500_info": {
+        "title": "The Human Melanoma Proteome Atlas: Mapping Protein Expression in Malignant Melanoma",
+        "lead_author": "Lazaro Hiram Betancourt",
+        "abstract": "This study maps protein levels in over 500 malignant melanoma (MM) tumor samples, encompassing 294 tumors analyzed across 5 datasets. It provides detailed proteogenomic insights into melanoma biology, focusing on protein expression, mutational status, and tumor characteristics across subtypes and metastases. The findings enhance understanding of melanoma development, progression, and BRAF mutations.",
+        "paper_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8299047/",
+        "doi": "https://doi.org/10.1002/ctm2.451",
+        "data_link": "https://github.com/4ronB/MEL-PLOT/tree/main",
+        "data_explanation": "Three key datasets focus on metastasis versus primary tumors:\n\n1. Cero: 90 FFPE samples from 77 patients (38 men, 39 women; 2005–2020), including primary, lymph node, and cutaneous metastases.\n2. Segundo: Fresh frozen samples from 137 metastatic melanoma patients (65% male; avg. age 62.3; 1975–2011) with lymph node, subcutaneous, cutaneous, and visceral origins, focusing on BRAF/NRAS mutations.\n3. Cuarto: 77 surgically resected samples from 47 patients, categorized as non-tumor (NT), tumor microenvironment (TM), primary tumor (PT), local recurrences (LR), and metastases (CM, LN, DM). Clinical Data available for Segundo and Cero datasets.",
+        "data_comparison": "Metastases vs. Primary Tumors.",
+        "data_method": "Different mass spectrometry-based approaches were used across datasets, including Data Dependent Acquisition (DDA) with TMT quantification and Data Independent Acquisition (DIA) with label-free quantification, alongside appropriate normalization techniques."
+    },
+    
     "hugo_info": {
         "title": "Genomic and Transcriptomic Features of Response to Anti-PD-1 Therapy in Metastatic Melanoma",
         "lead_author": "Hugo, Willy",
@@ -152,7 +154,7 @@
         "data_comparison": "Comparison Groups: Responding tumors (complete or progressive response) vs non-responding tumors (Progressive disease ) based on anti-PD-1 therapy",
         "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
     
-},
+    },
     "riaz_info": {
         "title": "Tumor and Microenvironment Evolution during Immunotherapy with Nivolumab",
         "lead_author": "Riaz, Nadeem",
@@ -164,6 +166,7 @@
         "data_comparison": "Comparison Groups: Responding patients vs non-responding patients based on nivolumab therapy",
         "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
     },
+    
     "tsoi_info": {
         "title": "Multi-stage differentiation defines melanoma subtypes with differential vulnerability to drug-induced iron-dependent oxidative stress",
         "lead_author": "Tsoi, Jennifer",
@@ -174,6 +177,5 @@
         "data_explanation": "53 total samples, 17 melanocytic samples, 14 neural crest like samples, 12 transitory samples, and 10 undifferentiated samples. Samples were all melanoma cell lines established from metastatic melanoma patient biopsies.",
         "data_comparison": "Comparison Groups: Neural crest like, Transitory, Melanocytic, and Undifferentiated.",
         "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
-
     }
 }

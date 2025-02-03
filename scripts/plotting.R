@@ -94,16 +94,27 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
   #' @return A Plotly object representing the survival curves for different groups, or a string message if an error occurs.
   
   tryCatch({
+    # Create the survival object from the clinical data.
     survival_object <- Surv(time = clinical_data$OS.days., event = clinical_data$status)
     survival_fit <- survfit(as.formula(paste("survival_object ~", group_col)), data = clinical_data)
     
-    # Perform log-rank test (survdiff) to assess statistical significance
+    # Perform log-rank test (survdiff) to assess statistical significance.
     logrank_test <- survdiff(as.formula(paste("survival_object ~", group_col)), data = clinical_data)
     p_value <- 1 - pchisq(logrank_test$chisq, df = length(logrank_test$n) - 1)
     
+    # Determine if the grouping variable represents quartiles.
+    if (all(unique(clinical_data[[group_col]]) %in% c("Q1", "Q2", "Q3", "Q4"))) {
+      # Convert to a factor with fixed levels to control ordering in the legend.
+      clinical_data[[group_col]] <- factor(clinical_data[[group_col]], levels = c("Q1", "Q2", "Q3", "Q4"))
+      groups <- levels(clinical_data[[group_col]])
+      # Named color vector ensures that each quartile always has the same color.
+      quartile_colors <- c("Q1" = "#1E88E5", "Q2" = "#D81B60", "Q3" = "#D76C33", "Q4" = "#8999A9")
+    } else {
+      groups <- unique(clinical_data[[group_col]])
+      colors <- c("#1E88E5", "#D81B60", "#D76C33", "#8999A9")
+    }
+    
     mortality_plot <- plot_ly()
-    groups <- unique(clinical_data[[group_col]])
-    colors <- c("#1E88E5", "#D81B60", "#33a02c")
     median_survivals <- list()
     
     for (i in seq_along(groups)) {
@@ -112,7 +123,7 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
       group_survival_object <- Surv(time = group_data$OS.days., event = group_data$status)
       group_survival_fit <- survfit(group_survival_object ~ 1)
       
-      # Create custom hover text
+      # Create custom hover text.
       custom_text <- c(
         paste(
           "Time: 0",
@@ -128,6 +139,13 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
         )
       )
       
+      # Choose the trace color: use the quartile_colors mapping if available; otherwise use the default palette.
+      if (exists("quartile_colors")) {
+        group_color <- quartile_colors[group_name]
+      } else {
+        group_color <- colors[((i - 1) %% length(colors)) + 1]
+      }
+      
       mortality_plot <- mortality_plot %>%
         add_trace(
           type = 'scatter',
@@ -135,11 +153,13 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
           x = c(0, group_survival_fit$time), 
           y = c(1, group_survival_fit$surv),
           name = group_name,
-          line = list(color = colors[i %% length(colors)]),
+          line = list(color = group_color),
+          marker = list(color = group_color),  # Set marker (dot) color to be the same as the line
           text = custom_text,
           hoverinfo = 'text'
         )
       
+      # Capture the median survival for this group.
       median_survival <- summary(group_survival_fit)$table["median"]
       if (is.na(median_survival)) {
         median_survivals[[group_name]] <- "Not Reached"
@@ -150,7 +170,7 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
     
     median_text <- paste0(groups, ": ", unlist(median_survivals), collapse = "<br>")
     
-    # Update plot layout with p-value from log-rank test
+    # Update the layout with the p-value and median survival information.
     mortality_plot <- mortality_plot %>%
       layout(
         title = list(

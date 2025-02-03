@@ -47,7 +47,9 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
     # Check for mismatched patient IDs between clinical data and DESeq2 data
     mismatched_ids <- clinical_data$X[!clinical_data$X %in% colnames(deseq2_data)]
     if (length(mismatched_ids) > 0) {
-      warning(paste("Some patient IDs in the clinical data do not match the DESeq2 data. Removing", length(mismatched_ids), "rows with mismatched IDs:", paste(mismatched_ids, collapse = ", ")))
+      warning(paste("Some patient IDs in the clinical data do not match the DESeq2 data. Removing", 
+                    length(mismatched_ids), "rows with mismatched IDs:", 
+                    paste(mismatched_ids, collapse = ", ")))
       clinical_data <- clinical_data[clinical_data$X %in% colnames(deseq2_data), ]
     }
     
@@ -68,9 +70,9 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
     # Create quartile groups for gene expression
     clinical_data$group <- cut(
       gene_expression,
-      breaks = quantile(gene_expression, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
+      breaks = quantile(gene_expression, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE),
       include.lowest = TRUE,
-      labels = c("Q1", "Q2", "Q3")
+      labels = c("Q1", "Q2", "Q3", "Q4")
     )
   } else {
     # Handle missing values in the grouping column
@@ -132,7 +134,6 @@ process_violin_data <- function(dds, display_genes) {
       counts <- counts(dds, normalized = TRUE)
       counts_filtered <- counts[rownames(counts) %in% gene_of_interest, , drop = FALSE]
       df <- as.data.frame(log(counts_filtered + 1))
-      
       col_data_df <- as.data.frame(colData(dds))
       col_data_df <- col_data_df %>%
         rownames_to_column(var = "patient_id") %>%
