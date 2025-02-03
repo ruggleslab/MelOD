@@ -93,7 +93,7 @@ gide_server <- function() {
     # List of all downloaded file paths
     downloaded_files <- list(
       gide_combo_metadata$local_path,
-      gide_combo_metadata$local_path,
+      gide_mono_metadata$local_path,
       gide_combo$local_path,
       gide_mono$local_path
     )
