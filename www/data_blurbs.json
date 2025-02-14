@@ -16,7 +16,7 @@
         "paper_link": "https://pubmed.ncbi.nlm.nih.gov/30753825/",
         "doi": "10.1016/j.ccell.2019.01.003",
         "data_link": "https://www.ebi.ac.uk/ena/browser/view/PRJEB23709",
-        "data_explanation": "74 total samples, 41 anti-PD-1 monotherapy (20 Responders, 21 Non Responders), 33 combined anti-PD-1 and anti-CTLA-4 (18 Responders, 14 Non Responders).",
+        "data_explanation": "73 total samples, 41 anti-PD-1 monotherapy (22 Responders, 19 Non Responders), 32 combined anti-PD-1 and anti-CTLA-4 (24 Responders, 8 Non Responders).",
         "data_comparison": "Comparison Groups: Responder vs. Non Responder.",
         "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
 
