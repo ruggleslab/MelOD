@@ -87,8 +87,8 @@ plot_variance <- function(vs_data) {
 plot_mortality_curve <- function(clinical_data, group_col = "group") {
   #' Plot Mortality Curve
   #'
-  #' @description Generates a mortality curve plot based on clinical data, showing survival probabilities over time,
-  #'              the incertitude (confidence interval) zone, and statistical summaries.
+  #' @description Generates a mortality curve plot based on clinical data, showing survival probabilities over time
+  #'              and statistical summaries.
   #' @param clinical_data DataFrame containing clinical data with survival information.
   #' @param group_col Column name by which to group the data for survival analysis, defaults to "group".
   #'
@@ -122,7 +122,7 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
     mortality_plot <- plot_ly()
     median_survivals <- list()
     
-    # Loop over each group to add the incertitude zone (confidence interval) and survival curve.
+    # Loop over each group to add the survival curve.
     for (i in seq_along(groups)) {
       group_name <- groups[i]
       group_data <- clinical_data[clinical_data[[group_col]] == group_name, ]
@@ -131,26 +131,6 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
       
       # Retrieve fixed color for this group.
       group_color <- group_color_map[group_name]
-      
-      # Add the incertitude (confidence interval) zone if available.
-      if (!is.null(group_survival_fit$lower) && !is.null(group_survival_fit$upper)) {
-        # Build polygon coordinates.
-        x_poly <- c(0, group_survival_fit$time, rev(group_survival_fit$time), 0)
-        y_poly <- c(1, group_survival_fit$lower, rev(group_survival_fit$upper), 1)
-        
-        mortality_plot <- mortality_plot %>%
-          add_trace(
-            type = 'scatter',
-            mode = 'lines',
-            x = x_poly,
-            y = y_poly,
-            fill = 'toself',
-            fillcolor = paste0(group_color, "33"),  # "33" adds ~20% opacity.
-            line = list(color = 'transparent'),
-            showlegend = FALSE,
-            hoverinfo = 'none'
-          )
-      }
       
       # Create custom hover text.
       custom_text <- c(
@@ -168,7 +148,7 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
         )
       )
       
-      # Add the survival curve (with markers) on top of the incertitude zone.
+      # Add the survival curve (with markers).
       mortality_plot <- mortality_plot %>%
         add_trace(
           type = 'scatter',
@@ -177,7 +157,7 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
           y = c(1, group_survival_fit$surv),
           name = group_name,
           line = list(color = group_color),
-          marker = list(color = group_color),  # Markers use the same color as the line.
+          marker = list(color = group_color),
           text = custom_text,
           hoverinfo = 'text'
         )
@@ -210,7 +190,6 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
     return("No metadata available")
   })
 }
-
 
 plot_volcano <- function(result_data, deseq2_data, gene = NULL) {
   #' Create Volcanoplot

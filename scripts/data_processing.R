@@ -66,7 +66,6 @@ process_clinical_data <- function(clinical_data, group_by = "condition", deseq2_
     
     # (Optional) Add jitter to avoid ties – not essential for a median split but can be kept if desired
     gene_expression <- jitter(gene_expression, factor = 0.1)
-    
     # Split patients into "Low" and "High" groups based on the median of gene expression
     med_val <- median(gene_expression, na.rm = TRUE)
     clinical_data$group <- factor(ifelse(gene_expression > med_val, "High", "Low"), levels = c("Low", "High"))
