@@ -25,7 +25,7 @@ dashboardTemplate <- function() {
                           menuSubItem("Riaz et al. 2017", tabName = "riaz"),
                           menuSubItem("Hugo et al. 2016", tabName = "hugo")
                  ),
-                 menuItem("Single Cell", tabName = "single",
+                 menuItem("Single Cell RNAseq", tabName = "single",
                           menuSubItem("Qi Sun et al. 2019", tabName = "qisun"),
                           menuSubItem("Biermann et al. 2022", tabName = "biermann"),
                           menuSubItem("Jerby-Arnon et al. 2018", tabName = "jerby"),

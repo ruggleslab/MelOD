@@ -128,7 +128,7 @@
         "data_link": "https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=45f63f0e96214b5996d526067e475d97",
         "data_explanation": "24 total samples, 12 melanoma brain metastasis-derived (BM), 12 extracranial metastasis-derived (NBM). Samples included 3 patient    -matched pairs, where the same patient contributed both BM and NBM samples. The study focused on analyzing proteins implicated in neurodegenerative diseases and their role in brain metastasis.",
         "data_comparison": "Comparison Groups: Brain Metastases (BM) vs. Extracranial Metastases (NBM).",
-        "data_method" : "Protein levels were median-centered and log₂ normalized. Differential expression was determined using Welch’s t-test for unpaired samples and a paired t-test for the three sample pairs."
+        "data_method" : "Protein levels were median-centered and log₂ normalized. Differential expression was determined using Welch’s t-test for unpaired samples and a paired t-test for the three sample pairs. The method uses TMT for quantitative proteomics."
     },
     
     "MM500_info": {

@@ -64,7 +64,7 @@ home_ui <- function(id) {
             class = "clickable collapsed", 
             `data-toggle` = "collapse", 
             `data-target` = "#collapseInstructionssinglecell", 
-            "Single Cell Tab"
+            "Single Cell RNAseq Tab"
           ),
           tags$div(
             id = "collapseInstructionssinglecell", 

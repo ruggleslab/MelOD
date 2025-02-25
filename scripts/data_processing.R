@@ -8,10 +8,34 @@ process_pca_data <- function(dds) {
   
   vsdata <- vst(dds, blind = FALSE)
   pca_data <- plotPCA(vsdata, intgroup = "group", returnData = TRUE)
-  
   # Extract size factors and add them to the PCA data
   size_factors <- sizeFactors(dds)
   pca_data$size_factor <- size_factors[rownames(pca_data)]
+  
+  
+  # 
+  # # First, obtain the variance stabilized data
+  # vsdata <- vst(dds, blind = FALSE)
+  # 
+  # # Perform PCA manually using prcomp. Note that we transpose the assay data,
+  # # so that rows correspond to samples.
+  # pca <- prcomp(t(assay(vsdata)))
+  # 
+  # # Create a data frame with the desired principal components.
+  # # For example, to include PC1, PC2, and PC3:
+  # pca_data_full <- data.frame(
+  #   PC1 = pca$x[, "PC1"],
+  #   PC2 = pca$x[, "PC2"],
+  #   PC3 = pca$x[, "PC3"],
+  #   group = colData(dds)$group,
+  #   row.names = colnames(vsdata)
+  # )
+  # 
+  # # If you still need the size factors, you can add them:
+  # size_factors <- sizeFactors(dds)
+  # pca_data_full$size_factor <- size_factors[rownames(pca_data_full)]
+  # print(pca_data_full)
+  # print(pca_data)
   
   return(list(pca_data = pca_data, vsdata = vsdata))
 }

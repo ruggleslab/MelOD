@@ -19,7 +19,7 @@
     },
     "correlation": {
       "title": "Correlation Plot Information",
-      "text": "The correlation plot displays the correlation coefficients and their significance for each gene relative to the gene of interest. The scatter plot shows the correlation coefficients on the x-axis and the -log10 p-values on the y-axis, while the histogram shows the distribution of correlation coefficients."
+      "text": "The correlation plot displays the Pearson correlation coefficients and their significance for each gene relative to the gene of interest. The scatter plot shows the correlation coefficients on the x-axis and the -log10 p-values on the y-axis, while the histogram shows the distribution of correlation coefficients."
     },
     "mortality_curve": {
       "title": "Mortality Curve Information",

@@ -60,6 +60,15 @@ pca_metadata_server <- function(id, shared_reactives) {
       }
     })
     
+    output$risk_table <- renderUI({
+      result <- plot_mortality_curve_generic(shared_reactives$selected_clinical_data(), "condition")
+      if (is.character(result)) {
+        div(class = "error-message", result)
+      } else {
+        plot_mortality_curve(result, group_col = "risk_table")
+      }
+    })
+    
     observe({
       updateSelectizeInput(session, "gene_mortality", choices = rownames(shared_reactives$filtered_res()), server = TRUE, selected = NULL)
     })

@@ -95,6 +95,71 @@ plot_mortality_curve <- function(clinical_data, group_col = "group") {
   #' @return A Plotly object representing the survival curves for different groups, or a string message if an error occurs.
   
   tryCatch({
+    if(group_col == "risk_table"){
+      # Risk table mode: use a default grouping column "group" if available, otherwise treat as one group.
+      if ("group" %in% names(clinical_data)) {
+        groups <- sort(unique(clinical_data[["group"]]))
+      } else {
+        groups <- "Overall"
+        clinical_data$Overall <- "Overall"
+      }
+      
+      # Create survival fits per group.
+      fit_list <- list()
+      for (group_name in groups) {
+        if (group_name != "Overall") {
+          group_data <- clinical_data[clinical_data[["group"]] == group_name, ]
+        } else {
+          group_data <- clinical_data
+        }
+        group_survival_object <- Surv(time = group_data$OS.days., event = group_data$status)
+        fit_list[[group_name]] <- survfit(group_survival_object ~ 1)
+      }
+      
+      # Define common time points (e.g., every 50 days up to the maximum observed time).
+      max_time <- max(clinical_data$OS.days., na.rm = TRUE)
+      risk_times <- seq(0, max_time, by = 50)
+      
+      # Prepare risk table data.
+      risk_table_data <- list("Time" = risk_times)
+      for (group_name in groups) {
+        fit <- fit_list[[group_name]]
+        risk_summary <- summary(fit, times = risk_times)
+        risk_numbers <- sapply(risk_times, function(t) {
+          index <- which(risk_summary$time == t)
+          if (length(index) > 0) {
+            return(risk_summary$n.risk[index])
+          } else {
+            valid_times <- risk_summary$time[risk_summary$time <= t]
+            if (length(valid_times) > 0) {
+              last_index <- max(which(risk_summary$time <= t))
+              return(risk_summary$n.risk[last_index])
+            } else {
+              return(NA)
+            }
+          }
+        })
+        risk_table_data[[group_name]] <- risk_numbers
+      }
+      
+      # Create and return the risk table.
+      risk_table <- plot_ly(
+        type = 'table',
+        header = list(
+          values = c("<b>Time (days)</b>", paste0("<b>", groups, "</b>")),
+          align = c('center', rep('center', length(groups))),
+          line = list(width = 1, color = 'black'),
+          fill = list(color = 'lightgrey')
+        ),
+        cells = list(
+          values = c(list(risk_table_data$Time), lapply(groups, function(g) risk_table_data[[g]])),
+          align = c('center', rep('center', length(groups)))
+        )
+      ) %>% layout(margin = list(l = 20, r = 20))
+      
+      return(risk_table)
+    }
+    
     # Create the overall survival object.
     survival_object <- Surv(time = clinical_data$OS.days., event = clinical_data$status)
     survival_fit <- survfit(as.formula(paste("survival_object ~", group_col)), data = clinical_data)

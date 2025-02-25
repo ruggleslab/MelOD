@@ -115,7 +115,7 @@ pca_ui <- function(id) {
     tabPanel("PCA",
              withSpinner(plotlyOutput(ns('pca_plot')),type = 6, color = "#FFA812", size = 0.5),
              fluidRow(
-               column(6,
+               column(5,
                       selectInput(
                         inputId = ns("size_by"),
                         label = "Size by:",
@@ -123,7 +123,7 @@ pca_ui <- function(id) {
                         selected = "constant"
                       )
                ),
-               column(6,
+               column(5,
                       selectInput(
                         inputId = ns("color_by"),
                         label = "Color by:",
@@ -156,6 +156,8 @@ metadata_ui <- function(id) {
     tabPanel("Survival curves by condition", withSpinner(uiOutput(ns("mortality_by_condition")),type = 6, color = "#FFA812", size = 0.5)),
     tabPanel("Survival curves by gene", withSpinner(uiOutput(ns("mortality_by_gene") ,type = 6, color = "#FFA812", size = 0.5)),
                       selectizeInput(ns("gene_mortality"), "Gene", choices = NULL, selected = NULL, multiple = FALSE, options = list(maxItems = 1))),
+    tabPanel("Risk Table", withSpinner(uiOutput(ns("risk_table")),type = 6, color = "#FFA812", size = 0.5))
+    
   )
 }
 
