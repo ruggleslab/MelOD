@@ -197,3 +197,24 @@ setup_download_handler <- function(id, output, name, data_reactive, filename_pre
     }
   )
 }
+
+  
+  
+setup_download_handler_plot <- function(id, output, name, data_reactive, filename_prefix) {
+  output[[name]] <- downloadHandler(
+    filename = function() {
+      paste0(id, "_", filename_prefix, "_", Sys.Date(), ".svg")
+    },
+    content = function(file) {
+      plot_object <- data_reactive()
+      if (inherits(plot_object, "ggplot")) {
+        ggsave(file, plot = plot_object, device = "svg")
+      } else if (inherits(plot_object, "plotly")) {
+        # Ensure that the necessary backend (orca or kaleido) is installed
+        plotly::export(plot_object, file = file, engine = "kaleido", selenium = NULL)
+      } else {
+        stop("Unsupported plot object type. The plot must be a ggplot or plotly object.")
+      }
+    }
+  )
+}

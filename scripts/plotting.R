@@ -39,12 +39,15 @@ plot_pca <- function(pca_data_frame, size_by = "constant", color_by = "group") {
     text = text_labels,
     colors = custom_colors,
     marker = list(size = dot_size,
-                  line = list(color = "black", width = 1))    
+                  line = list(color = "black", width = 1))
   ) %>%
     layout(
       xaxis = list(title = "PC1", zeroline = FALSE),
-      yaxis = list(title = "PC2", zeroline = FALSE))
-  
+      yaxis = list(title = "PC2", zeroline = FALSE)
+    ) %>%
+    config(
+      toImageButtonOptions = list(format = "svg", filename = "pca_export")
+    )
   return(pca_plot)
 }
 

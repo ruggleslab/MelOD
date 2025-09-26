@@ -23,7 +23,8 @@ dashboardTemplate <- function() {
                           menuSubItem("Tsoi et al. 2018", tabName = "tsoi"),
                           menuSubItem("Badal et al. 2017", tabName = "badal"),
                           menuSubItem("Riaz et al. 2017", tabName = "riaz"),
-                          menuSubItem("Hugo et al. 2016", tabName = "hugo")
+                          menuSubItem("Hugo et al. 2016", tabName = "hugo"),
+                          menuSubItem("Ibrahim et al. 2024", tabName = "ibrahim")
                  ),
                  menuItem("Single Cell RNAseq", tabName = "single",
                           menuSubItem("Qi Sun et al. 2019", tabName = "qisun"),
@@ -65,6 +66,7 @@ dashboardTemplate <- function() {
         tabItem(tabName = "hugo", hugo_ui("hugo_template")),
         tabItem(tabName = "tsoi", tsoi_ui("tsoi_template")),
         tabItem(tabName = "riaz", riaz_ui("riaz_template")),
+        tabItem(tabName = "ibrahim", ibrahim_ui("ibrahim_template")),
         
         tabItem(tabName = "qisun", qisun_ui("qisun_template")),
         tabItem(tabName = "biermann", biermann_ui("biermann_template")),

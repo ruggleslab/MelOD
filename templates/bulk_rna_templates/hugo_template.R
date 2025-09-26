@@ -42,7 +42,7 @@ hugo_server <- function() {
     update_modal_progress(0.3, text="Downloading data...")
     Sys.sleep(0.5)
     
-    hugo <- drive_download("Hugo_Progressive Disease_vs_Complete or Progressive Response_Deseq2.rds", overwrite = TRUE)
+    hugo <- drive_download("Hugo_Responder_vs_Non_Responder.dds.rds", overwrite = TRUE)
     
     update_modal_progress(0.6, text="Loading data...")
     Sys.sleep(0.5)

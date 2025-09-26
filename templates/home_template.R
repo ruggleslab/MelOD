@@ -184,6 +184,11 @@ home_ui <- function(id) {
                      "Hugo et al. 2016: Genomic and Transcriptomic Features of Response to Anti-PD-1 Therapy in Metastatic Melanoma.",
                      tags$br(),
                      tags$span(class = "comparison", tags$b("Comparison Groups:"), "Progressive disease vs. Complete or Partial Response.")
+                   ),
+                   tags$li(
+                     "Ibrahim et al. 2024: NF1 Loss Promotes EGFR Activation and Confers Sensitivity to EGFR Inhibition in NF1-Mutant Melanoma.",
+                     tags$br(),
+                     tags$span(class = "comparison", tags$b("Comparison Groups:"), "NF1 Mutant vs. NF1 Wild-Type.")
                    )
                  )
                ),
@@ -207,21 +212,21 @@ home_ui <- function(id) {
                  tags$li(
                    "Biermann et Izar, 2022: Dissecting the treatment-naive ecosystem of human melanoma brain metastasis.",
                    tags$br(),
-                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "TBD.")
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "MBM (brain metastasis samples) versus ECM (extracranial metastasis samples).")
                  ),
                  tags$li(
                    "Jerby-Arnon & Regev, 2018: A Cancer Cell Program Promotes T Cell Exclusion and Resistance to Checkpoint Blockade.",
                    tags$br(),
-                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "TBD.")
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "Pre-ICI versus post-ICI resistant melanoma samples, focusing on T cell-infiltrated (hot) vs. T cell-excluded (cold) niches.")
                  ),
                  tags$li(
                    "Pozniak et al., 2022: A TCF4/BRD4-dependent regulatory network confers cross-resistance to targeted and immune checkpoint therapy in melanoma.",
                    tags$br(),
-                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "TBD.")
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "Pre-treatment versus early on-treatment biopsies from responders and non-responders to anti-PD-1 therapy.")
                  ),tags$li(
                    "Rambow et al., 2018: Toward Minimal Residual Disease-Directed Therapy in Melanoma.",
                    tags$br(),
-                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "TBD.")
+                   tags$span(class = "comparison", tags$b("Comparison Groups:"), "Pre-treatment (T0) versus MRD phases and treatment phases (e.g., Phase 2: MRD vs. Phase 3: drug resistance).")
                  )
                )),
                
@@ -238,6 +243,11 @@ home_ui <- function(id) {
                                        
                                tags$span( class = "comparison", tags$b("Comparison Groups:"), " Brain Metastases (BM) vs. Extracranial Metastases (NBM)."
                                )
+                             ),
+                             tags$li("MM500: The Human Melanoma Proteome Atlas: Mapping Protein Expression in Malignant Melanoma",
+                                     tags$br(),
+                                     tags$span( class = "comparison", tags$b("Comparison Groups:"), "Metastases vs. Primary Tumors."
+                                     )
                              )
                     ),
                     

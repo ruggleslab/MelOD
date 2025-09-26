@@ -28,7 +28,20 @@ pca_metadata_server <- function(id, shared_reactives) {
     render_plots(output, pca_data_reactive)
     
     setup_download_handler(id, output, "pca_data", reactive({ pca_data_reactive()$pca_data }), "pca")
-    
+    setup_download_handler_plot(
+      id = id,
+      output = output,
+      name = "pca_plot_download",
+      data_reactive = reactive({
+        req(pca_data_reactive())
+        plot_pca(
+          pca_data_reactive()$pca_data,
+          size_by = input$size_by,
+          color_by = input$color_by
+        )
+      }),
+      filename_prefix = "pca"
+    )
     observeEvent(input$info_pca_plot, {
       shinyalert(title = blurbs$info$pca$title, html = TRUE, text = blurbs$info$pca$text)
     })
@@ -56,7 +69,8 @@ pca_metadata_server <- function(id, shared_reactives) {
       if (is.character(result)) {
         div(class = "error-message", result)
       } else {
-        plot_mortality_curve(result, group_col = "group")
+        plot <- reactive(plot_mortality_curve(result, group_col = "group"))
+        plot()
       }
     })
     
@@ -83,6 +97,26 @@ pca_metadata_server <- function(id, shared_reactives) {
       ),
       filename_prefix = "mortality"
     )
+    setup_download_handler_plot(
+      id = id,
+      output = output,
+      name = "metadata_plot",
+      data_reactive = reactive({
+        result <- plot_mortality_curve_generic(
+          shared_reactives$selected_clinical_data(),
+          "group",
+          shared_reactives$dds_processed(),
+          input$gene_mortality
+        )
+        if (is.character(result)) {
+          print(result)
+          stop(result)  # Stop if there's an error message
+        } else {
+          plot_mortality_curve(result, group_col = "group")
+        }
+      }),
+      filename_prefix = "mortality_by_gene"
+    )    
     observeEvent(input$info_metadata_plot, {
       shinyalert(title = blurbs$info$mortality_curve$title, html = TRUE, text = blurbs$info$mortality_curve$text)
     })

@@ -147,13 +147,13 @@
         "title": "Genomic and Transcriptomic Features of Response to Anti-PD-1 Therapy in Metastatic Melanoma",
         "lead_author": "Hugo, Willy",
         "abstract": "PD-1 immune checkpoint blockade provides significant clinical benefits for melanoma patients. We analyzed the somatic mutanomes and transcriptomes of pretreatment melanoma biopsies to identify factors that may influence innate sensitivity or resistance to anti-PD-1 therapy. We find that, while overall high mutational loads associate with improved survival both in responding and non-responding patients, responding tumors are specifically enriched for mutations in the DNA repair gene BRCA2. Innately resistant tumors display a transcriptional signature (referred to as the IPRES or Innate anti-PD-1 Resistance) indicating concurrent upexpression of genes involved in the regulation of mesenchymal transition, cell adhesion, ECM remodeling, angiogenesis and wound-healing. Notably, MAPK-targeted therapy (MAPKi) induces similar signatures in melanoma, suggesting that a non-genomic form of MAPKi resistance mediates cross-resistance to anti-PD-1 therapy. Validation of the IPRES in other independent tumor cohorts defines a transcriptomic subset across distinct types of advanced cancer. These findings suggest that attenuating the biological processes that underlie IPRES may improve anti-PD-1 response in melanoma and other cancer types.",
-        "paper_link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5953834/",
+        "paper_link": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4808437/",
         "doi": "10.1016/j.cell.2016.12.007",
         "data_link": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE78220",
-        "data_explanation": "38 melanoma specimens and their patient-matched normal tissues were analyzed by whole exome sequencing (WES). This includes 32 pretreatment tumors and other samples.",
-        "data_comparison": "Comparison Groups: Responding tumors (complete or progressive response) vs non-responding tumors (Progressive disease ) based on anti-PD-1 therapy",
-        "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
-    
+        "data_explanation": "RNA-seq data from 28 pretreatment melanoma tumors (15 responders and 13 non-responders) treated with anti-PD-1 therapy. Responders include patients who achieved complete or partial response, or stable disease; non-responders had progressive disease as defined by irRECIST.",
+        "data_comparison": "Comparison groups: Responding tumors (complete/partial response or stable disease) vs non-responding tumors (progressive disease), based on anti-PD-1 therapy response.",
+        "data_method": "Differential gene expression analysis was performed using the NYU SNS pipeline (https://igordot.github.io/sns), including RNA-Star for alignment and RNA-Star-Groups-DGE for quantification."
+        
     },
     "riaz_info": {
         "title": "Tumor and Microenvironment Evolution during Immunotherapy with Nivolumab",
@@ -165,6 +165,18 @@
         "data_explanation": "68 patients with advanced melanoma were analyzed for genomic changes before and after nivolumab therapy, using whole-exome sequencing and transcriptome analysis; T-cell receptor sequencing was not included in this analysis.",       
         "data_comparison": "Comparison Groups: Responding patients vs non-responding patients based on nivolumab therapy",
         "data_method" : "The NYU SNS pipeline (https://igordot.github.io/sns) was employed for differential gene expression analysis, utilizing RNA-Star and RNA-Star-Groups-DGE."
+    },
+    
+    "ibrahim_info": {
+        "title": "NF1 Loss Promotes EGFR Activation and Confers Sensitivity to EGFR Inhibition in NF1-Mutant Melanoma",
+        "lead_author": "Ibrahim, Milad",
+        "abstract": "Targeted therapies and immunotherapy have improved treatment outcomes for many patients with melanoma. However, patients whose melanomas harbor driver mutations in the neurofibromin 1 (NF1) tumor suppressor gene often lack effective targeted treatment options when their tumors do not respond to immunotherapy. In this study, we utilized patient-derived short-term cultures and multiomics approaches to identify molecular features that could inform the development of therapies for patients with NF1-mutant (NF1Mut) melanoma. Differential gene expression analysis revealed that EGFR is highly expressed and active in NF1Mut melanoma cells, in which it hyperactivates ERK and AKT, leading to increased tumor cell proliferation, survival, and growth. In contrast, genetic or pharmacologic inhibition of EGFR hindered cell proliferation and survival and suppressed tumor growth in patient-derived NF1Mut melanoma models but not in NF1 wild-type models. These results reveal a connection between NF1 loss and increased EGFR expression that is critical for the survival and growth of NF1Mut melanoma cells in patient-derived culture and xenograft models, irrespective of their BRAF and NRAS mutation status. NF1 mutant melanomas rely on EGFR activation and can be effectively treated with the EGFR inhibitors cetuximab or afatinib, supporting further testing in clinical trials.",
+        "paper_link": "https://pubmed.ncbi.nlm.nih.gov/40494652/",
+        "doi": "10.1158/0008-5472.CAN-23-1234",
+        "data_link": "https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA1164244&o=acc_s%3Aa",
+        "data_explanation": "Patient-derived short-term cultures and multiomics approaches were used to analyze NF1-mutant and NF1 wild-type melanoma cells.",
+        "data_comparison": "Comparison Groups: NF1 Mutant vs. NF1 Wild-Type melanoma cells.",
+        "data_method": "Differential gene expression analysis."
     },
     
     "tsoi_info": {

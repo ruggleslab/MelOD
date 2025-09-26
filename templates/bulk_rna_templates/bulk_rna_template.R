@@ -110,7 +110,9 @@ pca_ui <- function(id) {
   
   ns <- NS(id)
   tabBox(
-    title = HTML(paste("PCA", actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('pca_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),
+    title = HTML(paste("PCA", actionLink(ns("info_pca_plot"), label = "", icon = icon("info-circle")), 
+                       downloadButton(ns('pca_data'), label = "", icon = icon("save-file", lib = "glyphicon")),
+                       downloadButton(ns('pca_plot_download'), label = "", icon = icon("save-file", lib = "glyphicon")))),
     width = 12,
     tabPanel("PCA",
              withSpinner(plotlyOutput(ns('pca_plot')),type = 6, color = "#FFA812", size = 0.5),
@@ -150,7 +152,9 @@ metadata_ui <- function(id) {
   
   ns <- NS(id)
   tabBox(
-    title = HTML(paste("Metadata", actionLink(ns("info_metadata_plot"), label = "", icon = icon("info-circle")), downloadButton(ns('metadata_data'), label = "", icon = icon("save-file", lib = "glyphicon")))),    
+    title = HTML(paste("Metadata", actionLink(ns("info_metadata_plot"), label = "", icon = icon("info-circle")), 
+                       downloadButton(ns('metadata_data'), label = "", icon = icon("save-file", lib = "glyphicon")), 
+                       downloadButton(ns('metadata_plot'), label = "", icon = icon("save-file", lib = "glyphicon")))),    
     id = "tabset1",
     width = 12,
     tabPanel("Survival curves by condition", withSpinner(uiOutput(ns("mortality_by_condition")),type = 6, color = "#FFA812", size = 0.5)),

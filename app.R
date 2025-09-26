@@ -24,6 +24,7 @@ source("templates/bulk_rna_templates/fischer_template.R", local = TRUE)
 source("templates/bulk_rna_templates/hugo_template.R", local = TRUE)
 source("templates/bulk_rna_templates/riaz_template.R", local = TRUE)
 source("templates/bulk_rna_templates/tsoi_template.R", local = TRUE)
+source("templates/bulk_rna_templates/ibrahim_template.R", local = TRUE)
 source("templates/bulk_rna_templates/bulk_rna_template.R", local = TRUE)
 
 source("templates/in_development_template.R", local = TRUE)
@@ -80,6 +81,8 @@ server <- function(input, output, session) {
       tsoi_server()
     } else if (input$tabs == "riaz"){
       riaz_server()
+    } else if (input$tabs == "ibrahim") {
+      ibrahim_server()
     } else if (input$tabs == "qisun") {
       qisun_server()
     } else if (input$tabs == "KBPT") {
